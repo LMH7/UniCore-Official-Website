@@ -1,0 +1,107 @@
+{
+  "url": "https://lmh7.github.io/UniCore-Official-Website/",
+  "checkedAt": "2026-11-09T06:26:08.154Z",
+  "checks": [
+    {
+      "width": 390,
+      "path": "index.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "products.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "solutions.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "resources.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "about.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "contact.html",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "product.html?id=nex-500",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "product.html?id=nex-250",
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "path": "product.html?id=nex-30",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "index.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "products.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "solutions.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "resources.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "about.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "contact.html",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "product.html?id=nex-500",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "product.html?id=nex-250",
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "path": "product.html?id=nex-30",
+      "status": "passed"
+    },
+    {
+      "path": "home → products → NEX 250 → reload → contact",
+      "status": "passed"
+    },
+    {
+      "path": "nested 404 → correct project homepage",
+      "status": "passed"
+    }
+  ],
+  "result": "passed",
+  "scriptErrors": [],
+  "checkedAtLocal": "2026-11-09T14:26:08.154000+08:00"
+}

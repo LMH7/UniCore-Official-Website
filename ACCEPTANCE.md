@@ -32,7 +32,18 @@ GitHub Pages 已启用，部署源设置为 GitHub Actions。预览地址：
 
 https://lmh7.github.io/UniCore-Official-Website/
 
-首次工作流和公网结果将于部署完成后补充。只有部署完成与网址验证通过后，才算公网预览上线。
+首次发布已完成，GitHub 云端检查与部署均成功：
+
+- 站点代码提交：`824f45836f6e722dd9bdbf106e7b19653154be76`。
+- [首次检查与部署记录](https://github.com/LMH7/UniCore-Official-Website/actions/runs/42572758170)。云端 Linux / Chromium 也通过全部 10 项检查。
+- 公网浏览器检查时间：北京时间 2026-11-09 14:26。
+- 390px 与 1440px 两种宽度分别检查六个栏目和三款详情，共 18 个视图，均正常，无破图、整体横向滚动和脚本错误。
+- 公网实际走通：首页 → 产品中心 → NEX 250 → 刷新 → 联系页。
+- 公网多层错误地址返回 HTTP 404，并能正确返回本仓库的站点首页。
+- 首页、全部栏目、详情模板、样式、脚本与三款产品图的公网请求正常返回 HTTP 200。
+- [公网检查记录](docs/live-check.json)；[线上首页截图](docs/screenshots/live-first-screen.webp)。
+
+以上证明本机网络下公网预览可访问，未替代下列真实设备与多网络检查。
 
 ## 仍需团队确认或实测
 
