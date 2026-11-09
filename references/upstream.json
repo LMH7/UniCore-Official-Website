@@ -1,0 +1,36 @@
+{
+  "template_commit": "7d297106cbda2f04db4696752fcdb5b4dc9cd936",
+  "retrieved": "2026-11-09",
+  "files": [
+    {
+      "file": "site/assets/vendor/modern-business.css",
+      "source": "https://raw.githubusercontent.com/StartBootstrap/startbootstrap-modern-business/7d297106cbda2f04db4696752fcdb5b4dc9cd936/dist/css/styles.css",
+      "sha256": "c97338db14e66a26fb733a982d3c51f55acff638de3444767e4f6f09646a1063",
+      "bytes": 237143
+    },
+    {
+      "file": "LICENSE",
+      "source": "https://raw.githubusercontent.com/StartBootstrap/startbootstrap-modern-business/7d297106cbda2f04db4696752fcdb5b4dc9cd936/LICENSE",
+      "sha256": "e8b857747301fcd4c885b3216544b18bbf60328aec2c34da614787346cf40282",
+      "bytes": 1091
+    },
+    {
+      "file": "site/assets/vendor/bootstrap.bundle.min.js",
+      "source": "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
+      "sha256": "9520018fa5d81f4e4dc9d06afb576f90cbbaba209cfcc6cb60e1464647f7890b",
+      "bytes": 80420
+    },
+    {
+      "file": "site/assets/vendor/BOOTSTRAP-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/twbs/bootstrap/v5.2.3/LICENSE",
+      "sha256": "53d2513c8df48a817d70537cc906b8e9c7bf2513328ff66847894773e615b37e",
+      "bytes": 1131
+    },
+    {
+      "file": "references/modern-business-index.html",
+      "source": "https://raw.githubusercontent.com/StartBootstrap/startbootstrap-modern-business/7d297106cbda2f04db4696752fcdb5b4dc9cd936/dist/index.html",
+      "sha256": "c19b4c03d3e37b666c74684696205111d2fa3553f99326648665510ef88ff08d",
+      "bytes": 16715
+    }
+  ]
+}

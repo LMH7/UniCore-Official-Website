@@ -1,0 +1,9 @@
+node_modules/
+artifacts/
+release/
+.env
+.env.*
+.wrangler/
+.DS_Store
+Thumbs.db
+*.log

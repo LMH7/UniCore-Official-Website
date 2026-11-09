@@ -1,0 +1,20 @@
+{
+  "name": "unicore-official-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "联核智域团队官网：静态页面与可维护内容数据",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "package": "node scripts/package.mjs",
+    "test": "playwright test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
+  }
+}
