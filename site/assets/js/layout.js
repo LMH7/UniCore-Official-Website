@@ -62,6 +62,8 @@ window.LAYOUT_READY = (async () => {
     ["products", "products.html", "产品中心"],
     ["solutions", "solutions.html", "解决方案"],
     ["resources", "resources.html", "资源与支持"],
+    ["publications", "publications.html", "学术成果"],
+    ["projects", "projects.html", "重点项目"],
     ["about", "about.html", "关于我们"],
   ];
   const brand = `<img class="brand-logo" src="${UI.url(data.logo)}" alt="${e(data.brand)} 联核智域" width="260" height="70"><span class="brand-caption">联核智域<span>INTELLIGENCE IN FLIGHT</span></span>`;

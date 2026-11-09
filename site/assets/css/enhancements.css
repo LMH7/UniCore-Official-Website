@@ -396,7 +396,8 @@
     color 0.2s,
     border-color 0.2s;
 }
-.filter-pills button[aria-pressed="true"] {
+.filter-pills button[aria-pressed="true"],
+.about-tabs button[aria-selected="true"] {
   background: #eaf2ff;
   border-color: #bfd7fa;
   color: #135fca;
@@ -404,6 +405,43 @@
 .filter-pills button:hover {
   border-color: #8db6ec;
   color: var(--blue);
+}
+.about-tabs {
+  gap: 10px;
+  margin-bottom: 38px;
+}
+.about-tabs button {
+  min-width: 108px;
+  padding: 11px 18px;
+}
+.template-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  padding: 40px 24px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f6f8fc;
+  text-align: center;
+}
+.template-placeholder h2 {
+  margin-bottom: 12px;
+  font-size: 26px;
+}
+.template-placeholder p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+@media (max-width: 575px) {
+  .about-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 28px;
+  }
+  .about-tabs button {
+    min-width: 0;
+  }
 }
 .search-field {
   border: 1px solid #dce4ef;
