@@ -1,12 +1,59 @@
-/* C 主要维护此文件。联系方式确认后填写；留空时不会出现假邮箱或无效按钮。 */
+/* 团队、方案与公开联系方式的统一内容源。 */
 window.SITE_CONTENT = {
   name: "联核智域科技团队",
   shortName: "联核智域",
-  brand: "NEXCORE",
+  brand: "iNEX",
+  logo: "assets/images/inex-logo.webp",
   tagline: "面向科研与教育的自主空中机器人平台",
   email: "",
   location: "",
   qrImage: "",
+  contacts: [
+    {
+      id: "wechat",
+      label: "微信",
+      name: "微信联系",
+      icon: "wechat",
+      description: "扫描二维码添加微信，交流产品选型与研究需求。",
+      qrImage: "assets/images/wechat-qr.png",
+      url: "",
+      action: "查看微信二维码",
+      downloadName: "inex-wechat-qr.png",
+    },
+    {
+      id: "linkedin",
+      label: "LinkedIn",
+      name: "LinkedIn · 魏宇昊",
+      icon: "linkedin",
+      description: "访问 LinkedIn 主页，或扫描二维码建立联系。",
+      qrImage: "assets/images/linkedin-qr.png",
+      url: "https://www.linkedin.com/in/%E5%AE%87%E6%98%8A-%E9%AD%8F-a7a450448?fromQR=1",
+      action: "访问 LinkedIn",
+      downloadName: "inex-linkedin-qr.png",
+    },
+  ],
+  faqs: [
+    {
+      question: "如何选择合适的 NEX 平台？",
+      answer:
+        "先明确研究目标、感知方式和实验环境。NEX 500 使用激光雷达，NEX 250 与 NEX 30 使用深度相机。其他配置请通过微信或 LinkedIn 与团队确认。",
+    },
+    {
+      question: "可以在哪里获取技术资料？",
+      answer:
+        "资源页提供公开学习入口。NEX 平台的具体配置、软件支持与技术资料，请联系团队获取适合你研究方向的信息。",
+    },
+    {
+      question: "是否支持教学科研合作？",
+      answer:
+        "欢迎围绕机器人感知、自主导航、集群协同与教学实验交流。请说明课题目标、实验环境和计划，便于进一步讨论。",
+    },
+    {
+      question: "手机上怎样使用联系二维码？",
+      answer:
+        "点击二维码可放大，也可以保存原图，在微信或 LinkedIn 中使用识别图片功能；LinkedIn 还支持直接打开个人主页。",
+    },
+  ],
   intro:
     "联核智域科技团队专注于微型自主空中机器人与集群技术研发。我们面向高校、科研院所与企业的研究需求，探索机器人平台、感知算法、仿真工具与教育科研的结合，让想法更快走向真实的飞行实验。",
   mission: "加速空中具身智能研发效率与落地应用。",

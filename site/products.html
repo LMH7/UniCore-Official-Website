@@ -2,28 +2,47 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
+    <link
+      rel="canonical"
+      href="https://lmh7.github.io/UniCore-Official-Website/products.html"
+    />
+    <meta
+      property="og:url"
+      content="https://lmh7.github.io/UniCore-Official-Website/products.html"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
       content="探索 NEX 500、NEX 250、NEX 30 自主空中机器人平台，了解激光雷达与深度相机产品方向。"
     />
-    <meta name="theme-color" content="#1465e8" />
+    <meta name="theme-color" content="#06111f" />
+    <meta property="og:site_name" content="iNEX 联核智域" />
+    <meta
+      property="og:image"
+      content="https://lmh7.github.io/UniCore-Official-Website/assets/images/inex-social.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="iNEX 联核智域品牌标识" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_CN" />
-    <meta property="og:title" content="产品中心 · NEXCORE 联核智域" />
+    <meta property="og:title" content="产品中心 · iNEX 联核智域" />
     <meta
       property="og:description"
       content="探索 NEX 500、NEX 250、NEX 30 自主空中机器人平台，了解激光雷达与深度相机产品方向。"
     />
-    <title>产品中心 · NEXCORE 联核智域</title>
-    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+    <title>产品中心 · iNEX 联核智域</title>
+    <link rel="icon" href="assets/images/favicon.png" type="image/png" />
     <link rel="stylesheet" href="assets/vendor/modern-business.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <script src="assets/vendor/bootstrap.bundle.min.js" defer></script>
     <script src="assets/js/site-content.js" defer></script>
     <script src="assets/js/products.js" defer></script>
+    <script src="assets/js/data-service.js" defer></script>
     <script src="assets/js/layout.js" defer></script>
     <script src="assets/js/app.js" defer></script>
+    <link rel="stylesheet" href="assets/css/enhancements.css" />
+    <script src="assets/js/interactions.js" defer></script>
   </head>
   <body data-page="products">
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -51,7 +70,80 @@
           <div class="collection-title">
             <span>NEX 系列</span><span>自主空中机器人平台</span>
           </div>
+          <div class="product-toolbar">
+            <div
+              class="filter-pills"
+              role="group"
+              aria-label="按传感器筛选产品"
+            >
+              <button
+                type="button"
+                data-product-filter="all"
+                aria-pressed="true"
+              >
+                全部平台
+              </button>
+              <button
+                type="button"
+                data-product-filter="激光雷达"
+                aria-pressed="false"
+              >
+                激光雷达
+              </button>
+              <button
+                type="button"
+                data-product-filter="深度相机"
+                aria-pressed="false"
+              >
+                深度相机
+              </button>
+            </div>
+            <label class="search-field"
+              ><span data-icon="search" data-size="18"></span
+              ><input
+                id="product-search"
+                type="search"
+                maxlength="200"
+                aria-label="搜索产品"
+                placeholder="搜索型号、感知方式…"
+            /></label>
+          </div>
+          <div class="collection-meta">
+            <span id="product-count" role="status" aria-live="polite"
+              >显示全部平台</span
+            ><span>选择两款或以上，可对比平台信息</span>
+          </div>
           <div class="product-grid" data-products></div>
+          <div class="filter-empty" id="products-empty" hidden>
+            <span data-icon="search" data-size="32"></span>
+            <h2>暂时没有匹配的平台</h2>
+            <p>换一个关键词，或查看全部平台。</p>
+            <button
+              class="btn btn-outline-primary"
+              id="reset-products"
+              type="button"
+            >
+              重置筛选
+            </button>
+          </div>
+          <div class="compare-bar" id="compare-bar" hidden>
+            <div>
+              <strong>平台对比</strong
+              ><span id="compare-count" role="status" aria-live="polite"></span>
+            </div>
+            <div class="compare-bar-actions">
+              <button class="text-link" type="button" id="clear-compare">
+                清空</button
+              ><button
+                class="btn btn-primary"
+                type="button"
+                id="open-compare"
+                disabled
+              >
+                开始对比 <span data-icon="arrow" data-size="17"></span>
+              </button>
+            </div>
+          </div>
           <p class="collection-note">
             页面展示平台型号及传感器类型；具体配置与技术资料请与团队进一步确认。
           </p>

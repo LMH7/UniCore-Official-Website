@@ -43,10 +43,18 @@ for (const page of pages) {
     }
   }
 }
+for (const asset of [
+  SITE_CONTENT.logo,
+  ...SITE_CONTENT.contacts.map((c) => c.qrImage),
+]) {
+  try {
+    await stat(path.join(root, asset));
+  } catch {
+    errors.push(`品牌或联系素材不存在：${asset}`);
+  }
+}
 if (!SITE_CONTENT.email)
-  console.log(
-    "提示：正式联系邮箱尚未填写；页面会显示「官方联系方式即将公布」。",
-  );
+  console.log("提示：未配置邮箱；联系页使用已提供的微信与 LinkedIn。");
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);

@@ -19,6 +19,8 @@ const types = {
   ".svg": "image/svg+xml",
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8",
+  ".jpg": "image/jpeg",
+  ".xml": "application/xml; charset=utf-8",
 };
 const server = http.createServer(async (req, res) => {
   if (!["GET", "HEAD"].includes(req.method)) {
@@ -63,5 +65,5 @@ server.on("error", (error) => {
   process.exit(1);
 });
 server.listen(port, host, () =>
-  console.log(`NEXCORE 网站预览：http://${host}:${port}\n按 Ctrl+C 停止。`),
+  console.log(`iNEX 网站预览：http://${host}:${port}\n按 Ctrl+C 停止。`),
 );

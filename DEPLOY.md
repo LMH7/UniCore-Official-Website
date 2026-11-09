@@ -11,7 +11,7 @@
 - 预览地址：https://lmh7.github.io/UniCore-Official-Website/
 - 发布结果：https://github.com/LMH7/UniCore-Official-Website/actions
 
-这是展示预览，联系方式与内容仍在确认中。后续若加入交易、付费业务或正式商业运营，需要按用途重新评估平台，方案仍推荐 Cloudflare Pages 或已获准的网站空间。
+这是展示预览，产品参数与案例仍可继续补充。后续若加入交易、付费业务或正式商业运营，需要按用途重新评估平台，方案仍推荐 Cloudflare Pages 或已获准的网站空间。
 
 ## 自动发布
 

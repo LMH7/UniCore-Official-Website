@@ -10,12 +10,17 @@ try {
     ["home-mobile", 390, 844, "/"],
     ["product-mobile", 390, 844, "/product.html?id=nex-500"],
     ["solutions-desktop", 1440, 1000, "/solutions.html"],
+    ["contact-desktop", 1440, 1000, "/contact.html"],
+    ["contact-mobile", 390, 844, "/contact.html"],
+    ["products-desktop", 1440, 1000, "/products.html"],
   ]) {
     const page = await browser.newPage({
       viewport: { width, height },
       deviceScaleFactor: 1,
+      reducedMotion: "reduce",
     });
     await page.goto("http://127.0.0.1:4173" + url);
+    await page.evaluate(() => window.INTERACTIONS_READY);
     await page.evaluate(async () => {
       for (const img of document.images) {
         img.loading = "eager";

@@ -1,10 +1,15 @@
-/* A 提供基础呈现；B 维护产品模块，C 维护其他栏目。 */
-(() => {
+/* 页面内容呈现；数据来自统一数据服务，保持静态与 API 模式的页面行为一致。 */
+window.APP_READY = (async () => {
+  await SiteData.ready;
   const { escape: e, icon } = UI;
+  const isCollection = document.body.dataset.page === "products";
   const card = (p) =>
-    `<article class="product-card"><a class="product-image" href="product.html?id=${encodeURIComponent(p.id)}" aria-label="查看 ${e(p.name)}"><span class="image-caption">NEX SERIES</span><img src="${UI.url(p.image)}" alt="${e(p.imageAlt)}" width="560" height="420" loading="lazy"></a><div class="product-card-body"><div class="product-card-heading"><h3><a href="product.html?id=${encodeURIComponent(p.id)}">${e(p.name)}</a></h3><span class="sensor-tag">${e(p.sensor)}</span></div><p>${e(p.summary)}</p><a class="text-link" href="product.html?id=${encodeURIComponent(p.id)}">探索产品 ${icon("arrow", 18)}</a></div></article>`;
+    `<article class="product-card" data-product-card="${e(p.id)}"><a class="product-image" href="product.html?id=${encodeURIComponent(p.id)}" aria-label="查看 ${e(p.name)}"><span class="image-caption">NEX SERIES</span><img src="${UI.url(p.image)}" alt="${e(p.imageAlt)}" width="560" height="420" loading="lazy"><span class="image-arrow">${icon("diagonal", 20)}</span></a><div class="product-card-body"><div class="product-card-heading"><h3><a href="product.html?id=${encodeURIComponent(p.id)}">${e(p.name)}</a></h3><span class="sensor-tag">${e(p.sensor)}</span></div><p>${e(p.summary)}</p><div class="product-card-actions"><a class="text-link" href="product.html?id=${encodeURIComponent(p.id)}">探索产品 ${icon("arrow", 18)}</a>${isCollection ? `<label class="compare-check"><input type="checkbox" value="${e(p.id)}" data-compare-product aria-label="将 ${e(p.name)} 加入对比"><span>加入对比</span></label>` : ""}</div></div></article>`;
   document.querySelectorAll("[data-products]").forEach((el) => {
-    el.innerHTML = PRODUCTS.map(card).join("");
+    el.innerHTML =
+      PRODUCTS.length || isCollection
+        ? PRODUCTS.map(card).join("")
+        : '<div class="empty-collection"><h3>平台信息正在更新</h3><p>欢迎与我们交流你的研究需求。</p><a class="text-link" href="contact.html">联系我们</a></div>';
   });
   document.querySelectorAll("[data-solutions]").forEach((el) => {
     el.innerHTML = SITE_CONTENT.solutions
@@ -30,6 +35,25 @@
           `<article class="resource-card"><span class="resource-icon">${icon("book", 28)}</span><span class="micro-label">${e(r.type)}</span><h2>${e(r.title)}</h2><p>${e(r.description)}</p><a class="text-link" href="${UI.url(r.url)}" target="_blank" rel="noopener noreferrer">${e(r.label)} ${icon("diagonal", 18)}<span class="visually-hidden">（新窗口打开）</span></a></article>`,
       )
       .join("");
+  if (!PRODUCTS.length && document.querySelector(".hero-visual"))
+    document.querySelector(".hero-visual").innerHTML =
+      '<div class="hero-empty"><span class="eyebrow">EXPLORE WITH iNEX</span><h2>下一次探索，从一个想法开始。</h2><p>平台信息正在更新，欢迎先与团队交流。</p><a class="btn btn-outline-primary" href="contact.html">联系我们</a></div>';
+  const tabs = document.querySelector(".hero-tabs");
+  if (tabs && PRODUCTS.length) {
+    tabs.innerHTML = PRODUCTS.slice(0, 3)
+      .map(
+        (p, i) =>
+          `<button type="button" class="${i === 0 ? "selected" : ""}" data-hero-product="${e(p.id)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")} / ${e(p.name)}</button>`,
+      )
+      .join("");
+    const first = PRODUCTS[0];
+    document.getElementById("hero-product-image").src = first.image;
+    document.getElementById("hero-product-image").alt = first.imageAlt;
+    document.getElementById("hero-model").textContent = first.name;
+    document.getElementById("hero-sensor").textContent = first.subtitle;
+    document.getElementById("hero-product-link").href =
+      `product.html?id=${encodeURIComponent(first.id)}`;
+  }
   const heroButtons = document.querySelectorAll("[data-hero-product]");
   heroButtons.forEach((button) =>
     button.addEventListener("click", () => {
@@ -42,6 +66,14 @@
       const image = document.getElementById("hero-product-image");
       image.src = p.image;
       image.alt = p.imageAlt;
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+        image.animate(
+          [
+            { opacity: 0.3, transform: "translateY(12px) scale(.97)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" },
+          ],
+          { duration: 320, easing: "ease-out" },
+        );
       document.getElementById("hero-model").textContent = p.name;
       document.getElementById("hero-sensor").textContent = p.subtitle;
       document.getElementById("hero-product-link").href =
@@ -51,9 +83,10 @@
   const contact = document.querySelector("[data-contact]");
   if (contact) {
     const email = SITE_CONTENT.email.trim();
-    contact.innerHTML = email
-      ? `<div class="contact-icon">${icon("mail", 32)}</div><span class="eyebrow">联系邮箱</span><h2>一起，让想法起飞。</h2><p>欢迎交流产品选型、科研实验与合作需求。</p><a class="contact-email" href="mailto:${encodeURIComponent(email)}">${e(email)}</a><button class="btn btn-primary" id="copy-email" type="button">${icon("copy", 18)} 复制邮箱</button><p class="copy-status" role="status" aria-live="polite"></p>`
-      : `<div class="contact-icon">${icon("mail", 32)}</div><span class="eyebrow">与 NEXCORE 连接</span><h2>一起，让想法起飞。</h2><p>欢迎围绕产品选型、科研实验和技术合作与我们交流。</p><div class="contact-pending"><span class="status-dot"></span>官方联系方式即将公布</div><p class="contact-note">感谢你的关注，欢迎先了解我们的平台与研究方向。</p><a class="text-link" href="products.html">先探索产品 ${icon("arrow", 18)}</a>`;
+    const product = PRODUCTS.find(
+      (p) => p.id === new URLSearchParams(location.search).get("product"),
+    );
+    contact.innerHTML = `<span class="eyebrow">CONNECT WITH ${e(SITE_CONTENT.brand)}</span><h2>一起，让想法起飞。</h2><p>从一个问题开始，找到适合你的平台与合作方向。</p>${product ? `<div class="inquiry-context">你正在了解 <strong>${e(product.name)}</strong><button type="button" class="text-link" data-copy="我想了解 ${e(product.name)}，希望进一步交流平台配置与研究需求。">复制咨询内容 ${icon("copy", 15)}</button></div>` : ""}<div class="contact-channels">${SITE_CONTENT.contacts.map((c) => `<article class="contact-channel"><div class="channel-heading"><span class="channel-icon">${icon(c.icon, 25)}</span><div><span class="micro-label">${e(c.label)}</span><h3>${e(c.name)}</h3></div></div><p>${e(c.description)}</p><button class="qr-preview" type="button" data-contact-qr="${e(c.id)}" aria-label="放大${e(c.label)}二维码"><img src="${UI.url(c.qrImage)}" alt="${e(c.label)}联系二维码" width="240" height="240" loading="lazy"><span>${icon("zoom", 15)} 点击放大 · 长按识别</span></button><div class="channel-actions">${c.url && UI.url(c.url) ? `<a class="text-link" href="${UI.url(c.url)}" target="_blank" rel="noopener noreferrer">${e(c.action)} ${icon("diagonal", 16)}<span class="visually-hidden">（新窗口打开）</span></a>` : `<button class="text-link" type="button" data-contact-qr="${e(c.id)}">${e(c.action)} ${icon("zoom", 16)}</button>`}<a class="download-qr" href="${UI.url(c.qrImage)}" download="${e(c.downloadName)}" aria-label="保存${e(c.label)}二维码">${icon("download", 17)} 保存</a></div></article>`).join("")}</div>${email ? `<div class="email-block"><span class="eyebrow">联系邮箱</span><a class="contact-email" href="mailto:${encodeURIComponent(email)}">${e(email)}</a><button class="btn btn-outline-primary" id="copy-email" type="button">${icon("copy", 18)} 复制邮箱</button><p class="copy-status" role="status" aria-live="polite"></p></div>` : ""}`;
     if (email)
       document
         .getElementById("copy-email")
@@ -66,6 +99,11 @@
             status.textContent = `暂时无法自动复制，请选中上方邮箱手动复制：${email}`;
           }
         });
+    if (!SITE_CONTENT.contacts.length && !email)
+      contact.insertAdjacentHTML(
+        "beforeend",
+        '<p class="info-note">联系方式正在更新，欢迎稍后再来。</p>',
+      );
     const extra = document.querySelector("[data-contact-extra]");
     if (extra && SITE_CONTENT.location) {
       const p = document.createElement("p");
@@ -80,5 +118,68 @@
       img.height = 160;
       extra.append(img);
     }
+  }
+  document.querySelectorAll("[data-faqs]").forEach((el) => {
+    el.innerHTML = SITE_CONTENT.faqs
+      .map(
+        (f) =>
+          `<details class="faq-item"><summary>${e(f.question)}<span aria-hidden="true">+</span></summary><p>${e(f.answer)}</p></details>`,
+      )
+      .join("");
+  });
+  if (isCollection) {
+    const search = document.getElementById("product-search");
+    const buttons = document.querySelectorAll("[data-product-filter]");
+    const params = new URLSearchParams(location.search);
+    let sensor = ["all", "激光雷达", "深度相机"].includes(params.get("sensor"))
+      ? params.get("sensor")
+      : "all";
+    search.value = (params.get("q") || "").slice(0, 200);
+    function filter(updateUrl = true) {
+      const query = search.value.trim().toLowerCase();
+      let count = 0;
+      document.querySelectorAll("[data-product-card]").forEach((el) => {
+        const p = PRODUCTS.find((p) => p.id === el.dataset.productCard);
+        const visible =
+          (sensor === "all" || sensor === p.sensor) &&
+          [p.name, p.sensor, p.summary, ...p.applications]
+            .join(" ")
+            .toLowerCase()
+            .includes(query);
+        el.hidden = !visible;
+        if (visible) count++;
+      });
+      buttons.forEach((b) =>
+        b.setAttribute(
+          "aria-pressed",
+          String(b.dataset.productFilter === sensor),
+        ),
+      );
+      document.getElementById("product-count").textContent =
+        `显示 ${count} / ${PRODUCTS.length} 款平台`;
+      document.getElementById("products-empty").hidden = count > 0;
+      if (updateUrl) {
+        const next = new URL(location.href);
+        if (query) next.searchParams.set("q", search.value.trim());
+        else next.searchParams.delete("q");
+        if (sensor !== "all") next.searchParams.set("sensor", sensor);
+        else next.searchParams.delete("sensor");
+        history.replaceState(null, "", next);
+      }
+    }
+    search.addEventListener("input", () => filter());
+    buttons.forEach((b) =>
+      b.addEventListener("click", () => {
+        sensor = b.dataset.productFilter;
+        filter();
+      }),
+    );
+    document.getElementById("reset-products").addEventListener("click", () => {
+      search.value = "";
+      sensor = "all";
+      filter();
+      search.focus();
+    });
+    filter(false);
   }
 })();

@@ -13,7 +13,8 @@ await cp(path.join(root, "site"), output, { recursive: true });
 const filename = path.join(output, "404.html");
 const errorPage = await readFile(filename, "utf8");
 const baseElement = /<base\s+href=["']\/["']\s*\/?>/i;
-if (!baseElement.test(errorPage)) throw new Error("404 页面缺少根路径 base，停止发布以免错误页链接失效。");
+if (!baseElement.test(errorPage))
+  throw new Error("404 页面缺少根路径 base，停止发布以免错误页链接失效。");
 await writeFile(
   filename,
   errorPage.replace(baseElement, `<base href="${base}" />`),

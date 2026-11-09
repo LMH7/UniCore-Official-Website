@@ -1,4 +1,4 @@
-/* A 维护：公共布局与内容渲染工具。数据中的文本一律转义。 */
+/* 公共布局与内容渲染工具。数据中的文本一律转义。 */
 window.UI = {
   escape(value = "") {
     return String(value).replace(
@@ -15,14 +15,14 @@ window.UI = {
   },
   url(value = "") {
     const text = String(value).trim();
-    if (/^(https?:\/\/|mailto:)/i.test(text)) return this.escape(text);
+    if (/^(https?:\/\/|mailto:)/i.test(text)) return UI.escape(text);
     if (
       /^(?![\/\\])(?:[a-zA-Z0-9_.\/-]+)(?:[?#][a-zA-Z0-9_.%=&-]*)?$/.test(
         text,
       ) &&
       !text.includes("..")
     )
-      return this.escape(text);
+      return UI.escape(text);
     return "";
   },
   icon(name, size = 24) {
@@ -38,11 +38,22 @@ window.UI = {
         '<path d="m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5"/>',
       check: '<path d="m5 12 4 4L19 6"/>',
       copy: '<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
+      search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+      close: '<path d="m6 6 12 12M18 6 6 18"/>',
+      zoom: '<circle cx="10" cy="10" r="6"/><path d="M10 7v6m-3-3h6m2 2 6 6"/>',
+      share: '<path d="M12 16V3m-5 5 5-5 5 5M4 13v7h16v-7"/>',
+      top: '<path d="m5 12 7-7 7 7M12 5v15"/>',
+      linkedin:
+        '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7m0-10v.1M11 17v-7m0 3c0-4 6-4 6 0v4"/>',
+      wechat:
+        '<path d="M13 15c-1 .5-2.4.8-3.8.8L5 18l1-3C1 12 2 5 9 4c4-.6 8 1.3 9 5M21 19l1 3-3-1c-6 1-10-3-8-7 2-5 10-4 12 0 1 2 0 4-2 5Z"/><path d="M7 9h.1m5 0h.1m3 7h.1m4 0h.1"/>',
+      download: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',
     };
     return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.arrow}</svg>`;
   },
 };
-(() => {
+window.LAYOUT_READY = (async () => {
+  await SiteData.ready;
   const { escape: e, icon } = UI;
   const data = SITE_CONTENT;
   const page = document.body.dataset.page;
@@ -53,11 +64,19 @@ window.UI = {
     ["resources", "resources.html", "资源与支持"],
     ["about", "about.html", "关于我们"],
   ];
-  const brand = `<span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-words"><strong>${e(data.brand)}</strong><span>${e(data.shortName)} · 智能探索无界</span></span>`;
+  const brand = `<img class="brand-logo" src="${UI.url(data.logo)}" alt="${e(data.brand)} 联核智域" width="260" height="70"><span class="brand-caption">联核智域<span>INTELLIGENCE IN FLIGHT</span></span>`;
   document.getElementById("site-header").innerHTML =
-    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="index.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => `<li class="nav-item"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav>`;
+    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="index.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => `<li class="nav-item"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul><button class="icon-button nav-search" type="button" data-open-search aria-label="搜索全站">${icon("search", 19)}</button><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav><div class="reading-progress" aria-hidden="true"></div>`;
   document.getElementById("site-footer").innerHTML =
-    `<div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="index.html">${brand}</a><p>${e(data.tagline)}<br>让每一个研究想法，都有起飞的可能。</p></div><div class="footer-links"><div><span>探索 NEXCORE</span><a href="products.html">产品中心</a><a href="solutions.html">解决方案</a></div><div><span>与我们连接</span><a href="about.html">关于团队</a><a href="resources.html">资源与支持</a><a href="contact.html">联系我们</a></div></div></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} ${e(data.name)}</span><span>探索无界 · 智启未来</span><a href="credits.html">素材与开源说明</a></div></div>`;
+    `<div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="index.html">${brand}</a><p>${e(data.tagline)}<br>让每一个研究想法，都有起飞的可能。</p><div class="footer-socials">${data.contacts.some((c) => c.id === "wechat") ? `<button class="icon-button" type="button" data-contact-qr="wechat" aria-label="查看微信二维码">${icon("wechat", 20)}</button>` : ""}${data.contacts
+      .filter((c) => c.url && UI.url(c.url))
+      .map(
+        (c) =>
+          `<a class="icon-button" href="${UI.url(c.url)}" target="_blank" rel="noopener noreferrer" aria-label="访问 ${e(c.label)}（新窗口）">${icon(c.icon, 19)}</a>`,
+      )
+      .join(
+        "",
+      )}</div></div><div class="footer-links"><div><span>探索 ${e(data.brand)}</span><a href="products.html">产品中心</a><a href="solutions.html">解决方案</a></div><div><span>与我们连接</span><a href="about.html">关于团队</a><a href="resources.html">资源与支持</a><a href="contact.html">联系我们</a></div></div></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} ${e(data.name)}</span><span>探索无界 · 智启未来</span><a href="credits.html">素材与开源说明</a></div></div>`;
   document.querySelectorAll("[data-icon]").forEach((el) => {
     el.innerHTML = icon(el.dataset.icon, Number(el.dataset.size) || 22);
   });

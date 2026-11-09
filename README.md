@@ -1,91 +1,98 @@
-# 联核智域官网 · UniCore Official Website
+# iNEX 联核智域官网
 
-面向科研与教育的自主空中机器人展示网站。采用静态 HTML、Bootstrap 5.2.3 和少量 JavaScript；无需数据库、账号密钥或构建服务即可浏览。
+自主空中机器人展示网站，已完成整个前端的品牌、栏目与浏览交互。当前使用静态内容，后端尚未开发。
 
-预览网址：**https://lmh7.github.io/UniCore-Official-Website/**。首次发布及当前运行结果请查看仓库的 **Actions → Check and publish website**；以绿色成功状态和实际访问为准。
+- [在线预览](https://lmh7.github.io/UniCore-Official-Website/)
+- [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
+- [内容维护说明](CONTENT_GUIDE.md)
+- [后端接入方案](BACKEND_PLAN.md)
+- [检查记录](ACCEPTANCE.md)
+
+## 本次前端能力
+
+- iNEX 正式标识、深蓝与青蓝品牌配色、移动端导航、统一页脚。
+- 首页、产品中心、产品详情、解决方案、公开资源、关于、联系、错误页。
+- 产品关键词搜索、感知类型筛选、分享筛选地址、零结果恢复。
+- 最多三款平台对比，支持手机上左右查看表格。
+- 全站搜索（顶部放大镜，或在非输入框时按 `/`）。
+- 产品图片放大、分享链接复制、相关平台推荐。
+- 微信与 LinkedIn 二维码放大和原图保存；LinkedIn 主页直达。
+- 产品咨询入口保留所选型号，可复制咨询内容。
+- FAQ 展开、方案快捷导航、回到顶部、滚动进度。
+- 卡片、按钮、图片与导航 hover 反馈，轻量进入动效、鼠标轨迹反馈。
+- 键盘操作、弹窗焦点管理、Escape 关闭、减少动态效果设置。
+- 本地静态运行与 GitHub Pages 自动发布；未来 API 接入点、出错/超时回退。
+
+功能适用于当前的展示官网。现阶段没有后台登录、在线表单收信、数据库或支付服务，页面不会模拟这些功能的成功结果。
 
 ## 本地打开
 
-最省事：双击 `启动预览.cmd`，然后用浏览器打开 http://127.0.0.1:4173 。需要 Node.js 20 或以上版本；当前电脑已安装。预览过程中保持窗口打开。
+双击 `启动预览.cmd`，浏览器打开 http://127.0.0.1:4173 。需要 Node.js 20 或以上；当前电脑已安装。保持预览窗口打开。
 
-也可在 VS Code 打开本目录，在终端运行：
+也可在 VS Code 打开此目录，终端执行：
 
 ```sh
 npm run dev
 ```
 
-**预览无需先执行 npm install。** 如果端口被占用，用 `npm run dev -- --port 4174`，浏览器同步改为 4174。
+预览无需先安装依赖。端口被占用时用 `npm run dev -- --port 4174`。直接双击 `site/index.html` 可查看基础页面，但推荐使用预览服务检查复制、分享、错误页等行为。
 
-直接双击 `site/index.html` 也能查看页面、图片、产品和导航；推荐用上面的预览服务检查错误地址及复制邮箱功能。
+## 文件位置
 
-## 当前范围
+| 文件 | 用途 |
+| --- | --- |
+| `site/assets/js/products.js` | 产品记录；首页、列表、详情、搜索与对比共用 |
+| `site/assets/js/site-content.js` | 团队、方案、资源、微信/LinkedIn、FAQ |
+| `site/assets/js/data-service.js` | 本地与未来 API 数据源切换；目前为 local |
+| `site/assets/js/layout.js` | 公共导航、品牌、页脚与转义工具 |
+| `site/assets/js/app.js` | 栏目呈现、产品筛选、联系卡片 |
+| `site/assets/js/product-detail.js` | 产品详情与相关平台 |
+| `site/assets/js/interactions.js` | 搜索、弹窗、对比、分享与动效 |
+| `site/assets/css/custom.css` | 基础排版与响应式布局 |
+| `site/assets/css/enhancements.css` | iNEX 视觉与交互样式 |
+| `site/assets/images/` | 自有产品图、Logo、二维码与插画 |
+| `site/*.html` | 各页面的标题、结构与独立文字 |
 
-- A：统一风格、公共导航与页脚、首页、错误页、预览服务、自动检查、部署与交接说明。
-- B/C 接手基础：产品中心与三条详情、解决方案、资源、关于、联系均可浏览，使用会议材料中的有限信息搭建初版。页面内容仍需 B/C 和研发负责人审核、扩充。
-- 联系方式按要求预留；未填写时清楚提示「官方联系方式即将公布」。不存在无法收信的假表单。
-- 首页产品图来自团队会议材料；概念插画为本站绘制。没有加入客户数量、性能指标、合作机构背书等未经确认的信息。
+`site/` 是唯一网站发布源。原始会议材料、PDF、开发依赖不放入站点。素材与组件来源见 [ASSET_SOURCES.md](ASSET_SOURCES.md) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
-## 谁改哪里
+## 日常同步、检查和上传
 
-| 负责人 | 主要文件 | 用途 |
-| --- | --- | --- |
-| A | `site/index.html`、`site/assets/css/custom.css`、`site/assets/js/layout.js` | 首页、全局样式、统一导航和页脚 |
-| B | `site/assets/js/products.js`、`site/products.html`、`site/product.html`、`site/assets/js/product-detail.js` | 产品数据、列表、详情 |
-| C | `site/assets/js/site-content.js`、`site/solutions.html`、`site/resources.html`、`site/about.html`、`site/contact.html` | 团队、方案、资源、联系信息 |
-| A/B/C 协调 | `site/assets/js/app.js` | 基础产品卡片与其他栏目的数据呈现，修改前同步范围 |
-
-详细步骤见 [CONTENT_GUIDE.md](CONTENT_GUIDE.md)，协作约定见 [HANDOFF.md](HANDOFF.md)，发布和回退见 [DEPLOY.md](DEPLOY.md)，检查记录见 [ACCEPTANCE.md](ACCEPTANCE.md)，素材来源见 [ASSET_SOURCES.md](ASSET_SOURCES.md)。
-
-## 日常同步与上传
-
-开始编辑之前拉取最新内容；发现冲突时先处理，不要覆盖队友工作：
+开始编辑前：
 
 ```sh
 git pull --ff-only
 ```
 
-提交前查看 `git status` 和 `git diff`，确认只包含准备提交的改动。首次完整协作版本按用户要求使用 main；后续建议 B/C 分别在任务分支提交，A 检查后合并。
+完成后检查实际页面与差异，再执行：
 
 ```sh
+npm run check
 git add .
 git commit -m "说明本次修改"
 git push
 ```
 
-推送 main 后会自动检查并发布到 GitHub Pages。**仓库同步成功不等于发布成功**，需要等待 Actions 的部署步骤完成。
+推送 main 后自动检查并发布。上传成功不等于发布成功，须等待 Actions 的 deploy 步骤成功，再打开线上网址复查。
 
-## 检查与部署包
-
-普通内容检查不需要额外依赖：
-
-```sh
-npm run check
-npm run package
-```
-
-部署包在 `release/` 下，仅包含 `site/` 中的网站文件，不含会议原文、账号信息和开发依赖。这个目录不会随 Git 上传。
-
-浏览器检查需要安装开发依赖。Windows 默认使用已安装的 Edge；Linux CI 使用 Chromium：
+## 浏览器检查和截图
 
 ```sh
 npm ci
 npm test
 ```
 
-如果 Windows 没有 Edge，可以修改 `playwright.config.mjs` 使用 Chromium，再执行 `npx playwright install chromium`。自动检查覆盖不同宽度、导航、图片、详情刷新、错误地址和联系功能。截图保存方法：先启动本地预览，再执行 `node scripts/capture.mjs`；结果在 `artifacts/screenshots/`。
+Windows 默认使用已安装的 Edge，GitHub 云端使用 Chromium。Windows 没有 Edge 时可调整 `playwright.config.mjs` 并执行 `npx playwright install chromium`。
 
-## 结构
+本地开启预览后，用 `node scripts/capture.mjs` 保存电脑、手机和联系页截图，保存在 `artifacts/screenshots/`。用于截图的浏览器选择减少动态效果，以免全页截图包含未进入视野的过渡状态；正式页面仍按访客设备偏好显示。
 
-```text
-site/                      可以独立发布的网站
-  assets/css/custom.css    全局自定义风格
-  assets/js/               公共布局、产品数据和栏目内容
-  assets/images/           本地图片与概念插画
-  assets/vendor/           模板成品样式、Bootstrap 脚本和许可证
-scripts/                   预览、静态检查、截图与打包工具
-tests/                     浏览器功能检查
-references/upstream.json   模板版本、下载来源与校验值
-.github/workflows/         检查和 GitHub Pages 发布
+## 部署与备份
+
+```sh
+npm run package
 ```
 
-仅 `site/` 会公开发布为网页。网站以中文首版为目标，后续可继续增加产品、方案、公开资料和正式 Logo。现阶段无需引入后台或复杂框架。
+`release/` 中会得到可解压的通用网站包；仅含 `site/` 的公开内容。GitHub Pages 由工作流自动准备子目录错误页，无需手动上传 ZIP。发布、迁移与回退见 [DEPLOY.md](DEPLOY.md)。
+
+## 后续内容
+
+可以继续补充高清产品原图、经确认参数、公开资料、真实案例和邮箱。仅添加已经确认可公开的内容，避免把研究方向写成实际性能或已完成案例。后端接口规划和切换方法见 [BACKEND_PLAN.md](BACKEND_PLAN.md)，目前不需要架设服务器即可使用本站。

@@ -81,8 +81,10 @@ test("手机菜单和首页到产品、详情、联系的完整路径", async ({
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("NEX 250");
   await page.getByRole("link", { name: "咨询平台" }).click();
-  await expect(page).toHaveURL(/contact\.html$/);
-  await expect(page.getByText("官方联系方式即将公布")).toBeVisible();
+  await expect(page).toHaveURL(/contact\.html\?product=nex-250$/);
+  await expect(page.locator(".contact-channels")).toContainText("微信联系");
+  await expect(page.locator(".contact-channels")).toContainText("LinkedIn");
+  await expect(page.locator(".inquiry-context")).toContainText("NEX 250");
   await expect(page.locator("form")).toHaveCount(0);
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
 });
@@ -159,7 +161,7 @@ test("联系方式填写后可显示、点击和复制，并可安全处理文�
     page.getByRole("link", { name: "research@example.com" }),
   ).toHaveAttribute("href", "mailto:research%40example.com");
   await page.getByRole("button", { name: "复制邮箱" }).click();
-  await expect(page.getByRole("status")).toHaveText("邮箱已复制。");
+  await expect(page.locator(".copy-status")).toHaveText("邮箱已复制。");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "research@example.com",
   );
