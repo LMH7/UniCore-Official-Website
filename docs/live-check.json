@@ -1,6 +1,6 @@
 {
   "url": "https://lmh7.github.io/UniCore-Official-Website/",
-  "checkedAt": "2026-11-09T06:26:08.154Z",
+  "checkedAt": "2026-11-09T12:34:18.934Z",
   "checks": [
     {
       "width": 390,
@@ -48,6 +48,11 @@
       "status": "passed"
     },
     {
+      "width": 390,
+      "path": "credits.html",
+      "status": "passed"
+    },
+    {
       "width": 1440,
       "path": "index.html",
       "status": "passed"
@@ -93,15 +98,34 @@
       "status": "passed"
     },
     {
-      "path": "home → products → NEX 250 → reload → contact",
+      "width": 1440,
+      "path": "credits.html",
       "status": "passed"
     },
     {
-      "path": "nested 404 → correct project homepage",
+      "path": "live filtering and comparison",
+      "status": "passed"
+    },
+    {
+      "path": "live search, detail, image dialog, share, inquiry context",
+      "status": "passed"
+    },
+    {
+      "path": "live QR dialogs and downloads",
+      "status": "passed"
+    },
+    {
+      "path": "nested 404 to project homepage",
+      "status": "passed"
+    },
+    {
+      "path": "compressed QR public files match source SHA-256 and remain decodable",
       "status": "passed"
     }
   ],
-  "result": "passed",
   "scriptErrors": [],
-  "checkedAtLocal": "2026-11-09T14:26:08.154000+08:00"
+  "result": "passed",
+  "commit": "869da58",
+  "checkedAtLocal": "2026-11-09T20:34:18.934000+08:00",
+  "workflow": "https://github.com/LMH7/UniCore-Official-Website/actions/runs/42617939469"
 }
