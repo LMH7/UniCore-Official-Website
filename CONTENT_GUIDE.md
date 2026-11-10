@@ -33,6 +33,8 @@
 
 独立页面标题和页面引导文字在相应 HTML 中；品牌改名还要检查 `<title>`、description、Open Graph 文案，以及 `product-detail.js` 的动态标题。公司主体与资质不要从 Logo 推断，应以负责人确认的对外表述为准。
 
+关于页使用连续排版：公司介绍之后是“依托实验室”，不再使用二级切换按钮。两个实验室的简介、官网链接和标识在 `site/about.html` 的 `.about-labs` 区域维护，顺序为飞行器基础布局全国重点实验室、跨域智能飞行实验室。标识分别使用 `aircraft-basic-layout-lab-logo.png` 与 `cdif-lab-logo.png`；简介来源见 `ASSET_SOURCES.md`。
+
 ## 微信与 LinkedIn
 
 `contacts` 数组是联系卡片与二维码弹窗的统一来源。二维码图片都在 `site/assets/images/`：
