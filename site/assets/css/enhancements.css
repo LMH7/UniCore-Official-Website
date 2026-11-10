@@ -17,6 +17,57 @@
     box-shadow 0.25s,
     background 0.25s;
 }
+.nav-item-menu {
+  position: relative;
+}
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  min-width: 176px;
+  padding: 10px;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 18px 44px rgba(4, 16, 34, 0.28);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(8px);
+  transition:
+    opacity 0.18s var(--ease),
+    transform 0.18s var(--ease),
+    visibility 0s linear 0.18s;
+}
+.nav-item-menu:hover .nav-dropdown,
+.nav-item-menu:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  transition-delay: 0s;
+}
+.nav-dropdown a {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.nav-dropdown a:hover,
+.nav-dropdown a:focus-visible {
+  background: #edf5ff;
+  color: var(--blue);
+}
+@media (max-width: 991px) {
+  .nav-dropdown {
+    display: none;
+  }
+}
 .site-header.is-scrolled {
   background: rgba(6, 17, 31, 0.98);
   box-shadow: 0 8px 35px #04102225;
@@ -551,27 +602,6 @@
 #cdif-lab-title {
   scroll-margin-top: 128px;
 }
-.about-index-item {
-  position: relative;
-}
-.about-index-sub {
-  display: none;
-  margin: 2px 0 10px;
-  padding-left: 20px;
-  flex-direction: column;
-  gap: 1px;
-}
-.about-index-item:hover .about-index-sub,
-.about-index-item:focus-within .about-index-sub {
-  display: flex;
-}
-.about-index-sub a {
-  padding: 5px 10px;
-  border-left: none;
-  border-radius: 6px;
-  font-size: 12px;
-  white-space: nowrap;
-}
 @media (max-width: 991px) {
   .about-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -610,10 +640,6 @@
     font-size: 28px;
   }
   .about-index-card {
-    display: none;
-  }
-  .about-index-item:hover .about-index-sub,
-  .about-index-item:focus-within .about-index-sub {
     display: none;
   }
 }
