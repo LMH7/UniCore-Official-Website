@@ -6,6 +6,76 @@
   --red: #e70024;
   --ease: cubic-bezier(0.22, 0.68, 0.16, 1);
 }
+/* 长短页面都预留滚动条宽度，避免居中内容和导航横向跳动。 */
+html {
+  scrollbar-gutter: stable;
+}
+@supports not (scrollbar-gutter: stable) {
+  html {
+    overflow-y: scroll;
+  }
+}
+/* 窄屏跨页保留菜单高度；Bootstrap 接管后仍可正常手动收起。 */
+@media (max-width: 991.98px) {
+  html[data-navigation-open] #main-navigation.collapse {
+    display: block;
+  }
+}
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* 跨页快照只交叠淡化；取消默认尺寸动画，导航独立保持可见。 */
+  html[data-page-transition="native"] .site-header {
+    view-transition-name: site-navigation;
+  }
+  ::view-transition-group(root),
+  ::view-transition-group(site-navigation) {
+    animation: none;
+  }
+  ::view-transition-old(root) {
+    animation: none;
+  }
+  ::view-transition-new(root) {
+    animation: page-fade-in 420ms ease-in-out both;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+  ::view-transition-group(site-navigation) {
+    z-index: 1;
+  }
+  ::view-transition-old(site-navigation) {
+    display: none;
+  }
+  ::view-transition-new(site-navigation) {
+    animation: none;
+  }
+  /* VS Code 内嵌预览和不支持跨页快照的浏览器使用淡出、淡入。 */
+  html[data-page-entering] #main,
+  html[data-page-entering] #site-footer {
+    opacity: 0;
+  }
+  html[data-page-leaving] #main,
+  html[data-page-leaving] #site-footer {
+    animation: page-fade-out 160ms ease-in both;
+  }
+  html[data-page-arriving] #main,
+  html[data-page-arriving] #site-footer {
+    animation: page-fade-in 300ms ease-out both;
+  }
+}
 [hidden] {
   display: none !important;
 }

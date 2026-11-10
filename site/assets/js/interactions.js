@@ -252,7 +252,7 @@ window.INTERACTIONS_READY = (async () => {
   addEventListener("resize", scroll);
   scroll();
   const revealTargets = document.querySelectorAll(
-    ".section-heading,.product-card,.solution-card,.resource-card,.about-grid,.cta-panel,.solution-detail,.contact-channel,.value-grid>article,.faq-section,.related-card",
+    ".section-heading,.product-card,.solution-card,.resource-card,.about-grid,.cta-panel,.contact-channel,.value-grid>article,.faq-section,.related-card",
   );
   if (!reduced.matches && "IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
@@ -266,6 +266,9 @@ window.INTERACTIONS_READY = (async () => {
       { threshold: 0.06 },
     );
     revealTargets.forEach((el) => {
+      const bounds = el.getBoundingClientRect();
+      // 当前已可见的内容保持可见，避免先显示再被脚本隐藏造成闪烁。
+      if (bounds.top < innerHeight && bounds.bottom > 0) return;
       el.classList.add("reveal-ready");
       observer.observe(el);
     });
@@ -296,14 +299,8 @@ window.INTERACTIONS_READY = (async () => {
     });
   }
   const solutionSections = document.querySelectorAll(".solution-detail[id]");
-  if (solutionSections.length) {
-    const subnav = document.createElement("nav");
-    subnav.className = "solution-subnav";
-    subnav.setAttribute("aria-label", "方案快捷导航");
-    subnav.innerHTML = SITE_CONTENT.solutions
-      .map((s) => `<a href="#${e(s.id)}">${e(s.title)}</a>`)
-      .join("");
-    document.querySelector("[data-full-solutions]").before(subnav);
+  const subnav = document.querySelector(".solution-subnav");
+  if (solutionSections.length && subnav && "IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
@@ -317,15 +314,7 @@ window.INTERACTIONS_READY = (async () => {
       { rootMargin: "-100px 0px -45% 0px", threshold: 0 },
     );
     solutionSections.forEach((s) => observer.observe(s));
-    const initial = SITE_CONTENT.solutions.find(
-      (s) => location.hash === "#" + s.id,
-    );
-    if (initial)
-      requestAnimationFrame(() =>
-        document
-          .getElementById(initial.id)
-          .scrollIntoView({ behavior: "instant" }),
-      );
+    // 方案锚点已在初始 HTML 中，由浏览器定位，避免脚本再次滚动。
   }
   if (state.fallback) {
     const banner = document.createElement("p");

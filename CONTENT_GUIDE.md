@@ -31,6 +31,8 @@
 - `resources`：公开资源与全站搜索内容。
 - `faqs`：资源和联系页的常见问题；每条包含 `question`、`answer`。
 
+修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync:solutions`，将同一份模板生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
+
 独立页面标题和页面引导文字在相应 HTML 中；品牌改名还要检查 `<title>`、description、Open Graph 文案，以及 `product-detail.js` 的动态标题。公司主体与资质不要从 Logo 推断，应以负责人确认的对外表述为准。
 
 关于页使用连续排版：公司介绍之后是“依托实验室”，不再使用二级切换按钮。两个实验室的简介、官网链接和标识在 `site/about.html` 的 `.about-labs` 区域维护，顺序为飞行器基础布局全国重点实验室、跨域智能飞行实验室。标识分别使用 `aircraft-basic-layout-lab-logo.png` 与 `cdif-lab-logo.png`；简介来源见 `ASSET_SOURCES.md`。
@@ -55,6 +57,12 @@
 ## 调整视觉与交互
 
 基础布局在 `custom.css`，iNEX 品牌、hover、对比、二维码和动效在 `enhancements.css`。公共导航和页脚在 `layout.js`；全站搜索、弹窗、对比和分享在 `interactions.js`。不要修改第三方 `vendor` 文件。
+
+公共导航由 `layout.js` 统一生成并预置在各页 HTML 中。修改导航或 `site-content.js` 中的品牌名称、Logo 后运行 `npm run sync:nav`，再运行 `npm run check`；不要直接编辑各页的导航 HTML。
+
+页面转场由 `page-transitions.js` 与 `enhancements.css` 管理：支持的浏览器交叠淡化前后页面，内嵌预览使用正文淡出、淡入，导航保持显示。该脚本在各页 head 中同步执行，避免内容先显示再隐藏。减少动态效果时关闭转场，站内锚点、外链、下载与新标签页操作保留浏览器行为。
+
+窄屏导航会在同一标签页内保留展开状态，切换栏目时保持菜单高度；再次点击菜单按钮或按 Escape 可收起。切回桌面宽度后清除展开状态，下次缩窄窗口时默认收起。状态按网站目录保存，不影响同域其他网站。
 
 用户选择减少动态效果时不会做进入动画；触屏可点击所有功能，核心内容不依赖 hover 才可发现。保持按钮的可读标签与键盘焦点样式。
 

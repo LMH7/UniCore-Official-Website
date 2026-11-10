@@ -20,13 +20,34 @@ window.APP_READY = (async () => {
       .join("");
   });
   const fullSolutions = document.querySelector("[data-full-solutions]");
-  if (fullSolutions)
-    fullSolutions.innerHTML = SITE_CONTENT.solutions
-      .map(
-        (s) =>
-          `<section class="solution-detail" id="${e(s.id)}"><div class="solution-detail-visual solution-${e(s.id)}"><span class="large-number">${e(s.number)}</span><div class="solution-orbit">${icon(s.icon, 90)}</div><span class="micro-label">${e(s.english)}</span></div><div class="solution-detail-copy"><span class="eyebrow">应用方向 / ${e(s.number)}</span><h2>${e(s.title)}</h2><p class="lead-text">${e(s.summary)}</p><p>${e(s.description)}</p><div class="tags">${s.topics.map((t) => `<span>${e(t)}</span>`).join("")}</div><div class="audience"><span>面向人群</span><p>${e(s.audience)}</p></div><a class="text-link" href="contact.html">讨论你的研究需求 ${icon("arrow", 18)}</a></div></section>`,
-      )
-      .join("");
+  if (fullSolutions) {
+    const solutionsMarkup =
+      `<nav class="solution-subnav" aria-label="方案快捷导航">${SITE_CONTENT.solutions.map((s) => `<a href="#${e(s.id)}">${e(s.title)}</a>`).join("")}</nav>` +
+      SITE_CONTENT.solutions
+        .map(
+          (s) =>
+            `<section class="solution-detail" id="${e(s.id)}"><div class="solution-detail-visual solution-${e(s.id)}"><span class="large-number">${e(s.number)}</span><div class="solution-orbit">${icon(s.icon, 90)}</div><span class="micro-label">${e(s.english)}</span></div><div class="solution-detail-copy"><span class="eyebrow">应用方向 / ${e(s.number)}</span><h2>${e(s.title)}</h2><p class="lead-text">${e(s.summary)}</p><p>${e(s.description)}</p><div class="tags">${s.topics.map((t) => `<span>${e(t)}</span>`).join("")}</div><div class="audience"><span>面向人群</span><p>${e(s.audience)}</p></div><a class="text-link" href="contact.html">讨论你的研究需求 ${icon("arrow", 18)}</a></div></section>`,
+        )
+        .join("");
+    // 静态内容与数据一致时保留 DOM，避免再次插入导航和正文造成位移。
+    let solutionsHash = 0x811c9dc5;
+    for (let i = 0; i < solutionsMarkup.length; i++) {
+      solutionsHash = Math.imul(
+        solutionsHash ^ solutionsMarkup.charCodeAt(i),
+        0x01000193,
+      );
+    }
+    const solutionsKey = `v1-${(solutionsHash >>> 0).toString(16).padStart(8, "0")}`;
+    if (
+      fullSolutions.dataset.solutionsKey !== solutionsKey ||
+      !fullSolutions.querySelector(".solution-subnav") ||
+      (SITE_CONTENT.solutions.length &&
+        !fullSolutions.querySelector(".solution-detail"))
+    ) {
+      fullSolutions.innerHTML = solutionsMarkup;
+      fullSolutions.dataset.solutionsKey = solutionsKey;
+    }
+  }
   const resources = document.querySelector("[data-resources]");
   if (resources)
     resources.innerHTML = SITE_CONTENT.resources
