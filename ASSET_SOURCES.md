@@ -9,6 +9,7 @@
 | `nex-30.webp` | 用户会议文档 image5，306×229，转换 WebP | NEX 30，后续可换高清图 |
 | `inex-logo.webp` | 用户本次指定的 `iNEX.pdf` 中原始图像 | 裁出标识、保留白/青/红字形用于深色背景，没有重新设计或替换品牌 |
 | `inex-brand-banner.webp` | 同一 PDF 的品牌主视觉 | 页面显示副本，缩小压缩，保留原构图 |
+| `inex-logo-dark.webp` | 用户素材中的 `inex-logo-light.png`（深蓝字形版） | 等比缩小至 300×100，用于关于页浅色侧边栏 |
 | `inex-social.jpg` | 同一品牌主视觉加网站标题 | 用于分享预览卡，1200×630 |
 | `favicon.png` | 同一原始 iNEX 标识的首部 | 用于浏览器标签小图标 |
 | `wechat-qr.png` | 用户放入工作目录的微信二维码截图 | 只裁出二维码与留白，压缩 PNG 调色板；未公开头像和整张个人名片 |

@@ -541,7 +541,8 @@
 #who,
 #direction,
 #supporting-labs,
-#publications {
+#publications,
+#contact {
   scroll-margin-top: 128px;
 }
 @media (max-width: 991px) {
@@ -613,8 +614,33 @@
   padding-top: 0;
   border-top: none;
 }
-.about-block .about-full-visual {
-  margin-bottom: 34px;
+.about-direction-visual {
+  position: relative;
+  overflow: visible;
+  max-height: none;
+  margin-bottom: 52px;
+}
+.about-direction-visual > img {
+  border-radius: 10px;
+}
+.about-direction-visual .value-grid {
+  position: absolute;
+  right: 22px;
+  bottom: -52px;
+  left: 22px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 0;
+}
+.about-direction-visual .value-grid > article {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 20px 14px;
+  box-shadow: 0 14px 34px rgba(10, 30, 60, 0.14);
+}
+.about-direction-visual .value-grid h3 {
+  margin: 10px 0 8px;
+  font-size: 17px;
 }
 .about-index-num {
   margin-right: 9px;
@@ -631,18 +657,56 @@
   padding: 20px 16px 16px;
   border-top: 1px solid var(--line);
 }
-.about-index-brand {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: var(--muted);
+.about-index-card.about-index-brandviz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 10px 10px;
 }
-.about-index-card p {
-  margin-bottom: 14px;
-  font-size: 13px;
-  line-height: 1.9;
-  color: var(--ink);
+.about-index-brandviz .about-index-logo {
+  width: 132px;
+  height: auto;
+}
+.about-index-drones {
+  position: relative;
+  width: 100%;
+  height: 72px;
+  margin-top: 4px;
+  color: var(--blue);
+}
+.about-index-drone {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  opacity: 0.55;
+}
+.about-index-drone-a {
+  top: 2px;
+  right: 10px;
+}
+.about-index-drone-b {
+  bottom: 2px;
+  left: 8px;
+  width: 22px;
+  height: 22px;
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .about-index-drone-a {
+    animation: about-drone-float 5.2s ease-in-out infinite;
+  }
+  .about-index-drone-b {
+    animation: about-drone-float 6.4s ease-in-out 0.8s infinite;
+  }
+}
+@keyframes about-drone-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(6deg);
+  }
 }
 @media (max-width: 767px) {
   .about-block {
@@ -655,8 +719,17 @@
   .about-page-intro .about-team-name {
     font-size: 19px;
   }
-  .about-block .about-full-visual {
-    margin-bottom: 24px;
+  .about-direction-visual {
+    margin-bottom: 0;
+  }
+  .about-direction-visual .value-grid {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: -44px 14px 0;
+  }
+  .about-direction-visual .value-grid > article {
+    padding: 14px 18px 12px;
   }
 }
 .search-field {
