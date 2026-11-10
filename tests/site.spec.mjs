@@ -66,7 +66,7 @@ for (const width of [375, 390, 768, 1440]) {
 test("手机菜单和首页到产品、详情、联系的完整路径", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: "展开导航菜单" });
+  const toggle = page.getByRole("button", { name: /^(展开|收起)导航菜单$/ });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await expect(page.locator("#main-navigation")).toBeVisible();
