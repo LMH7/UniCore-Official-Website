@@ -424,11 +424,6 @@
   color: var(--muted);
   font-size: 14px;
 }
-.about-labs {
-  margin-top: 64px;
-  padding-top: 44px;
-  border-top: 1px solid var(--line);
-}
 .about-labs > h2 {
   margin-bottom: 12px;
   font-size: 32px;
@@ -473,10 +468,6 @@
   line-height: 2.1;
 }
 @media (max-width: 767px) {
-  .about-labs {
-    margin-top: 42px;
-    padding-top: 32px;
-  }
   .about-labs > h2 {
     font-size: 28px;
   }
@@ -538,11 +529,6 @@
   border-left-color: var(--blue);
   color: var(--blue);
 }
-.about-publications {
-  margin-top: 64px;
-  padding-top: 44px;
-  border-top: 1px solid var(--line);
-}
 .about-publications > h2 {
   margin-bottom: 12px;
   font-size: 32px;
@@ -594,6 +580,83 @@
   }
   .about-publications > h2 {
     font-size: 28px;
+  }
+  .about-index-card {
+    display: none;
+  }
+}
+.about-block {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 1px solid var(--line);
+}
+.about-block:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+#who > h2,
+#direction > h2 {
+  margin-bottom: 24px;
+  font-size: 32px;
+}
+.about-page-intro.about-block {
+  margin-bottom: 0;
+}
+.about-page-intro .about-team-name {
+  margin: 2px 0 20px;
+  font-size: 22px;
+  font-weight: 650;
+}
+.about-block .value-grid {
+  margin-top: 34px;
+  padding-top: 0;
+  border-top: none;
+}
+.about-block .about-full-visual {
+  margin-bottom: 34px;
+}
+.about-index-num {
+  margin-right: 9px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.about-index a:hover .about-index-num,
+.about-index a[aria-current="location"] .about-index-num {
+  color: var(--blue);
+}
+.about-index-card {
+  margin-top: 28px;
+  padding: 20px 16px 16px;
+  border-top: 1px solid var(--line);
+}
+.about-index-brand {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+.about-index-card p {
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink);
+}
+@media (max-width: 767px) {
+  .about-block {
+    margin-top: 42px;
+    padding-top: 32px;
+  }
+  #direction > h2 {
+    font-size: 27px;
+  }
+  .about-page-intro .about-team-name {
+    font-size: 19px;
+  }
+  .about-block .about-full-visual {
+    margin-bottom: 24px;
   }
 }
 .search-field {

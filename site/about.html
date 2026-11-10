@@ -68,17 +68,23 @@
           <aside class="about-index" aria-label="关于我们栏目索引">
             <span class="about-index-title">本页内容</span>
             <nav>
-              <a href="#who">我们是谁</a>
-              <a href="#direction">研究方向</a>
-              <a href="#supporting-labs">依托实验室</a>
-              <a href="#publications">学术成果</a>
-              <a href="contact.html">联系我们</a>
+              <a href="#who"><span class="about-index-num">01</span>我们是谁</a>
+              <a href="#direction"><span class="about-index-num">02</span>研究方向</a>
+              <a href="#supporting-labs"><span class="about-index-num">03</span>依托实验室</a>
+              <a href="#publications"><span class="about-index-num">04</span>学术成果</a>
+              <a href="contact.html"><span class="about-index-num">05</span>联系我们</a>
             </nav>
+            <div class="about-index-card">
+              <span class="about-index-brand">iNEX · 联核智域</span>
+              <p>让每一个研究想法，都有起飞的可能。</p>
+              <a class="text-link" href="contact.html">与我们连接</a>
+            </div>
           </aside>
           <div class="about-main">
-          <div class="about-page-intro" id="who">
-            <span class="eyebrow">我们是谁</span>
-            <h2 data-team-name>联核智域科技团队</h2>
+          <div class="about-block about-page-intro" id="who">
+            <span class="eyebrow">WHO WE ARE</span>
+            <h2>我们是谁</h2>
+            <p class="about-team-name" data-team-name>联核智域科技团队</p>
             <p data-team-intro></p>
           </div>
           <figure class="brand-showcase">
@@ -91,17 +97,20 @@
             />
             <figcaption>iNEX · 以探索连接空中智能的更多可能</figcaption>
           </figure>
-          <div class="about-full-visual">
-            <img
-              src="assets/images/flight-field.svg"
-              alt="自主空中机器人与轨迹概念插画，不代表具体产品或实测结果"
-              width="900"
-              height="650"
-              loading="lazy"
-            />
-          </div>
-          <div class="value-grid" id="direction">
-            <article>
+          <div class="about-block" id="direction">
+            <span class="eyebrow">RESEARCH DIRECTIONS</span>
+            <h2>研究方向</h2>
+            <div class="about-full-visual">
+              <img
+                src="assets/images/flight-field.svg"
+                alt="自主空中机器人与轨迹概念插画，不代表具体产品或实测结果"
+                width="900"
+                height="650"
+                loading="lazy"
+              />
+            </div>
+            <div class="value-grid">
+              <article>
               <span class="value-number">01 / PLATFORM</span>
               <h3>从平台出发</h3>
               <p>围绕 NEX 系列硬件，连接感知、控制与飞行实验的研究起点。</p>
@@ -120,9 +129,10 @@
                 面向高校、科研院所与企业的需求，探索教育、科研与工程实践之间的连接。
               </p>
             </article>
+            </div>
           </div>
           <section
-            class="about-labs"
+            class="about-block about-labs"
             id="supporting-labs"
             aria-labelledby="supporting-labs-title"
           >
@@ -186,7 +196,7 @@
             </article>
           </section>
           <section
-            class="about-publications"
+            class="about-block about-publications"
             id="publications"
             aria-labelledby="publications-title"
           >
