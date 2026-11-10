@@ -29,9 +29,10 @@
   min-width: 176px;
   padding: 10px;
   flex-direction: column;
-  background: #fff;
+  background: #0b1930;
+  border: 1px solid #ffffff14;
   border-radius: 10px;
-  box-shadow: 0 18px 44px rgba(4, 16, 34, 0.28);
+  box-shadow: 0 18px 44px rgba(2, 8, 18, 0.55);
   opacity: 0;
   visibility: hidden;
   transform: translateX(-50%) translateY(8px);
@@ -52,7 +53,7 @@
   border-radius: 6px;
   font-size: 13px;
   white-space: nowrap;
-  color: var(--ink);
+  color: #d7e4f5;
   text-decoration: none;
   transition:
     color 0.2s,
@@ -60,8 +61,8 @@
 }
 .nav-dropdown a:hover,
 .nav-dropdown a:focus-visible {
-  background: #edf5ff;
-  color: var(--blue);
+  background: #16294a;
+  color: #fff;
 }
 @media (max-width: 991px) {
   .nav-dropdown {
@@ -748,7 +749,7 @@
   width: 62px;
   height: 52px;
   opacity: 0.55;
-  --tilt: -26deg;
+  --tilt: -12deg;
 }
 @media (prefers-reduced-motion: no-preference) {
   .about-index-drone-a {
