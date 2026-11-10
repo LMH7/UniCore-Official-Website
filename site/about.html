@@ -68,11 +68,40 @@
           <aside class="about-index" aria-label="关于我们栏目索引">
             <span class="about-index-title">本页内容</span>
             <nav>
-              <a href="#who"><span class="about-index-num">01</span>我们是谁</a>
-              <a href="#direction"><span class="about-index-num">02</span>研究方向</a>
-              <a href="#supporting-labs"><span class="about-index-num">03</span>依托实验室</a>
-              <a href="#publications"><span class="about-index-num">04</span>学术成果</a>
-              <a href="#contact"><span class="about-index-num">05</span>联系我们</a>
+              <div class="about-index-item">
+                <a href="#who"><span class="about-index-num">01</span>我们是谁</a>
+                <div class="about-index-sub">
+                  <a href="#who">团队简介</a>
+                  <a href="#brand-showcase">品牌主视觉</a>
+                </div>
+              </div>
+              <div class="about-index-item">
+                <a href="#direction"><span class="about-index-num">02</span>研究方向</a>
+                <div class="about-index-sub">
+                  <a href="#dir-platform">从平台出发</a>
+                  <a href="#dir-research">向问题靠近</a>
+                  <a href="#dir-connection">让研究连接</a>
+                </div>
+              </div>
+              <div class="about-index-item">
+                <a href="#supporting-labs"><span class="about-index-num">03</span>依托实验室</a>
+                <div class="about-index-sub">
+                  <a href="#national-lab-title">全国重点实验室</a>
+                  <a href="#cdif-lab-title">跨域智能飞行实验室</a>
+                </div>
+              </div>
+              <div class="about-index-item">
+                <a href="#publications"><span class="about-index-num">04</span>学术成果</a>
+                <div class="about-index-sub">
+                  <a href="publications.html">查看学术成果</a>
+                </div>
+              </div>
+              <div class="about-index-item">
+                <a href="#contact"><span class="about-index-num">05</span>联系我们</a>
+                <div class="about-index-sub">
+                  <a href="contact.html">微信与 LinkedIn</a>
+                </div>
+              </div>
             </nav>
             <div class="about-index-card about-index-brandviz">
               <img
@@ -140,7 +169,7 @@
             <p class="about-team-name" data-team-name>联核智域科技团队</p>
             <p data-team-intro></p>
           </div>
-          <figure class="brand-showcase">
+          <figure class="brand-showcase" id="brand-showcase">
             <img
               src="assets/images/inex-brand-banner.webp"
               alt="iNEX 联核智域品牌主视觉，来自团队提供的 Logo 文件"
@@ -162,19 +191,19 @@
                 loading="lazy"
               />
               <div class="value-grid">
-              <article>
+              <article id="dir-platform">
               <span class="value-number">01 / PLATFORM</span>
               <h3>从平台出发</h3>
               <p>围绕 NEX 系列硬件，连接感知、控制与飞行实验的研究起点。</p>
             </article>
-            <article>
+            <article id="dir-research">
               <span class="value-number">02 / RESEARCH</span>
               <h3>向问题靠近</h3>
               <p>
                 关注自主感知、环境探索与集群协同，在具体问题中寻找研究价值。
               </p>
             </article>
-            <article>
+            <article id="dir-connection">
               <span class="value-number">03 / CONNECTION</span>
               <h3>让研究连接</h3>
               <p>

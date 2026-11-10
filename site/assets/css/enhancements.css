@@ -542,8 +542,35 @@
 #direction,
 #supporting-labs,
 #publications,
-#contact {
+#contact,
+#brand-showcase,
+#dir-platform,
+#dir-research,
+#dir-connection,
+#national-lab-title,
+#cdif-lab-title {
   scroll-margin-top: 128px;
+}
+.about-index-item {
+  position: relative;
+}
+.about-index-sub {
+  display: none;
+  margin: 2px 0 10px;
+  padding-left: 20px;
+  flex-direction: column;
+  gap: 1px;
+}
+.about-index-item:hover .about-index-sub,
+.about-index-item:focus-within .about-index-sub {
+  display: flex;
+}
+.about-index-sub a {
+  padding: 5px 10px;
+  border-left: none;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 @media (max-width: 991px) {
   .about-layout {
@@ -583,6 +610,10 @@
     font-size: 28px;
   }
   .about-index-card {
+    display: none;
+  }
+  .about-index-item:hover .about-index-sub,
+  .about-index-item:focus-within .about-index-sub {
     display: none;
   }
 }
@@ -675,6 +706,7 @@
   color: var(--blue);
 }
 .about-index-drone {
+  --tilt: 0deg;
   position: absolute;
   width: 72px;
   height: 60px;
@@ -685,11 +717,12 @@
   right: 0;
 }
 .about-index-drone-b {
-  bottom: 0;
+  bottom: -12px;
   left: 0;
-  width: 48px;
-  height: 40px;
-  opacity: 0.5;
+  width: 62px;
+  height: 52px;
+  opacity: 0.55;
+  --tilt: -26deg;
 }
 @media (prefers-reduced-motion: no-preference) {
   .about-index-drone-a {
@@ -702,10 +735,10 @@
 @keyframes about-drone-float {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: rotate(var(--tilt)) translateY(0);
   }
   50% {
-    transform: translateY(-7px) rotate(6deg);
+    transform: rotate(var(--tilt)) translateY(-7px);
   }
 }
 @media (max-width: 767px) {
