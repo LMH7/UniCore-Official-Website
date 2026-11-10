@@ -348,6 +348,24 @@ window.INTERACTIONS_READY = (async () => {
         { rootMargin: "-110px 0px -55% 0px", threshold: 0 },
       );
       aboutTargets.forEach((s) => aboutObserver.observe(s));
+      // 接近页底时点亮"联系我们"：页面末尾的联系引导区进不到监听判定区域
+      const contactLink = Array.from(aboutLinks).find(
+        (a) => a.hash === "#contact",
+      );
+      if (contactLink) {
+        const onAboutScroll = () => {
+          const nearBottom =
+            window.innerHeight + window.scrollY >=
+            document.documentElement.scrollHeight - 4;
+          if (nearBottom)
+            aboutLinks.forEach((a) => {
+              if (a === contactLink) a.setAttribute("aria-current", "location");
+              else a.removeAttribute("aria-current");
+            });
+        };
+        window.addEventListener("scroll", onAboutScroll, { passive: true });
+        onAboutScroll();
+      }
     }
   }
   if (state.fallback) {
