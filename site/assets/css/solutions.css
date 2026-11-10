@@ -68,8 +68,118 @@
   border-radius: 50%;
   background: #9fb4cc;
 }
+.solution-links {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.solution-link-group {
+  display: grid;
+  gap: 7px;
+}
+.solution-link-group .micro-label {
+  color: #8a97a6;
+  font-size: 9px;
+}
+.platform-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.platform-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid #dbe7f5;
+  border-radius: 6px;
+  background: #f7fbff;
+  color: var(--ink);
+  font-size: 11px;
+}
+.platform-chip strong {
+  font-size: 12px;
+}
+.platform-chip span {
+  color: #7b8ba0;
+  font-size: 10px;
+}
+.platform-chip:hover {
+  border-color: #9dc1f6;
+  background: #eef6ff;
+  color: var(--ink);
+}
+.solution-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.solution-link-row .text-link {
+  font-size: 11px;
+}
+.solution-start {
+  margin-top: 46px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+.solution-start-head {
+  max-width: 720px;
+  margin-bottom: 26px;
+}
+.solution-start-head h2 {
+  margin: 8px 0 10px;
+  font-size: 32px;
+}
+.solution-start-head p {
+  font-size: 13px;
+}
+.solution-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.solution-steps li {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fbff;
+}
+.solution-steps li > span {
+  color: var(--blue);
+  font: 600 11px/1.4 monospace;
+  letter-spacing: 0.08em;
+}
+.solution-steps h3 {
+  margin: 10px 0 8px;
+  font-size: 19px;
+}
+.solution-steps p {
+  min-height: 60px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.solution-steps .text-link {
+  font-size: 11px;
+}
+.solution-start-cta {
+  margin-top: 38px;
+}
+.solution-cta-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+}
 @media (max-width: 991px) {
   .solution-case {
+    grid-template-columns: 1fr;
+  }
+  .solution-steps {
     grid-template-columns: 1fr;
   }
 }
@@ -86,5 +196,19 @@
   }
   .solution-case-copy p {
     font-size: 12px;
+  }
+  .solution-start {
+    margin-top: 36px;
+    padding-top: 30px;
+  }
+  .solution-start-head h2 {
+    font-size: 27px;
+  }
+  .solution-steps p {
+    min-height: 0;
+  }
+  .solution-start-cta {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

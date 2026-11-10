@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="浏览 NEX 平台的入门、文档、代码与软件入口，以及公开的机器人学习资源。"
+      content="浏览公开的实验室网站与机器人学习资源，开启自主空中机器人研究。"
     />
     <meta name="theme-color" content="#06111f" />
     <meta property="og:site_name" content="iNEX 联核智域" />
@@ -29,7 +29,7 @@
     <meta property="og:title" content="资源与支持 · iNEX 联核智域" />
     <meta
       property="og:description"
-      content="浏览 NEX 平台的入门、文档、代码与软件入口，以及公开的机器人学习资源。"
+      content="浏览公开的实验室网站与机器人学习资源，开启自主空中机器人研究。"
     />
     <title>资源与支持 · iNEX 联核智域</title>
     <link rel="icon" href="assets/images/favicon.png" type="image/png" />
@@ -62,45 +62,87 @@
           <span class="eyebrow">RESOURCES / KEEP EXPLORING</span>
           <h1>从这里，继续探索</h1>
           <p>
-            汇集 NEX 平台的入门、文档、代码与软件入口，并整理公开学习资源，为理解平台与开展实验提供参考。
+            汇集公开学习入口，按平台查找 NEX 资料；专属文档与软件将在确认后逐步补充。
           </p>
         </div>
       </section>
       <section class="page-content">
         <div class="container">
-          <section class="resource-section" aria-labelledby="nex-resource-title">
-            <div class="collection-title">
-              <span id="nex-resource-title" role="heading" aria-level="2"
-                >NEX 资料入口</span
-              ><span>快速入门 · 使用文档 · 代码仓库 · 软件下载</span>
-            </div>
-            <div
-              class="resource-grid resource-categories-grid"
-              data-resource-categories
-            ></div>
+          <section class="support-paths" aria-label="资源使用路径">
+            <a class="support-path" href="#public-resources">
+              <span>01</span>
+              <h2>先看公开资源</h2>
+              <p>CDIF-Lab、PX4 与 ROS 2 的公开入口，适合建立背景知识。</p>
+              <span class="text-link"
+                >浏览公开资源 <span data-icon="arrow" data-size="16"></span
+              ></span>
+            </a>
+            <a class="support-path" href="#platform-resources">
+              <span>02</span>
+              <h2>再按平台查找</h2>
+              <p>按 NEX 型号查看平台信息；专属资料正在整理。</p>
+              <span class="text-link"
+                >查看平台资料 <span data-icon="arrow" data-size="16"></span
+              ></span>
+            </a>
+            <a class="support-path" href="contact.html">
+              <span>03</span>
+              <h2>需要时联系我们</h2>
+              <p>选型、配置与暂未公开的资料，直接与团队交流。</p>
+              <span class="text-link"
+                >联系团队 <span data-icon="diagonal" data-size="16"></span
+              ></span>
+            </a>
           </section>
+          <div id="public-resources">
+            <div class="collection-title">
+              <span>公开资源</span><span>研究与学习入口</span>
+            </div>
+            <div class="resource-grid" data-resources></div>
+          </div>
           <section
-            class="resource-section"
-            aria-labelledby="learning-resource-title"
+            class="platform-resource-section"
+            id="platform-resources"
+            aria-labelledby="platform-resources-title"
           >
             <div class="collection-title">
-              <span id="learning-resource-title" role="heading" aria-level="2"
-                >公开学习资源</span
-              ><span>第三方研究与学习入口</span>
+              <span
+                id="platform-resources-title"
+                role="heading"
+                aria-level="2"
+                >按平台查找</span
+              ><span>NEX 系列</span>
             </div>
-            <div
-              class="resource-grid learning-grid"
-              data-learning-resources
-            ></div>
+            <div class="platform-resource-grid" data-platform-resources></div>
+            <p class="resource-pending-note">
+              各平台的快速入门、使用文档、代码仓库与软件下载正在整理；取得真实文件后在此启用。
+            </p>
+          </section>
+          <section
+            class="resource-update-section"
+            aria-labelledby="resource-updates-title"
+          >
+            <div class="collection-title">
+              <span id="resource-updates-title" role="heading" aria-level="2"
+                >NEX 专属资料</span
+              ><span>待后续补充</span>
+            </div>
+            <div class="resource-update-list" data-resource-updates></div>
+            <p class="resource-pending-note">
+              以上资料待团队确认可公开后补充；现阶段如需提前获取，请<a
+                href="contact.html"
+                >联系我们</a
+              >。
+            </p>
           </section>
           <div class="info-note">
-            NEX 专属文档、代码与软件将在团队确认可公开后逐步补充。PX4、ROS 2
-            为第三方通用学习资源，不代表每款 NEX 平台均已适配。
+            PX4、ROS 2 为第三方通用学习资源，不代表每款 NEX 平台均已适配。NEX
+            专属文档与代码将在团队确认可公开后逐步补充。
           </div>
           <div class="page-cta">
-            <p>需要了解某个平台的技术资料？欢迎先浏览产品信息。</p>
-            <a class="text-link" href="products.html"
-              >查看产品平台 <span data-icon="arrow" data-size="18"></span
+            <p>没有找到需要的资料？告诉我们你的平台与研究方向。</p>
+            <a class="text-link" href="contact.html"
+              >联系我们 <span data-icon="diagonal" data-size="17"></span
             ></a>
           </div>
           <section class="faq-section" aria-labelledby="faq-title">

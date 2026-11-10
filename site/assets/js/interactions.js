@@ -295,6 +295,194 @@ window.INTERACTIONS_READY = (async () => {
       hero.style.setProperty("--pointer-y", "0px");
     });
   }
+  function initHeroWave() {
+    const canvas = document.getElementById("hero-wave");
+    const heroEl = canvas?.closest(".hero");
+    if (!canvas || !heroEl) return;
+    if (reduced.matches || !matchMedia("(hover: hover) and (pointer: fine)").matches)
+      return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
+    let width = 0;
+    let height = 0;
+    let raf = 0;
+    let last = 0;
+    let phase = 0;
+    let visible = true;
+    const pointer = { x: 0, y: 0, tx: 0, ty: 0, active: false };
+    const trail = [];
+    const colors = [
+      [20, 101, 232],
+      [0, 195, 237],
+      [123, 108, 255],
+    ];
+    const layers = [
+      { color: colors[0], alpha: 0.13, base: 0.56, amp: 30, freq: 0.0055, speed: 0.18, offset: 0 },
+      { color: colors[1], alpha: 0.11, base: 0.68, amp: 38, freq: 0.0042, speed: 0.24, offset: 1.8 },
+      { color: colors[2], alpha: 0.1, base: 0.8, amp: 26, freq: 0.0062, speed: 0.14, offset: 3.6 },
+    ];
+
+    function resize() {
+      const rect = heroEl.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (!pointer.active) {
+        pointer.x = pointer.tx = width * 0.72;
+        pointer.y = pointer.ty = height * 0.56;
+      }
+    }
+
+    function onPointer(event) {
+      const rect = heroEl.getBoundingClientRect();
+      pointer.tx = event.clientX - rect.left;
+      pointer.ty = event.clientY - rect.top;
+      pointer.active = true;
+      const head = trail[0];
+      if (!head || Math.hypot(pointer.tx - head.x, pointer.ty - head.y) > 18) {
+        trail.unshift({ x: pointer.tx, y: pointer.ty, life: 1 });
+        if (trail.length > 12) trail.pop();
+      }
+    }
+
+    function glow(x, y, radius, color, alpha) {
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(
+        0,
+        `rgba(${color[0]},${color[1]},${color[2]},${alpha})`,
+      );
+      gradient.addColorStop(
+        0.5,
+        `rgba(${color[0]},${color[1]},${color[2]},${alpha * 0.45})`,
+      );
+      gradient.addColorStop(
+        1,
+        `rgba(${color[0]},${color[1]},${color[2]},0)`,
+      );
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function ribbon(layer, time) {
+      const { color, alpha, base, amp, freq, speed, offset } = layer;
+      const points = [];
+      for (let x = -60; x <= width + 60; x += 14) {
+        const wave =
+          Math.sin(x * freq + time * speed + offset) * amp +
+          Math.sin(x * freq * 0.55 + time * speed * 1.6 + offset * 1.4) *
+            amp *
+            0.42;
+        const distance = (x - pointer.x) / (width * 0.28);
+        const lift = pointer.active
+          ? (pointer.y - height * base) *
+            0.14 *
+            Math.exp(-(distance * distance))
+          : 0;
+        points.push([x, height * base + wave + lift]);
+      }
+      const top = height * base - amp * 3;
+      const bottom = height * base + amp * 4;
+      const gradient = ctx.createLinearGradient(0, top, 0, bottom);
+      gradient.addColorStop(
+        0,
+        `rgba(${color[0]},${color[1]},${color[2]},0)`,
+      );
+      gradient.addColorStop(
+        0.38,
+        `rgba(${color[0]},${color[1]},${color[2]},${alpha})`,
+      );
+      gradient.addColorStop(
+        1,
+        `rgba(${color[0]},${color[1]},${color[2]},0)`,
+      );
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], height + 80);
+      for (const [x, y] of points) ctx.lineTo(x, y);
+      ctx.lineTo(points[points.length - 1][0], height + 80);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function frame(now) {
+      const dt = Math.min(32, now - last) / 16.67;
+      last = now;
+      if (!pointer.active) {
+        pointer.tx = width * 0.72 + Math.sin(now * 0.00022) * width * 0.06;
+        pointer.ty = height * 0.56 + Math.cos(now * 0.00017) * height * 0.05;
+      }
+      pointer.x += (pointer.tx - pointer.x) * Math.min(0.18, 0.055 * dt);
+      pointer.y += (pointer.ty - pointer.y) * Math.min(0.18, 0.055 * dt);
+      phase += dt * 0.016;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = trail.length - 1; i >= 0; i--) {
+        const point = trail[i];
+        point.life *= 0.955;
+        if (point.life < 0.04) trail.splice(i, 1);
+        else glow(point.x, point.y, 120 + i * 14, colors[1], 0.045 * point.life);
+      }
+      const unit = Math.min(width, height);
+      glow(pointer.x, pointer.y, unit * 0.46, colors[0], 0.13);
+      glow(
+        pointer.x + Math.sin(phase * 1.4) * 44,
+        pointer.y + Math.cos(phase * 0.9) * 30,
+        unit * 0.36,
+        colors[2],
+        0.09,
+      );
+      glow(pointer.x - 70, pointer.y + 55, unit * 0.3, colors[1], 0.07);
+      for (const layer of layers) ribbon(layer, now * 0.001);
+      ctx.globalCompositeOperation = "source-over";
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (raf || document.hidden) return;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+
+    resize();
+    heroEl.addEventListener("pointermove", onPointer, { passive: true });
+    heroEl.addEventListener("pointerleave", () => {
+      pointer.active = false;
+    });
+    if ("ResizeObserver" in window)
+      new ResizeObserver(resize).observe(heroEl);
+    else addEventListener("resize", resize);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          visible = entry.isIntersecting;
+          if (visible) start();
+          else stop();
+        },
+        { threshold: 0 },
+      ).observe(heroEl);
+    } else start();
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stop();
+      else if (visible) start();
+    });
+    reduced.addEventListener("change", () => {
+      if (reduced.matches) {
+        stop();
+        ctx.clearRect(0, 0, width, height);
+      } else if (visible) start();
+    });
+    start();
+  }
+  initHeroWave();
   const solutionSections = document.querySelectorAll(".solution-detail[id]");
   if (solutionSections.length) {
     const subnav = document.createElement("nav");

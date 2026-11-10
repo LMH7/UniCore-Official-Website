@@ -9,7 +9,7 @@ window.APP_READY = (async () => {
     `<a class="text-link" href="${href}"${external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${e(label)} ${icon(external ? "diagonal" : "arrow", 18)}${external ? '<span class="visually-hidden">（新窗口打开）</span>' : ""}</a>`;
   const resourceCard = (r) => {
     const href = UI.url(r.url);
-    return `<article class="resource-card"><span class="resource-icon">${icon(r.icon || "book", 28)}</span><span class="micro-label">${e(r.type)}</span><h3>${e(r.title)}</h3><p>${e(r.description)}</p>${resourceLink(href, r.label, /^https?:/i.test(href))}</article>`;
+    return `<article class="resource-card"><span class="resource-icon">${icon(r.icon || "book", 28)}</span><span class="micro-label">${e(r.type)}</span><h2>${e(r.title)}</h2><p>${e(r.description)}</p>${resourceLink(href, r.label, /^https?:/i.test(href))}</article>`;
   };
   const solutionCase = (s) => {
     const c = s.case || {};
@@ -19,6 +19,17 @@ window.APP_READY = (async () => {
       return `<article class="solution-case is-ready">${image ? `<div class="solution-case-media"><img src="${image}" alt="${e(c.imageAlt || c.title)}" width="640" height="360" loading="lazy"></div>` : '<div class="solution-case-media" role="img" aria-label="案例图片待补充"><span>案例图片待补充</span></div>'}<div class="solution-case-copy"><span class="micro-label">CASE / ${e(s.title)}</span><h3>${e(c.title)}</h3><p>${e(c.summary || "")}</p>${link ? resourceLink(link, "查看案例", /^https?:/i.test(link)) : ""}</div></article>`;
     }
     return `<div class="solution-case is-pending"><div class="solution-case-media" role="img" aria-label="案例图片待补充，建议比例十六比九"><span>案例图片待补充 · 16:9</span></div><div class="solution-case-copy"><span class="micro-label">CASE / 待补充</span><h3>案例位置</h3><p>${e(c.note || "用于放置经团队确认可公开的应用案例，建议 16:9 图片与 100–150 字说明。")}</p><span class="pending-badge">资料待补充</span></div></div>`;
+  };
+  const solutionLinks = (s) => {
+    const platforms = (s.platforms || [])
+      .map((id) => (PRODUCTS || []).find((p) => p.id === id))
+      .filter(Boolean)
+      .map(
+        (p) =>
+          `<a class="platform-chip" href="product.html?id=${encodeURIComponent(p.id)}"><strong>${e(p.name)}</strong><span>${e(p.sensor)}</span></a>`,
+      )
+      .join("");
+    return `<div class="solution-links"><div class="solution-link-group"><span class="micro-label">可了解的平台</span><div class="platform-chips">${platforms || '<span class="pending-badge">平台待确认</span>'}</div></div><div class="solution-link-group"><span class="micro-label">相关入口</span><div class="solution-link-row"><a class="text-link" href="resources.html">公开学习资源 ${icon("arrow", 16)}</a><a class="text-link" href="resources.html#faq-title">常见问题 ${icon("arrow", 16)}</a></div></div></div>`;
   };
   document.querySelectorAll("[data-products]").forEach((el) => {
     el.innerHTML =
@@ -42,32 +53,33 @@ window.APP_READY = (async () => {
       ? SITE_CONTENT.solutions
           .map(
             (s) =>
-              `<section class="solution-detail" id="${e(s.id)}"><div class="solution-detail-visual solution-${e(s.id)}"><span class="large-number">${e(s.number)}</span><div class="solution-orbit">${icon(s.icon, 90)}</div><span class="micro-label">${e(s.english)}</span></div><div class="solution-detail-copy"><span class="eyebrow">应用方向 / ${e(s.number)}</span><h2>${e(s.title)}</h2><p class="lead-text">${e(s.summary)}</p><p>${e(s.description)}</p><div class="tags">${s.topics.map((t) => `<span>${e(t)}</span>`).join("")}</div><div class="audience"><span>面向人群</span><p>${e(s.audience)}</p></div><a class="text-link" href="contact.html">讨论你的研究需求 ${icon("arrow", 18)}</a></div>${solutionCase(s)}</section>`,
+              `<section class="solution-detail" id="${e(s.id)}"><div class="solution-detail-visual solution-${e(s.id)}"><span class="large-number">${e(s.number)}</span><div class="solution-orbit">${icon(s.icon, 90)}</div><span class="micro-label">${e(s.english)}</span></div><div class="solution-detail-copy"><span class="eyebrow">应用方向 / ${e(s.number)}</span><h2>${e(s.title)}</h2><p class="lead-text">${e(s.summary)}</p><p>${e(s.description)}</p><div class="tags">${s.topics.map((t) => `<span>${e(t)}</span>`).join("")}</div><div class="audience"><span>面向人群</span><p>${e(s.audience)}</p></div>${solutionLinks(s)}<a class="text-link" href="contact.html">讨论你的研究需求 ${icon("arrow", 18)}</a></div>${solutionCase(s)}</section>`,
           )
           .join("")
       : '<div class="empty-collection"><h3>方案内容正在整理</h3><p>欢迎先浏览产品中心，或与我们交流研究需求。</p><a class="text-link" href="products.html">查看产品平台</a></div>';
-  const categories = document.querySelector("[data-resource-categories]");
-  if (categories)
-    categories.innerHTML = (SITE_CONTENT.resourceCategories || [])
-      .map((c) => {
-        const item = (SITE_CONTENT.resources || []).find(
-          (r) => r.category === c.id && UI.url(r.url),
-        );
-        const href = item ? UI.url(item.url) : "";
-        return `<article class="resource-card${item ? "" : " is-pending"}"><span class="resource-icon">${icon(c.icon, 28)}</span><span class="micro-label">${e(c.english)}</span><h3>${e(item ? item.title : c.title)}</h3><p>${e(item ? item.description : c.description)}</p>${item ? resourceLink(href, item.label || "查看资料", /^https?:/i.test(href)) : '<span class="pending-badge">资料待补充</span>'}</article>`;
+  const resources = document.querySelector("[data-resources]");
+  if (resources)
+    resources.innerHTML = SITE_CONTENT.resources.length
+      ? SITE_CONTENT.resources.map(resourceCard).join("")
+      : '<div class="empty-collection"><h3>学习资源正在整理</h3><p>欢迎先浏览产品中心，或与我们交流学习需求。</p><a class="text-link" href="products.html">查看产品平台</a></div>';
+  const platformResources = document.querySelector(
+    "[data-platform-resources]",
+  );
+  if (platformResources)
+    platformResources.innerHTML = PRODUCTS.length
+      ? PRODUCTS.map(
+          (p) =>
+            `<a class="platform-resource" href="product.html?id=${encodeURIComponent(p.id)}"><span class="micro-label">${e(p.sensor)}</span><strong>${e(p.name)}</strong><span class="platform-resource-more">查看平台信息 ${icon("arrow", 16)}</span><span class="pending-badge">专属资料待补充</span></a>`,
+        ).join("")
+      : '<div class="empty-collection"><h3>平台信息正在更新</h3><p>欢迎先与我们交流研究需求。</p><a class="text-link" href="contact.html">联系我们</a></div>';
+  const resourceUpdates = document.querySelector("[data-resource-updates]");
+  if (resourceUpdates)
+    resourceUpdates.innerHTML = (SITE_CONTENT.resourceUpdates || [])
+      .map((u) => {
+        const href = u.status === "ready" ? UI.url(u.url) : "";
+        return `<div class="resource-update-row"><div><strong>${e(u.title)}</strong><p>${e(u.note)}</p></div>${href ? resourceLink(href, "查看资料", /^https?:/i.test(href)) : '<span class="pending-badge">待补充</span>'}</div>`;
       })
       .join("");
-  const learningResources = document.querySelector(
-    "[data-learning-resources]",
-  );
-  if (learningResources) {
-    const items = (SITE_CONTENT.resources || []).filter(
-      (r) => r.category === "learning" && UI.url(r.url),
-    );
-    learningResources.innerHTML = items.length
-      ? items.map(resourceCard).join("")
-      : '<div class="empty-collection"><h3>学习资源正在整理</h3><p>欢迎先浏览产品中心，或与我们交流学习需求。</p><a class="text-link" href="products.html">查看产品平台</a></div>';
-  }
   if (!PRODUCTS.length && document.querySelector(".hero-visual"))
     document.querySelector(".hero-visual").innerHTML =
       '<div class="hero-empty"><span class="eyebrow">EXPLORE WITH iNEX</span><h2>下一次探索，从一个想法开始。</h2><p>平台信息正在更新，欢迎先与团队交流。</p><a class="btn btn-outline-primary" href="contact.html">联系我们</a></div>';

@@ -75,6 +75,10 @@
           "机器人感知",
           "自主导航",
           "算法实验"
+        ],
+        "platforms": [
+          "nex-250",
+          "nex-30"
         ]
       },
       {
@@ -99,6 +103,10 @@
           "环境感知",
           "自主建图",
           "路径规划"
+        ],
+        "platforms": [
+          "nex-500",
+          "nex-250"
         ]
       },
       {
@@ -123,43 +131,15 @@
           "多机协同",
           "编队研究",
           "仿真验证"
+        ],
+        "platforms": [
+          "nex-30"
         ]
-      }
-    ],
-    "resourceCategories": [
-      {
-        "id": "quick-start",
-        "title": "快速入门",
-        "english": "GETTING STARTED",
-        "description": "开箱、充电、首次飞行与安全事项。",
-        "icon": "book"
-      },
-      {
-        "id": "docs",
-        "title": "使用文档",
-        "english": "DOCUMENTATION",
-        "description": "平台手册、参数与维护说明。",
-        "icon": "layers"
-      },
-      {
-        "id": "code",
-        "title": "代码仓库",
-        "english": "CODE & SDK",
-        "description": "示例代码、开发接口与仿真配置。",
-        "icon": "nodes"
-      },
-      {
-        "id": "software",
-        "title": "软件下载",
-        "english": "SOFTWARE",
-        "description": "固件、地面站工具与仿真环境。",
-        "icon": "download"
       }
     ],
     "resources": [
       {
         "id": "cdif-lab",
-        "category": "learning",
         "icon": "layers",
         "title": "CDIF-Lab",
         "type": "实验室网站",
@@ -169,7 +149,6 @@
       },
       {
         "id": "px4-docs",
-        "category": "learning",
         "icon": "book",
         "title": "PX4 文档",
         "type": "飞行控制学习",
@@ -179,13 +158,38 @@
       },
       {
         "id": "ros2-docs",
-        "category": "learning",
         "icon": "nodes",
         "title": "ROS 2 文档",
         "type": "机器人开发学习",
         "description": "ROS 2 官方文档与教程，了解机器人软件开发的基础概念。",
         "url": "https://docs.ros.org/en/jazzy/",
         "label": "阅读文档"
+      }
+    ],
+    "resourceUpdates": [
+      {
+        "title": "快速入门",
+        "note": "开箱、充电、首次飞行与安全事项。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "使用文档",
+        "note": "平台手册、参数说明与维护建议。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "代码仓库",
+        "note": "示例代码、开发接口与仿真配置。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "软件下载",
+        "note": "固件、地面站工具与仿真环境。",
+        "status": "pending",
+        "url": ""
       }
     ]
   }
