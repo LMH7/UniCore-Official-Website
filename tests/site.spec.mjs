@@ -176,9 +176,11 @@ test("键盘跳转、低动态偏好与320px小屏", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "跳到主要内容" }),
   ).toBeInViewport();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
-    320,
-  );
+  const dimensions = await page.evaluate(() => ({
+    content: document.documentElement.scrollWidth,
+    viewport: document.documentElement.clientWidth,
+  }));
+  expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   expect(
     await page.evaluate(
       () => getComputedStyle(document.documentElement).scrollBehavior,
