@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
-    "check": "node scripts/check.mjs",
+    "sync:nav": "node scripts/sync-navigation.mjs",
+    "sync:solutions": "node scripts/sync-solutions.mjs",
+    "check": "node scripts/sync-navigation.mjs --check && node scripts/sync-solutions.mjs --check && node scripts/check.mjs",
     "package": "node scripts/package.mjs",
     "test": "playwright test"
   },
