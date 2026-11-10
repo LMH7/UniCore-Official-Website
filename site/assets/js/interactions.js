@@ -332,7 +332,7 @@ window.INTERACTIONS_READY = (async () => {
   if (aboutIndex) {
     const aboutLinks = aboutIndex.querySelectorAll('a[href^="#"]');
     const aboutTargets = document.querySelectorAll(
-      "#who, #direction, #supporting-labs, #publications, #contact",
+      "#who, #supporting-labs, #partners, #contact",
     );
     if (aboutLinks.length && aboutTargets.length) {
       const aboutObserver = new IntersectionObserver(

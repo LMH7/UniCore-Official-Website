@@ -66,30 +66,9 @@ window.LAYOUT_READY = (async () => {
     ["projects", "projects.html", "重点项目"],
     ["about", "about.html", "关于我们"],
   ];
-  // 悬停展开的下拉目录（桌面端）：键为导航项 id，值为 [文字, 链接]
-  const navMenus = {
-    products: () => [
-      ...(window.PRODUCTS || []).map((p) => [p.name, `product.html?id=${p.id}`]),
-      ["查看全部产品", "products.html"],
-    ],
-    solutions: () =>
-      SITE_CONTENT.solutions.map((s) => [s.title, `solutions.html#${s.id}`]),
-    resources: () =>
-      SITE_CONTENT.resources.map((r) => [r.title, "resources.html"]),
-    about: () => [
-      ["我们是谁", "about.html#who"],
-      ["研究方向", "about.html#direction"],
-      ["依托实验室", "about.html#supporting-labs"],
-      ["学术成果", "about.html#publications"],
-      ["联系我们", "contact.html"],
-    ],
-  };
   const brand = `<img class="brand-logo" src="${UI.url(data.logo)}" alt="${e(data.brand)} 联核智域" width="260" height="70"><span class="brand-caption">联核智域<span>INTELLIGENCE IN FLIGHT</span></span>`;
   document.getElementById("site-header").innerHTML =
-    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="index.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => {
-      const menu = navMenus[id] ? navMenus[id]() : [];
-      return `<li class="nav-item${menu.length ? " nav-item-menu" : ""}"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a>${menu.length ? `<div class="nav-dropdown">${menu.map(([t, u]) => `<a href="${UI.url(u) || u}">${e(t)}</a>`).join("")}</div>` : ""}</li>`;
-    }).join("")}</ul><button class="icon-button nav-search" type="button" data-open-search aria-label="搜索全站">${icon("search", 19)}</button><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav><div class="reading-progress" aria-hidden="true"></div>`;
+    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="index.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => `<li class="nav-item"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul><button class="icon-button nav-search" type="button" data-open-search aria-label="搜索全站">${icon("search", 19)}</button><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav><div class="reading-progress" aria-hidden="true"></div>`;
   document.getElementById("site-footer").innerHTML =
     `<div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="index.html">${brand}</a><p>${e(data.tagline)}<br>让每一个研究想法，都有起飞的可能。</p><div class="footer-socials">${data.contacts.some((c) => c.id === "wechat") ? `<button class="icon-button" type="button" data-contact-qr="wechat" aria-label="查看微信二维码">${icon("wechat", 20)}</button>` : ""}${data.contacts
       .filter((c) => c.url && UI.url(c.url))

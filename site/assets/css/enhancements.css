@@ -17,58 +17,6 @@
     box-shadow 0.25s,
     background 0.25s;
 }
-.nav-item-menu {
-  position: relative;
-}
-.nav-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  z-index: 60;
-  display: flex;
-  min-width: 176px;
-  padding: 10px;
-  flex-direction: column;
-  background: #0b1930;
-  border: 1px solid #ffffff14;
-  border-radius: 10px;
-  box-shadow: 0 18px 44px rgba(2, 8, 18, 0.55);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(-50%) translateY(8px);
-  transition:
-    opacity 0.18s var(--ease),
-    transform 0.18s var(--ease),
-    visibility 0s linear 0.18s;
-}
-.nav-item-menu:hover .nav-dropdown,
-.nav-item-menu:focus-within .nav-dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
-  transition-delay: 0s;
-}
-.nav-dropdown a {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  white-space: nowrap;
-  color: #d7e4f5;
-  text-decoration: none;
-  transition:
-    color 0.2s,
-    background 0.2s;
-}
-.nav-dropdown a:hover,
-.nav-dropdown a:focus-visible {
-  background: #16294a;
-  color: #fff;
-}
-@media (max-width: 991px) {
-  .nav-dropdown {
-    display: none;
-  }
-}
 .site-header.is-scrolled {
   background: rgba(6, 17, 31, 0.98);
   box-shadow: 0 8px 35px #04102225;
@@ -581,19 +529,17 @@
   border-left-color: var(--blue);
   color: var(--blue);
 }
-.about-publications > h2 {
+.about-partners > h2 {
   margin-bottom: 12px;
   font-size: 32px;
 }
-.about-publications > p {
+.about-partners .template-placeholder {
   margin-bottom: 20px;
-  font-size: 14px;
-  line-height: 2.1;
 }
 #who,
 #direction,
 #supporting-labs,
-#publications,
+#partners,
 #contact,
 #brand-showcase,
 #dir-platform,
@@ -637,7 +583,7 @@
     border-radius: 6px;
     font-size: 12px;
   }
-  .about-publications > h2 {
+  .about-partners > h2 {
     font-size: 28px;
   }
   .about-index-card {
