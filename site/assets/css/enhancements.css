@@ -495,6 +495,107 @@
     font-size: 22px;
   }
 }
+.about-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.about-index {
+  position: sticky;
+  top: 108px;
+  padding: 16px 0;
+  border-top: 2px solid var(--blue);
+}
+.about-index-title {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.about-index nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.about-index a {
+  display: block;
+  padding: 8px 12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+  color: #7287a2;
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+}
+.about-index a:hover,
+.about-index a[aria-current="location"] {
+  background: #edf5ff;
+  border-left-color: var(--blue);
+  color: var(--blue);
+}
+.about-publications {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 1px solid var(--line);
+}
+.about-publications > h2 {
+  margin-bottom: 12px;
+  font-size: 32px;
+}
+.about-publications > p {
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 2.1;
+}
+#who,
+#direction,
+#supporting-labs,
+#publications {
+  scroll-margin-top: 128px;
+}
+@media (max-width: 991px) {
+  .about-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .about-index {
+    top: 78px;
+    z-index: 15;
+    margin: 0 0 28px;
+    padding: 12px 0;
+    border-top: none;
+    border-bottom: 1px solid var(--line);
+    background: #ffffffed;
+    backdrop-filter: blur(12px);
+  }
+  .about-index-title {
+    display: none;
+  }
+  .about-index nav {
+    flex-direction: row;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .about-index nav::-webkit-scrollbar {
+    display: none;
+  }
+  .about-index a {
+    flex-shrink: 0;
+    padding: 8px 17px;
+    border-left: none;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  .about-publications > h2 {
+    font-size: 28px;
+  }
+}
 .search-field {
   border: 1px solid #dce4ef;
   background: #fff;

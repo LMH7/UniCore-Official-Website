@@ -327,6 +327,29 @@ window.INTERACTIONS_READY = (async () => {
           .scrollIntoView({ behavior: "instant" }),
       );
   }
+  // 关于页左侧索引：滚动到对应板块时高亮当前条目（仅关于页存在 .about-index 时启用）
+  const aboutIndex = document.querySelector(".about-index");
+  if (aboutIndex) {
+    const aboutLinks = aboutIndex.querySelectorAll('a[href^="#"]');
+    const aboutTargets = document.querySelectorAll(
+      "#who, #direction, #supporting-labs, #publications",
+    );
+    if (aboutLinks.length && aboutTargets.length) {
+      const aboutObserver = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (entry.isIntersecting)
+              aboutLinks.forEach((a) => {
+                if (a.hash === "#" + entry.target.id)
+                  a.setAttribute("aria-current", "location");
+                else a.removeAttribute("aria-current");
+              });
+          }),
+        { rootMargin: "-110px 0px -55% 0px", threshold: 0 },
+      );
+      aboutTargets.forEach((s) => aboutObserver.observe(s));
+    }
+  }
   if (state.fallback) {
     const banner = document.createElement("p");
     banner.className = "content-fallback";
