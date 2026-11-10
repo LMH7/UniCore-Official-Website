@@ -1,0 +1,90 @@
+/* E 模块：解决方案页专属样式。案例位与长标题适配；公共样式仍由 custom.css / enhancements.css 提供。 */
+.solution-detail {
+  row-gap: 30px;
+}
+.solution-detail-copy h2,
+.solution-case-copy h3 {
+  overflow-wrap: anywhere;
+}
+.solution-case {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 26px;
+  align-items: center;
+  padding: 20px;
+  border: 1px dashed #c7d7e9;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+.solution-case-media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  padding: 18px;
+  border: 1px dashed #b9cde6;
+  border-radius: 8px;
+  background: #f2f7fe;
+  color: #7b8ca3;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.solution-case-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.solution-case-copy h3 {
+  margin: 8px 0 10px;
+  font-size: 22px;
+}
+.solution-case-copy p {
+  max-width: 560px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.solution-case.is-ready {
+  border-style: solid;
+  background: #fff;
+}
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px dashed #b9cde6;
+  border-radius: 999px;
+  color: #6b7f97;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.pending-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9fb4cc;
+}
+@media (max-width: 991px) {
+  .solution-case {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .solution-detail {
+    row-gap: 22px;
+  }
+  .solution-case {
+    gap: 18px;
+    padding: 15px;
+  }
+  .solution-case-copy h3 {
+    font-size: 20px;
+  }
+  .solution-case-copy p {
+    font-size: 12px;
+  }
+}

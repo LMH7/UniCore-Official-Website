@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="浏览公开的实验室网站与机器人学习资源，开启自主空中机器人研究。"
+      content="浏览 NEX 平台的入门、文档、代码与软件入口，以及公开的机器人学习资源。"
     />
     <meta name="theme-color" content="#06111f" />
     <meta property="og:site_name" content="iNEX 联核智域" />
@@ -29,7 +29,7 @@
     <meta property="og:title" content="资源与支持 · iNEX 联核智域" />
     <meta
       property="og:description"
-      content="浏览公开的实验室网站与机器人学习资源，开启自主空中机器人研究。"
+      content="浏览 NEX 平台的入门、文档、代码与软件入口，以及公开的机器人学习资源。"
     />
     <title>资源与支持 · iNEX 联核智域</title>
     <link rel="icon" href="assets/images/favicon.png" type="image/png" />
@@ -42,6 +42,7 @@
     <script src="assets/js/layout.js" defer></script>
     <script src="assets/js/app.js" defer></script>
     <link rel="stylesheet" href="assets/css/enhancements.css" />
+    <link rel="stylesheet" href="assets/css/resources.css" />
     <script src="assets/js/interactions.js" defer></script>
   </head>
   <body data-page="resources">
@@ -61,19 +62,40 @@
           <span class="eyebrow">RESOURCES / KEEP EXPLORING</span>
           <h1>从这里，继续探索</h1>
           <p>
-            汇集公开研究与通用学习入口，为理解机器人平台、自主飞行与软件开发提供参考。
+            汇集 NEX 平台的入门、文档、代码与软件入口，并整理公开学习资源，为理解平台与开展实验提供参考。
           </p>
         </div>
       </section>
       <section class="page-content">
         <div class="container">
-          <div class="collection-title">
-            <span>公开资源</span><span>研究与学习入口</span>
-          </div>
-          <div class="resource-grid" data-resources></div>
+          <section class="resource-section" aria-labelledby="nex-resource-title">
+            <div class="collection-title">
+              <span id="nex-resource-title" role="heading" aria-level="2"
+                >NEX 资料入口</span
+              ><span>快速入门 · 使用文档 · 代码仓库 · 软件下载</span>
+            </div>
+            <div
+              class="resource-grid resource-categories-grid"
+              data-resource-categories
+            ></div>
+          </section>
+          <section
+            class="resource-section"
+            aria-labelledby="learning-resource-title"
+          >
+            <div class="collection-title">
+              <span id="learning-resource-title" role="heading" aria-level="2"
+                >公开学习资源</span
+              ><span>第三方研究与学习入口</span>
+            </div>
+            <div
+              class="resource-grid learning-grid"
+              data-learning-resources
+            ></div>
+          </section>
           <div class="info-note">
-            PX4、ROS 2 为第三方通用学习资源，不代表每款 NEX 平台均已适配。NEX
-            专属文档与代码将在团队确认可公开后逐步补充。
+            NEX 专属文档、代码与软件将在团队确认可公开后逐步补充。PX4、ROS 2
+            为第三方通用学习资源，不代表每款 NEX 平台均已适配。
           </div>
           <div class="page-cta">
             <p>需要了解某个平台的技术资料？欢迎先浏览产品信息。</p>

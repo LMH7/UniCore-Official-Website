@@ -1,0 +1,65 @@
+/* E 模块：资源页专属样式。四类入口 2×2，公开学习资源 3 列；待补充状态不生成链接。 */
+.resource-section + .resource-section {
+  margin-top: 54px;
+}
+.resource-section .collection-title {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.resource-categories-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.learning-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.resource-card h3 {
+  margin: 12px 0;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+}
+.resource-card.is-pending {
+  border-style: dashed;
+  background: #f8fbff;
+}
+.resource-card.is-pending .resource-icon {
+  color: #8aa0bb;
+}
+.resource-card.is-pending p {
+  color: #7b8ca3;
+}
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px dashed #b9cde6;
+  border-radius: 999px;
+  color: #6b7f97;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.pending-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9fb4cc;
+}
+@media (max-width: 991px) {
+  .resource-categories-grid,
+  .learning-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .resource-section + .resource-section {
+    margin-top: 40px;
+  }
+  .resource-categories-grid,
+  .learning-grid {
+    grid-template-columns: 1fr;
+  }
+  .resource-card h3 {
+    font-size: 22px;
+  }
+}
