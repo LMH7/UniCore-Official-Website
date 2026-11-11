@@ -68,29 +68,44 @@
       </section>
       <section class="page-content">
         <div class="container">
-          <div class="collection-title">
-            <span>公开资源</span><span>研究与学习入口</span>
+          <div class="page-layout">
+            <aside class="page-index" aria-label="资源与支持栏目索引">
+              <span class="page-index-title">本页内容</span>
+              <nav>
+                <a href="#resource-list"
+                  ><span class="page-index-num">01</span>公开资源</a
+                >
+                <a href="#faq-section"
+                  ><span class="page-index-num">02</span>常见问题</a
+                >
+              </nav>
+            </aside>
+            <div class="page-layout-main">
+              <div class="collection-title">
+                <span>公开资源</span><span>研究与学习入口</span>
+              </div>
+              <div class="resource-grid" id="resource-list" data-resources></div>
+              <div class="info-note">
+                PX4、ROS 2 为第三方通用学习资源，不代表每款 NEX
+                平台均已适配。NEX 专属文档与代码将在团队确认可公开后逐步补充。
+              </div>
+              <div class="page-cta">
+                <p>需要了解某个平台的技术资料？欢迎先浏览产品信息。</p>
+                <a class="text-link" href="products.html"
+                  >查看产品平台 <span data-icon="arrow" data-size="18"></span
+                ></a>
+              </div>
+              <section class="faq-section" id="faq-section" aria-labelledby="faq-title">
+                <span class="eyebrow">GOOD TO KNOW</span>
+                <h2 id="faq-title">开始探索之前</h2>
+                <div data-faqs></div>
+                <a class="text-link faq-contact" href="contact.html"
+                  >还有其他问题？与我们交流
+                  <span data-icon="arrow" data-size="18"></span
+                ></a>
+              </section>
+            </div>
           </div>
-          <div class="resource-grid" data-resources></div>
-          <div class="info-note">
-            PX4、ROS 2 为第三方通用学习资源，不代表每款 NEX 平台均已适配。NEX
-            专属文档与代码将在团队确认可公开后逐步补充。
-          </div>
-          <div class="page-cta">
-            <p>需要了解某个平台的技术资料？欢迎先浏览产品信息。</p>
-            <a class="text-link" href="products.html"
-              >查看产品平台 <span data-icon="arrow" data-size="18"></span
-            ></a>
-          </div>
-          <section class="faq-section" aria-labelledby="faq-title">
-            <span class="eyebrow">GOOD TO KNOW</span>
-            <h2 id="faq-title">开始探索之前</h2>
-            <div data-faqs></div>
-            <a class="text-link faq-contact" href="contact.html"
-              >还有其他问题？与我们交流
-              <span data-icon="arrow" data-size="18"></span
-            ></a>
-          </section>
         </div>
       </section>
     </main>

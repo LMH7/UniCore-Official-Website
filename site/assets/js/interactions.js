@@ -316,47 +316,41 @@ window.INTERACTIONS_READY = (async () => {
     solutionSections.forEach((s) => observer.observe(s));
     // 方案锚点已在初始 HTML 中，由浏览器定位，避免脚本再次滚动。
   }
-  // 关于页左侧索引：滚动到对应板块时高亮当前条目（仅关于页存在 .about-index 时启用）
-  const aboutIndex = document.querySelector(".about-index");
-  if (aboutIndex) {
-    const aboutLinks = aboutIndex.querySelectorAll('a[href^="#"]');
-    const aboutTargets = document.querySelectorAll(
-      "#who, #direction, #supporting-labs, #partners",
-    );
-    if (aboutLinks.length && aboutTargets.length) {
-      const aboutObserver = new IntersectionObserver(
-        (entries) =>
-          entries.forEach((entry) => {
-            if (entry.isIntersecting)
-              aboutLinks.forEach((a) => {
-                if (a.hash === "#" + entry.target.id)
-                  a.setAttribute("aria-current", "location");
-                else a.removeAttribute("aria-current");
-              });
-          }),
-        { rootMargin: "-110px 0px -55% 0px", threshold: 0 },
-      );
-      aboutTargets.forEach((s) => aboutObserver.observe(s));
-      // 接近页底时点亮"联系我们"：页面末尾的联系引导区进不到监听判定区域
-      const contactLink = Array.from(aboutLinks).find(
-        (a) => a.hash === "#contact",
-      );
-      if (contactLink) {
-        const onAboutScroll = () => {
-          const nearBottom =
-            window.innerHeight + window.scrollY >=
-            document.documentElement.scrollHeight - 4;
-          if (nearBottom)
-            aboutLinks.forEach((a) => {
-              if (a === contactLink) a.setAttribute("aria-current", "location");
+  // 各栏目页左侧索引：滚动到对应板块时高亮当前条目（存在 .page-index 时启用）
+  document.querySelectorAll(".page-index").forEach((indexEl) => {
+    const links = indexEl.querySelectorAll('a[href^="#"]');
+    const targets = Array.from(links)
+      .map((a) => document.getElementById(a.hash.slice(1)))
+      .filter(Boolean);
+    if (!links.length || !targets.length) return;
+    const observer = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (entry.isIntersecting)
+            links.forEach((a) => {
+              if (a.hash === "#" + entry.target.id)
+                a.setAttribute("aria-current", "location");
               else a.removeAttribute("aria-current");
             });
-        };
-        window.addEventListener("scroll", onAboutScroll, { passive: true });
-        onAboutScroll();
-      }
-    }
-  }
+        }),
+      { rootMargin: "-110px 0px -55% 0px", threshold: 0 },
+    );
+    targets.forEach((t) => observer.observe(t));
+    // 接近页底时点亮最后一个条目：末尾板块可能进不到监听判定区域
+    const lastLink = links[links.length - 1];
+    const onScroll = () => {
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 4;
+      if (nearBottom)
+        links.forEach((a) => {
+          if (a === lastLink) a.setAttribute("aria-current", "location");
+          else a.removeAttribute("aria-current");
+        });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  });
   if (state.fallback) {
     const banner = document.createElement("p");
     banner.className = "content-fallback";
