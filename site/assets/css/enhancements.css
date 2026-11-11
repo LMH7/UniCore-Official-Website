@@ -6,74 +6,10 @@
   --red: #e70024;
   --ease: cubic-bezier(0.22, 0.68, 0.16, 1);
 }
-/* 长短页面都预留滚动条宽度，避免居中内容和导航横向跳动。 */
-html {
-  scrollbar-gutter: stable;
-}
-@supports not (scrollbar-gutter: stable) {
-  html {
-    overflow-y: scroll;
-  }
-}
 /* 窄屏跨页保留菜单高度；Bootstrap 接管后仍可正常手动收起。 */
 @media (max-width: 991.98px) {
   html[data-navigation-open] #main-navigation.collapse {
     display: block;
-  }
-}
-@keyframes page-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  /* 跨页快照只交叠淡化；取消默认尺寸动画，导航独立保持可见。 */
-  html[data-page-transition="native"] .site-header {
-    view-transition-name: site-navigation;
-  }
-  ::view-transition-group(root),
-  ::view-transition-group(site-navigation) {
-    animation: none;
-  }
-  ::view-transition-old(root) {
-    animation: none;
-  }
-  ::view-transition-new(root) {
-    animation: page-fade-in 420ms ease-in-out both;
-  }
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    mix-blend-mode: normal;
-  }
-  ::view-transition-group(site-navigation) {
-    z-index: 1;
-  }
-  ::view-transition-old(site-navigation) {
-    display: none;
-  }
-  ::view-transition-new(site-navigation) {
-    animation: none;
-  }
-  /* VS Code 内嵌预览和不支持跨页快照的浏览器使用淡出、淡入。 */
-  html[data-page-entering] #main,
-  html[data-page-entering] #site-footer {
-    opacity: 0;
-  }
-  html[data-page-leaving] #main,
-  html[data-page-leaving] #site-footer {
-    animation: page-fade-out 160ms ease-in both;
-  }
-  html[data-page-arriving] #main,
-  html[data-page-arriving] #site-footer {
-    animation: page-fade-in 300ms ease-out both;
   }
 }
 [hidden] {
@@ -493,6 +429,120 @@ html {
   margin-bottom: 0;
   color: var(--muted);
   font-size: 14px;
+}
+.projects-intro {
+  max-width: 830px;
+  margin-bottom: 36px;
+}
+.projects-intro > p {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+.project-entry {
+  padding: 40px 0 44px;
+  border-top: 1px solid var(--line);
+}
+.project-entry:last-child {
+  padding-bottom: 0;
+}
+.project-heading {
+  margin-bottom: 18px;
+}
+.project-heading > div {
+  min-width: 0;
+}
+.project-heading .eyebrow {
+  margin-bottom: 7px;
+  font-size: 10px;
+}
+.project-heading h2 {
+  margin-bottom: 0;
+  font-size: 27px;
+  line-height: 1.5;
+}
+.project-copy {
+  max-width: 940px;
+}
+.project-copy > p {
+  margin-bottom: 18px;
+  line-height: 2;
+}
+.project-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0 0 26px;
+  padding: 0;
+  list-style: none;
+}
+.project-topics li {
+  padding: 4px 12px;
+  border-radius: 5px;
+  background: #eef4fc;
+  color: #42638a;
+  font-size: 12px;
+}
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.project-gallery-single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 920px;
+}
+.project-gallery figure {
+  min-width: 0;
+  margin: 0;
+}
+.project-image {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+}
+a.project-image {
+  cursor: zoom-in;
+}
+.project-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.project-image-concept {
+  aspect-ratio: 2.9;
+}
+.project-image-diagram {
+  aspect-ratio: 1527 / 751;
+}
+.project-gallery figcaption {
+  padding-top: 11px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+@media (max-width: 767px) {
+  .projects-intro {
+    margin-bottom: 26px;
+  }
+  .project-entry {
+    padding: 28px 0 32px;
+  }
+  .project-heading h2 {
+    font-size: 22px;
+  }
+  .project-copy > p {
+    font-size: 14px;
+  }
+  .project-gallery {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  .project-image-concept {
+    aspect-ratio: 16 / 10;
+  }
 }
 .about-labs {
   margin-top: 64px;

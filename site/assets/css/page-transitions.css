@@ -1,0 +1,51 @@
+/* 封面与主站共用转场：固定布局宽度，只淡化页面内容。 */
+html { scrollbar-gutter: stable; }
+@supports not (scrollbar-gutter: stable) {
+  html { overflow-y: scroll; }
+}
+/* 首页首屏为深色，淡入时沿用深色底；正文自带白底，结束后不变色。 */
+body[data-page="home"] #main { background: #fff; }
+@keyframes page-fade-out {
+  to { opacity: 0; }
+}
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-page-transition="native"] .site-header {
+    view-transition-name: site-navigation;
+  }
+  ::view-transition-group(root),
+  ::view-transition-group(site-navigation) {
+    animation: none;
+  }
+  ::view-transition-old(root) { animation: none; }
+  ::view-transition-new(root) { animation: page-fade-in 420ms ease-in-out both; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { mix-blend-mode: normal; }
+  ::view-transition-group(site-navigation) { z-index: 1; }
+  ::view-transition-old(site-navigation) { display: none; }
+  ::view-transition-new(site-navigation) { animation: none; }
+
+  /* 内嵌浏览器：封面整体淡化，主站仅正文和页脚淡化，导航持续显示。 */
+  html[data-page-entering] body[data-page="home"],
+  html[data-page-arriving] body[data-page="home"] {
+    background: #06111f;
+  }
+  html[data-page-entering] body[data-layout="standalone"],
+  html[data-page-entering] body:not([data-layout="standalone"]) #main,
+  html[data-page-entering] body:not([data-layout="standalone"]) #site-footer {
+    opacity: 0;
+  }
+  html[data-page-leaving] body[data-layout="standalone"],
+  html[data-page-leaving] body:not([data-layout="standalone"]) #main,
+  html[data-page-leaving] body:not([data-layout="standalone"]) #site-footer {
+    animation: page-fade-out 160ms ease-in both;
+  }
+  html[data-page-arriving] body[data-layout="standalone"],
+  html[data-page-arriving] body:not([data-layout="standalone"]) #main,
+  html[data-page-arriving] body:not([data-layout="standalone"]) #site-footer {
+    animation: page-fade-in 300ms ease-out both;
+  }
+}

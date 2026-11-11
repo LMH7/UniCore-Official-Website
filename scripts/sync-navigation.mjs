@@ -48,9 +48,15 @@ async function renderNavigation(page) {
 
 const pages = (await readdir(site)).filter((name) => name.endsWith(".html")).sort();
 const stale = [];
+let standalone = 0;
 for (const filename of pages) {
   const filepath = path.join(site, filename);
   const html = await readFile(filepath, "utf8");
+  const body = html.match(/<body\b[^>]*>/i)?.[0] || "";
+  if (/\bdata-layout="standalone"/i.test(body)) {
+    standalone++;
+    continue;
+  }
   const page = html.match(/<body\b[^>]*\bdata-page="([^"]+)"/i)?.[1];
   const headers = [
     ...html.matchAll(/<header\b(?=[^>]*\bid="site-header")[^>]*>[\s\S]*?<\/header>/gi),
@@ -77,7 +83,7 @@ if (check && stale.length) {
 } else {
   console.log(
     check
-      ? `导航检查通过：${pages.length} 个页面已同步。`
-      : `导航同步完成：更新 ${stale.length} / ${pages.length} 个页面。`,
+      ? `导航检查通过：${pages.length - standalone} 个页面已同步，${standalone} 个独立页面使用自己的布局。`
+      : `导航同步完成：更新 ${stale.length} / ${pages.length - standalone} 个公共布局页面。`,
   );
 }

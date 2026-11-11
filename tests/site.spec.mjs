@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const views = [
-  ["index.html", /让研究想法，\s*真正起飞。/],
+  ["home.html", /让研究想法，\s*真正起飞。/],
   ["products.html", "为研究而生的平台"],
   ["solutions.html", "连接技术与真实问题"],
   ["resources.html", "从这里，继续探索"],
@@ -12,6 +12,29 @@ const views = [
   ["product.html?id=nex-30", "NEX 30"],
   ["credits.html", "素材与开源说明"],
 ];
+
+test("网站默认入口是互动封面，进入主站后首页链接不会返回封面", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const path of ["/", "/index.html"]) {
+    const response = await page.goto(path);
+    expect(response.status()).toBe(200);
+    await expect(page.locator("body")).toHaveAttribute("data-layout", "standalone");
+    await expect(page.locator("#cover-title")).toHaveText("联核智域 iNEX");
+    await expect(page.locator("[data-cover-slide-index]")).toHaveCount(3);
+    await expect(page.locator(".cover-entry")).toHaveAttribute("href", "home.html");
+    await page.locator(".cover-entry").click();
+    await expect(page).toHaveURL(/\/home\.html$/);
+    await expect(page.locator("h1")).toHaveText(views[0][1]);
+    await page.locator('#main-navigation a[href="products.html"]').click();
+    await expect(page).toHaveURL(/\/products\.html$/);
+    await page.locator('#main-navigation a[href="home.html"]').click();
+    await expect(page).toHaveURL(/\/home\.html$/);
+    await expect(page.locator("body")).toHaveAttribute("data-page", "home");
+  }
+  expect(errors).toEqual([]);
+});
 
 for (const width of [375, 390, 768, 1440]) {
   test(`主要页面在 ${width}px 可读，无溢出、破图和脚本错误`, async ({
@@ -65,7 +88,7 @@ for (const width of [375, 390, 768, 1440]) {
 
 test("手机菜单和首页到产品、详情、联系的完整路径", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/home.html");
   const toggle = page.getByRole("button", { name: /^(展开|收起)导航菜单$/ });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
@@ -90,7 +113,7 @@ test("手机菜单和首页到产品、详情、联系的完整路径", async ({
 });
 
 test("首页产品切换同步图片、名称和详情入口", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/home.html");
   for (const [name, id] of [
     ["NEX 250", "nex-250"],
     ["NEX 30", "nex-30"],
@@ -137,7 +160,7 @@ test("错误产品与深层错误地址可以回到正确页面", async ({ page 
   );
   await expect(page.getByRole("navigation", { name: "主导航" })).toBeVisible();
   await page.getByRole("link", { name: "返回首页", exact: true }).click();
-  await expect(page).toHaveURL("http://127.0.0.1:4175/index.html");
+  await expect(page).toHaveURL("http://127.0.0.1:4175/home.html");
   expect(errors).toEqual([]);
 });
 
@@ -170,7 +193,7 @@ test("联系方式填写后可显示、点击和复制，并可安全处理文�
 test("键盘跳转、低动态偏好与320px小屏", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 320, height: 800 });
-  await page.goto("/");
+  await page.goto("/home.html");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "跳到主要内容" })).toBeFocused();
   await expect(
@@ -193,7 +216,7 @@ test("图片与脚本使用本地资源，站点能在子目录下浏览", async
     const url = route.request().url().replace("/preview/", "/");
     await route.fulfill({ response: await page.request.get(url) });
   });
-  await page.goto("/preview/index.html");
+  await page.goto("/preview/home.html");
   await page.getByRole("link", { name: "探索产品平台" }).click();
   await expect(page).toHaveURL(/\/preview\/products.html$/);
   await page.getByRole("link", { name: "查看 NEX 500", exact: true }).click();
