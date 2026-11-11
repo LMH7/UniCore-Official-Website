@@ -59,7 +59,7 @@ npm run package
 
 后端不上传 GitHub Pages。完整步骤、依赖 ZIP、容器入口、云账号交接及上线检查见 [backend/README.md](backend/README.md)。旧函数不能仅替换单个 app.py；新包需要 Python 3.12 环境。
 
-长期运行采用正式 Linux 云服务器 + Python 3.12 容器，部署配置见 [deploy/production/README.md](deploy/production/README.md)。不将旧 Python 3.10 函数或公测托管运行环境作为生产基线。
+已准备 **腾讯云 SCF 镜像 Web 函数 + 公网函数 URL** 的候选实现，由容器提供 Python 3.12。但免费镜像仓库的账号可用性未确认，用户反馈企业版约 665 元/月，按最新要求先上传代码、暂停采购及后续测试。配置参考见 [deploy/tencent-scf/README.md](deploy/tencent-scf/README.md)，完整费用修正见 [选型调查](deploy/tencent-scf/选型调查.md)。不把单独的函数用量费当成总价；旧服务器配置只保留为备份。
 
 正式切到 API 前，先完成新版服务公网检查，再改 `config/public.json` 的 `apiBase` 与 `source`，执行 `npm run sync`。生成的 `_headers` 同时包含准确的接口连接和图片来源，避免迁移到 Cloudflare 后被浏览器拦截。发布同一版图片、网页回退副本与后端快照。
 

@@ -15,6 +15,8 @@ FILES = [
     "backend/README.md", "backend/Dockerfile", "backend/.dockerignore", "backend/Dockerfile.dockerignore",
     "deploy/production/compose.yml", "deploy/production/Caddyfile",
     "deploy/production/production.env.example", "deploy/production/README.md",
+    "deploy/tencent-scf/README.md", "deploy/tencent-scf/选型调查.md",
+    "scripts/verify-backend.py",
 ]
 
 

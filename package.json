@@ -17,7 +17,8 @@
     "test:backend": "node scripts/backend-task.mjs test",
     "dev:backend": "node scripts/backend-task.mjs preview",
     "test:integration": "playwright test --config playwright.backend.config.mjs",
-    "package:backend": "node scripts/backend-task.mjs package"
+    "package:backend": "node scripts/backend-task.mjs package",
+    "build:cloud": "node scripts/cloud-image.mjs"
   },
   "engines": {
     "node": ">=20"

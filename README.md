@@ -2,11 +2,14 @@
 
 自主空中机器人展示网站，包含完整网页与可部署的只读内容后端。当前公网网页使用静态内容；新版后端已实现，本地可直接联调，云端升级须另行部署验收。
 
+2026-11-11：云函数候选部署文件已准备；因镜像仓库可能有较高固定费用，按用户要求先上传代码，暂停采购、后续测试和云端部署。费用修正见下方选型调查，未启用新的云服务。
+
 - [在线预览](https://lmh7.github.io/UniCore-Official-Website/)
 - [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
 - [内容维护说明](CONTENT_GUIDE.md)
 - [后端运行和部署](backend/README.md)
-- [长期生产部署](deploy/production/README.md)
+- [腾讯云函数部署与账号操作](deploy/tencent-scf/README.md)
+- [腾讯云与阿里云选型调查](deploy/tencent-scf/选型调查.md)
 - [后端实施结果](BACKEND_PLAN.md)
 - [检查记录](ACCEPTANCE.md)
 

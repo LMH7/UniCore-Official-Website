@@ -2,7 +2,7 @@
 
 新版代码在 `backend/`，取代原 `docs/function/app.py`。这是提供公开网站内容的只读服务，使用 Python 3.12、Flask 和 Waitress。产品、团队、方案、资源、FAQ、联系方式可以继续添加；现阶段通过文件审核和发布更新。
 
-**长期运行采用正式 Linux 云服务器 + Python 3.12 容器。** HTTPS、进程重启、健康检查、发布及维护步骤见 [生产部署说明](../deploy/production/README.md)。不以 Python 3.10 为生产目标；云函数托管运行环境若标公测，不用于这次正式上线。
+**云端部署暂缓，先上传代码。** 已准备腾讯云 SCF 镜像 Web 函数的候选实现，由镜像提供 Python 3.12；但用户账号反馈企业版镜像仓库约 665 元/月，免费仓库前提未满足。当前不采购、不继续测试、不切换线上。配置参考见 [腾讯云部署说明](../deploy/tencent-scf/README.md)，完整费用修正见 [选型调查](../deploy/tencent-scf/选型调查.md)。
 
 ## 在本机查看新版
 
@@ -66,31 +66,21 @@ npm run package:backend
 npm run package:backend -- --linux
 ```
 
-`release/inex-backend-版本-source.zip`：后端源码、锁定依赖和生产部署配置。容器构建会安装依赖；直接 Python 部署时安装 `backend/requirements.lock`。
+`release/inex-backend-版本-source.zip`：后端源码、锁定依赖、Dockerfile、上线检查脚本和部署说明。容器构建会安装依赖；直接 Python 部署时安装 `backend/requirements.lock`。**腾讯镜像函数使用构建上传的容器，不直接上传 ZIP。**
 
 `release/inex-backend-版本-linux-py312.zip`：额外包含 **Linux x86_64 CPython 3.12** 依赖，可直接用于匹配的云运行环境；不包含 Python 解释器。不能上传到 Python 3.6/3.9、ARM 或 Windows 运行环境。
 
 ZIP 根目录有 `app.py` 启动入口、`scf_bootstrap`、`backend/`、`manifest.json`。启动脚本权限为 755、Linux 换行。包内按文件记录 SHA-256，旁边另有 ZIP 校验值。包只收录后端和依赖，不包含虚拟环境、会议材料、账号或原始联系图片。内容版本相同但代码修复不同时，ZIP 校验值会不同；留存验收通过的 ZIP 和提交号，不仅依赖文件名辨别版本。
 
-## 云函数备选部署
+## 腾讯云正式部署
 
-优先执行上面的长期生产方案。本节仅适用于已确认正式商用、Python 3.12/x86_64 的云函数环境。同学已将演示服务迁到 Python 3.10 新函数 `inexapi2`，它不是此修复版的生产部署目标；复核见 [同学版本复核](../docs/function/2026-11-11-复核.md)。目前没有云账号控制台操作权限；不要在聊天中发送密码、验证码或永久密钥。
+以下仅为费用前提满足后、重新决定上线时的配置参考。按 [腾讯云部署说明](../deploy/tencent-scf/README.md) 使用已确认可用且费用合适的私有仓库和镜像 Web 函数。仓库根目录执行 `npm run build:cloud` 可构建并验收容器；账号持有人在本机登录仓库后，使用 `--image 实际仓库地址 --push` 上传。脚本不会自动创建云资源，当前不运行。
 
-1. 先保存旧函数版本、配置和 URL。建议新建一个测试 Web 函数验证，验收后再接替旧服务。
-2. 确认该地域、产品、架构的运行环境已正式商用。目标是 HTTP/Web 服务、Linux x86_64、Python 3.12，服务监听 `0.0.0.0:9000`。满足条件时上传 `linux-py312.zip`，确认 ZIP 根目录结构以及 `scf_bootstrap`/`python3.12 app.py` 启动方式；以控制台该类型的启动约定为准。
-3. 若只提供旧 Python 模板，**不要把新代码粘回旧模板的 app.py**。保留旧函数，选择支持 Python 3.12 的容器或其他 HTTP 服务环境；仓库提供 `backend/Dockerfile`，在仓库根目录执行 `docker build -f backend/Dockerfile -t inex-api .`。腾讯云的可选运行环境、镜像权限和启动入口须根据实际控制台确认后选定。
-4. 设置上表环境变量。开放 HTTPS 公网 GET/HEAD/OPTIONS 访问；保持平台层与代码层的 CORS 设置一致，避免额外添加 `*` 或重定向。不要开放调试模式。
-5. 先确认 `/healthz`、`/api/v1/products`、`/api/v1/site-content` 返回 JSON，并查看 `meta.version` 与包中一致；启动日志不得有缺依赖或架构错误。
-6. 在本地执行下列命令，`URL` 填服务根地址，不包含 `/api/v1/`，版本填该包 manifest 中的 `contentVersion`：
+此路线不使用代码包里的 `scf_bootstrap`；该文件仅保留给匹配 Python 3.12 的标准代码包环境，不是腾讯旧 Custom Runtime 的推荐入口。不要将源码 ZIP 或 Linux 依赖 ZIP 直接上传到“容器镜像”配置。
 
-```powershell
-node scripts/backend-task.mjs smoke URL --version 版本
-```
+本地构建/测试、镜像上传、云函数创建、公网验收是四个不同状态。当前没有云账号操作会话，尚未创建新函数或切换前端。账号持有人完成登录和仓库操作后，提供仓库地址；新函数创建后提供实际公网 URL，即可继续验收。
 
-7. 云端检查通过后，把 `config/public.json` 中 `apiBase` 换为正式地址、`source` 换为 `api`，运行 `npm run sync` 和所有检查，再提交发布网页。Cloudflare 的 `_headers` 会同步加入准确的接口及图片来源；GitHub Pages 不应用该文件。
-8. 从公网网页打开首页、产品详情、关于和联系页，电脑/手机检查图片、咨询入口和二维码；等待缓存最多约 60 秒再核对版本。线上验收记录必须写实际结果，不能用本地结果代替。
-
-腾讯云托管运行环境“3.11/3.12/3.13 全部公测”目前仅收到同学反馈，尚未取得对应地域、产品和架构的官方状态证明。当前长期方案使用正式服务器自行提供 Python 容器，无须等待这些托管运行时。云函数创建参考：<https://cloud.tencent.com/document/product/583/56124>。
+正式切到 API 前，必须运行 `node scripts/backend-task.mjs smoke 实际服务根URL --version 实际内容版本`，通过后再修改前端配置、运行同步和检查，发布同一版网页与图片。完整的参数、版本/别名、预算及回退步骤均在上述部署说明中。
 
 ## 费用、运维与回退
 
