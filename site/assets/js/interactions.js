@@ -252,7 +252,7 @@ window.INTERACTIONS_READY = (async () => {
   addEventListener("resize", scroll);
   scroll();
   const revealTargets = document.querySelectorAll(
-    ".section-heading,.product-card,.solution-card,.resource-card,.about-grid,.cta-panel,.solution-detail,.contact-channel,.value-grid>article,.faq-section,.related-card",
+    ".section-heading,.product-card,.solution-card,.resource-card,.about-grid,.cta-panel,.contact-channel,.value-grid>article,.faq-section,.related-card",
   );
   if (!reduced.matches && "IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
@@ -266,6 +266,9 @@ window.INTERACTIONS_READY = (async () => {
       { threshold: 0.06 },
     );
     revealTargets.forEach((el) => {
+      const bounds = el.getBoundingClientRect();
+      // 当前已可见的内容保持可见，避免先显示再被脚本隐藏造成闪烁。
+      if (bounds.top < innerHeight && bounds.bottom > 0) return;
       el.classList.add("reveal-ready");
       observer.observe(el);
     });

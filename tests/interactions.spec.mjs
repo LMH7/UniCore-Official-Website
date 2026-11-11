@@ -58,9 +58,11 @@ test("手机对比表、键盘关闭、清空与重新选择", async ({ page }) 
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByRole("table")).toContainText("NEX 500");
   await expect(page.getByRole("table")).toContainText("深度相机");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
-    390,
-  );
+  const dimensions = await page.evaluate(() => ({
+    content: document.documentElement.scrollWidth,
+    viewport: document.documentElement.clientWidth,
+  }));
+  expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page.getByRole("button", { name: "开始对比" })).toBeFocused();
