@@ -484,14 +484,8 @@ window.INTERACTIONS_READY = (async () => {
   }
   initHeroWave();
   const solutionSections = document.querySelectorAll(".solution-detail[id]");
-  if (solutionSections.length) {
-    const subnav = document.createElement("nav");
-    subnav.className = "solution-subnav";
-    subnav.setAttribute("aria-label", "方案快捷导航");
-    subnav.innerHTML = SITE_CONTENT.solutions
-      .map((s) => `<a href="#${e(s.id)}">${e(s.title)}</a>`)
-      .join("");
-    document.querySelector("[data-full-solutions]").before(subnav);
+  const subnav = document.querySelector(".solution-subnav");
+  if (solutionSections.length && subnav && "IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
@@ -505,15 +499,7 @@ window.INTERACTIONS_READY = (async () => {
       { rootMargin: "-100px 0px -45% 0px", threshold: 0 },
     );
     solutionSections.forEach((s) => observer.observe(s));
-    const initial = SITE_CONTENT.solutions.find(
-      (s) => location.hash === "#" + s.id,
-    );
-    if (initial)
-      requestAnimationFrame(() =>
-        document
-          .getElementById(initial.id)
-          .scrollIntoView({ behavior: "instant" }),
-      );
+    // 方案锚点已在初始 HTML 中，由浏览器定位，避免脚本再次滚动。
   }
   if (state.fallback) {
     const banner = document.createElement("p");
