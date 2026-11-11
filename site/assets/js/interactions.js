@@ -298,24 +298,6 @@ window.INTERACTIONS_READY = (async () => {
       hero.style.setProperty("--pointer-y", "0px");
     });
   }
-  const solutionSections = document.querySelectorAll(".solution-detail[id]");
-  const subnav = document.querySelector(".solution-subnav");
-  if (solutionSections.length && subnav && "IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (entry.isIntersecting)
-            subnav.querySelectorAll("a").forEach((a) => {
-              if (a.hash === "#" + entry.target.id)
-                a.setAttribute("aria-current", "location");
-              else a.removeAttribute("aria-current");
-            });
-        }),
-      { rootMargin: "-100px 0px -45% 0px", threshold: 0 },
-    );
-    solutionSections.forEach((s) => observer.observe(s));
-    // 方案锚点已在初始 HTML 中，由浏览器定位，避免脚本再次滚动。
-  }
   // 各栏目页左侧索引：滚动到对应板块时高亮当前条目（存在 .page-index 时启用）
   document.querySelectorAll(".page-index").forEach((indexEl) => {
     const links = indexEl.querySelectorAll('a[href^="#"]');

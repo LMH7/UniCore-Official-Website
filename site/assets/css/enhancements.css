@@ -567,7 +567,9 @@ html {
 }
 .page-index {
   position: sticky;
-  top: 108px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
   padding: 20px 14px 16px;
   background: #f2f7ff;
   border: 1px solid #e2edfb;
@@ -649,8 +651,9 @@ html {
   }
   .page-index {
     top: 78px;
-    z-index: 15;
+    bottom: auto;
     margin: 0 0 28px;
+    z-index: 15;
     padding: 10px 10px;
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -1626,35 +1629,8 @@ html {
   font-size: 11px;
   gap: 7px;
 }
-.solution-subnav {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: sticky;
-  top: 88px;
-  background: #ffffffed;
-  backdrop-filter: blur(12px);
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line);
-  z-index: 15;
-  margin: -25px 0 36px;
-}
-.solution-subnav a {
-  font-size: 12px;
-  border-radius: 6px;
-  padding: 8px 17px;
-  color: #7287a2;
-  transition:
-    color 0.2s,
-    background 0.2s;
-}
-.solution-subnav a:hover,
-.solution-subnav a[aria-current="location"] {
-  background: #edf5ff;
-  color: var(--blue);
-}
 .solution-detail {
-  scroll-margin-top: 175px;
+  scroll-margin-top: 140px;
 }
 .content-fallback {
   margin: 0;
@@ -1879,9 +1855,6 @@ html {
   }
   .related-card > svg {
     width: 17px;
-  }
-  .solution-subnav {
-    top: 78px;
   }
   .brand-showcase {
     margin-bottom: 30px;
@@ -2228,19 +2201,8 @@ html {
   .related-card .micro-label {
     font-size: 9px;
   }
-  .solution-subnav {
-    top: 76px;
-    margin: -14px 0 28px;
-    gap: 3px;
-    padding: 12px 0;
-    justify-content: space-between;
-  }
-  .solution-subnav a {
-    padding: 8px 10px;
-    font-size: 10px;
-  }
   .solution-detail {
-    scroll-margin-top: 155px;
+    scroll-margin-top: 120px;
   }
   .footer-brand .brand-caption {
     display: block;
@@ -2331,10 +2293,6 @@ html {
   }
   .related-card h3 {
     font-size: 21px;
-  }
-  .solution-subnav a {
-    padding: 7px 8px;
-    font-size: 9px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

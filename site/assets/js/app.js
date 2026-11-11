@@ -21,9 +21,7 @@ window.APP_READY = (async () => {
   });
   const fullSolutions = document.querySelector("[data-full-solutions]");
   if (fullSolutions) {
-    const solutionsMarkup =
-      `<nav class="solution-subnav" aria-label="方案快捷导航">${SITE_CONTENT.solutions.map((s) => `<a href="#${e(s.id)}">${e(s.title)}</a>`).join("")}</nav>` +
-      SITE_CONTENT.solutions
+    const solutionsMarkup = SITE_CONTENT.solutions
         .map(
           (s) =>
             `<section class="solution-detail" id="${e(s.id)}"><div class="solution-detail-visual solution-${e(s.id)}"><span class="large-number">${e(s.number)}</span><div class="solution-orbit">${icon(s.icon, 90)}</div><span class="micro-label">${e(s.english)}</span></div><div class="solution-detail-copy"><span class="eyebrow">应用方向 / ${e(s.number)}</span><h2>${e(s.title)}</h2><p class="lead-text">${e(s.summary)}</p><p>${e(s.description)}</p><div class="tags">${s.topics.map((t) => `<span>${e(t)}</span>`).join("")}</div><div class="audience"><span>面向人群</span><p>${e(s.audience)}</p></div><a class="text-link" href="contact.html">讨论你的研究需求 ${icon("arrow", 18)}</a></div></section>`,
@@ -40,7 +38,6 @@ window.APP_READY = (async () => {
     const solutionsKey = `v1-${(solutionsHash >>> 0).toString(16).padStart(8, "0")}`;
     if (
       fullSolutions.dataset.solutionsKey !== solutionsKey ||
-      !fullSolutions.querySelector(".solution-subnav") ||
       (SITE_CONTENT.solutions.length &&
         !fullSolutions.querySelector(".solution-detail"))
     ) {
@@ -107,7 +104,7 @@ window.APP_READY = (async () => {
     const product = PRODUCTS.find(
       (p) => p.id === new URLSearchParams(location.search).get("product"),
     );
-    contact.innerHTML = `<span class="eyebrow">CONNECT WITH ${e(SITE_CONTENT.brand)}</span><h2>一起，让想法起飞。</h2><p>从一个问题开始，找到适合你的平台与合作方向。</p>${product ? `<div class="inquiry-context">你正在了解 <strong>${e(product.name)}</strong><button type="button" class="text-link" data-copy="我想了解 ${e(product.name)}，希望进一步交流平台配置与研究需求。">复制咨询内容 ${icon("copy", 15)}</button></div>` : ""}<div class="contact-channels">${SITE_CONTENT.contacts.map((c) => `<article class="contact-channel"><div class="channel-heading"><span class="channel-icon">${icon(c.icon, 25)}</span><div><span class="micro-label">${e(c.label)}</span><h3>${e(c.name)}</h3></div></div><p>${e(c.description)}</p><button class="qr-preview" type="button" data-contact-qr="${e(c.id)}" aria-label="放大${e(c.label)}二维码"><img src="${UI.url(c.qrImage)}" alt="${e(c.label)}联系二维码" width="240" height="240" loading="lazy"><span>${icon("zoom", 15)} 点击放大 · 长按识别</span></button><div class="channel-actions">${c.url && UI.url(c.url) ? `<a class="text-link" href="${UI.url(c.url)}" target="_blank" rel="noopener noreferrer">${e(c.action)} ${icon("diagonal", 16)}<span class="visually-hidden">（新窗口打开）</span></a>` : `<button class="text-link" type="button" data-contact-qr="${e(c.id)}">${e(c.action)} ${icon("zoom", 16)}</button>`}<a class="download-qr" href="${UI.url(c.qrImage)}" download="${e(c.downloadName)}" aria-label="保存${e(c.label)}二维码">${icon("download", 17)} 保存</a></div></article>`).join("")}</div>${email ? `<div class="email-block"><span class="eyebrow">联系邮箱</span><a class="contact-email" href="mailto:${encodeURIComponent(email)}">${e(email)}</a><button class="btn btn-outline-primary" id="copy-email" type="button">${icon("copy", 18)} 复制邮箱</button><p class="copy-status" role="status" aria-live="polite"></p></div>` : ""}`;
+    contact.innerHTML = `<span class="eyebrow">CONNECT WITH ${e(SITE_CONTENT.brand)}</span><h2>联系方式</h2><p>一起，让想法起飞。从一个问题开始，找到适合你的平台与合作方向。</p>${product ? `<div class="inquiry-context">你正在了解 <strong>${e(product.name)}</strong><button type="button" class="text-link" data-copy="我想了解 ${e(product.name)}，希望进一步交流平台配置与研究需求。">复制咨询内容 ${icon("copy", 15)}</button></div>` : ""}<div class="contact-channels">${SITE_CONTENT.contacts.map((c) => `<article class="contact-channel"><div class="channel-heading"><span class="channel-icon">${icon(c.icon, 25)}</span><div><span class="micro-label">${e(c.label)}</span><h3>${e(c.name)}</h3></div></div><p>${e(c.description)}</p><button class="qr-preview" type="button" data-contact-qr="${e(c.id)}" aria-label="放大${e(c.label)}二维码"><img src="${UI.url(c.qrImage)}" alt="${e(c.label)}联系二维码" width="240" height="240" loading="lazy"><span>${icon("zoom", 15)} 点击放大 · 长按识别</span></button><div class="channel-actions">${c.url && UI.url(c.url) ? `<a class="text-link" href="${UI.url(c.url)}" target="_blank" rel="noopener noreferrer">${e(c.action)} ${icon("diagonal", 16)}<span class="visually-hidden">（新窗口打开）</span></a>` : `<button class="text-link" type="button" data-contact-qr="${e(c.id)}">${e(c.action)} ${icon("zoom", 16)}</button>`}<a class="download-qr" href="${UI.url(c.qrImage)}" download="${e(c.downloadName)}" aria-label="保存${e(c.label)}二维码">${icon("download", 17)} 保存</a></div></article>`).join("")}</div>${email ? `<div class="email-block"><span class="eyebrow">联系邮箱</span><a class="contact-email" href="mailto:${encodeURIComponent(email)}">${e(email)}</a><button class="btn btn-outline-primary" id="copy-email" type="button">${icon("copy", 18)} 复制邮箱</button><p class="copy-status" role="status" aria-live="polite"></p></div>` : ""}`;
     if (email)
       document
         .getElementById("copy-email")
