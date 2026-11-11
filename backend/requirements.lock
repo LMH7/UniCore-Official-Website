@@ -1,4 +1,5 @@
-# Python 3.12; all application dependencies pinned for repeatable deployment.
+# Python 3.12; use a supported runtime with ongoing security maintenance.
+# All application dependencies pinned for repeatable deployment.
 Flask==3.1.3
 waitress==3.0.2
 blinker==1.9.0

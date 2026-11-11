@@ -6,6 +6,7 @@
 - [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
 - [内容维护说明](CONTENT_GUIDE.md)
 - [后端运行和部署](backend/README.md)
+- [长期生产部署](deploy/production/README.md)
 - [后端实施结果](BACKEND_PLAN.md)
 - [检查记录](ACCEPTANCE.md)
 

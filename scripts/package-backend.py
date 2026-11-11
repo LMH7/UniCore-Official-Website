@@ -13,6 +13,8 @@ FILES = [
     "backend/__init__.py", "backend/__main__.py", "backend/app.py", "backend/validation.py",
     "backend/data/snapshot.json", "backend/requirements.txt", "backend/requirements.lock",
     "backend/README.md", "backend/Dockerfile", "backend/.dockerignore", "backend/Dockerfile.dockerignore",
+    "deploy/production/compose.yml", "deploy/production/Caddyfile",
+    "deploy/production/production.env.example", "deploy/production/README.md",
 ]
 
 
@@ -20,6 +22,7 @@ def package(linux=False):
     subprocess.run(["node", "scripts/sync-content.mjs", "--check"], cwd=ROOT, check=True)
     snapshot = json.loads((ROOT / "backend/data/snapshot.json").read_text(encoding="utf-8"))
     files = {name: (ROOT / name).read_bytes().replace(b"\r\n", b"\n") for name in FILES}
+    files["app.py"] = (ROOT / "backend/cloud_entry.py").read_bytes().replace(b"\r\n", b"\n")
     files["scf_bootstrap"] = (ROOT / "backend/scf_bootstrap").read_bytes().replace(b"\r\n", b"\n")
     with tempfile.TemporaryDirectory(prefix="inex-package-") as tmp:
         if linux:
@@ -50,7 +53,8 @@ def package(linux=False):
                             raise ValueError("Duplicate package path: " + name)
                         files[name] = z.read(entry)
         manifest = {
-            "format": 1, "contentVersion": snapshot["version"], "python": "3.12",
+            "format": 1, "contentVersion": snapshot["version"],
+            "python": "3.12",
             "target": "linux-x86_64-cp312" if linux else "source-install-requirements",
             "files": {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
         }
@@ -73,5 +77,6 @@ def package(linux=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--linux", action="store_true", help="Include Linux x86_64 Python 3.12 dependencies, not the interpreter")
-    package(parser.parse_args().linux)
+    parser.add_argument("--linux", action="store_true", help="Include Linux x86_64 dependencies, not the interpreter")
+    args = parser.parse_args()
+    package(args.linux)

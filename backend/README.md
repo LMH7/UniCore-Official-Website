@@ -2,6 +2,8 @@
 
 新版代码在 `backend/`，取代原 `docs/function/app.py`。这是提供公开网站内容的只读服务，使用 Python 3.12、Flask 和 Waitress。产品、团队、方案、资源、FAQ、联系方式可以继续添加；现阶段通过文件审核和发布更新。
 
+**长期运行采用正式 Linux 云服务器 + Python 3.12 容器。** HTTPS、进程重启、健康检查、发布及维护步骤见 [生产部署说明](../deploy/production/README.md)。不以 Python 3.10 为生产目标；云函数托管运行环境若标公测，不用于这次正式上线。
+
 ## 在本机查看新版
 
 Windows 已安装环境后，双击仓库根目录的 **启动后端预览.cmd**，打开 <http://127.0.0.1:9000/>。这个地址同时运行网页和真实后端；`/about.html` 包含实验室介绍，`/api/v1/products` 显示后端数据。保持窗口打开，停止用 Ctrl+C。
@@ -64,18 +66,18 @@ npm run package:backend
 npm run package:backend -- --linux
 ```
 
-`release/inex-backend-版本-source.zip`：源码和锁定依赖，目标环境安装 `backend/requirements.lock`。
+`release/inex-backend-版本-source.zip`：后端源码、锁定依赖和生产部署配置。容器构建会安装依赖；直接 Python 部署时安装 `backend/requirements.lock`。
 
 `release/inex-backend-版本-linux-py312.zip`：额外包含 **Linux x86_64 CPython 3.12** 依赖，可直接用于匹配的云运行环境；不包含 Python 解释器。不能上传到 Python 3.6/3.9、ARM 或 Windows 运行环境。
 
-ZIP 根目录有 `scf_bootstrap`、`backend/`、`manifest.json`。启动脚本权限为 755、Linux 换行。包内按文件记录 SHA-256，旁边另有 ZIP 校验值。包只收录后端和依赖，不包含虚拟环境、会议材料、账号或原始联系图片。内容版本相同但代码修复不同时，ZIP 校验值会不同；留存验收通过的 ZIP 和提交号，不仅依赖文件名辨别版本。
+ZIP 根目录有 `app.py` 启动入口、`scf_bootstrap`、`backend/`、`manifest.json`。启动脚本权限为 755、Linux 换行。包内按文件记录 SHA-256，旁边另有 ZIP 校验值。包只收录后端和依赖，不包含虚拟环境、会议材料、账号或原始联系图片。内容版本相同但代码修复不同时，ZIP 校验值会不同；留存验收通过的 ZIP 和提交号，不仅依赖文件名辨别版本。
 
-## 腾讯云上线交接
+## 云函数备选部署
 
-本地测试和打包不代表公网已更新。旧函数由同学个人账号托管，目前没有该账号的控制台操作权限；需要账号持有人完成部署。不要在聊天中发送密码、验证码或永久密钥。
+优先执行上面的长期生产方案。本节仅适用于已确认正式商用、Python 3.12/x86_64 的云函数环境。同学已将演示服务迁到 Python 3.10 新函数 `inexapi2`，它不是此修复版的生产部署目标；复核见 [同学版本复核](../docs/function/2026-11-11-复核.md)。目前没有云账号控制台操作权限；不要在聊天中发送密码、验证码或永久密钥。
 
 1. 先保存旧函数版本、配置和 URL。建议新建一个测试 Web 函数验证，验收后再接替旧服务。
-2. 查看控制台实际提供的**函数类型、运行环境和架构**。目标是 HTTP/Web 服务、Linux x86_64、Python 3.12，服务监听 `0.0.0.0:9000`。若可选择此环境，上传 `linux-py312.zip`，确认 ZIP 根目录结构以及 `scf_bootstrap` 启动方式；以控制台该类型的启动约定为准。
+2. 确认该地域、产品、架构的运行环境已正式商用。目标是 HTTP/Web 服务、Linux x86_64、Python 3.12，服务监听 `0.0.0.0:9000`。满足条件时上传 `linux-py312.zip`，确认 ZIP 根目录结构以及 `scf_bootstrap`/`python3.12 app.py` 启动方式；以控制台该类型的启动约定为准。
 3. 若只提供旧 Python 模板，**不要把新代码粘回旧模板的 app.py**。保留旧函数，选择支持 Python 3.12 的容器或其他 HTTP 服务环境；仓库提供 `backend/Dockerfile`，在仓库根目录执行 `docker build -f backend/Dockerfile -t inex-api .`。腾讯云的可选运行环境、镜像权限和启动入口须根据实际控制台确认后选定。
 4. 设置上表环境变量。开放 HTTPS 公网 GET/HEAD/OPTIONS 访问；保持平台层与代码层的 CORS 设置一致，避免额外添加 `*` 或重定向。不要开放调试模式。
 5. 先确认 `/healthz`、`/api/v1/products`、`/api/v1/site-content` 返回 JSON，并查看 `meta.version` 与包中一致；启动日志不得有缺依赖或架构错误。
@@ -88,7 +90,7 @@ node scripts/backend-task.mjs smoke URL --version 版本
 7. 云端检查通过后，把 `config/public.json` 中 `apiBase` 换为正式地址、`source` 换为 `api`，运行 `npm run sync` 和所有检查，再提交发布网页。Cloudflare 的 `_headers` 会同步加入准确的接口及图片来源；GitHub Pages 不应用该文件。
 8. 从公网网页打开首页、产品详情、关于和联系页，电脑/手机检查图片、咨询入口和二维码；等待缓存最多约 60 秒再核对版本。线上验收记录必须写实际结果，不能用本地结果代替。
 
-平台的 Python 3.12 支持及腾讯云部署尚需实际账号确认；当前没有假定旧模板能直接升级。参考腾讯云控制台的 Web 函数创建文档：<https://cloud.tencent.com/document/product/583/56124>。
+腾讯云托管运行环境“3.11/3.12/3.13 全部公测”目前仅收到同学反馈，尚未取得对应地域、产品和架构的官方状态证明。当前长期方案使用正式服务器自行提供 Python 容器，无须等待这些托管运行时。云函数创建参考：<https://cloud.tencent.com/document/product/583/56124>。
 
 ## 费用、运维与回退
 

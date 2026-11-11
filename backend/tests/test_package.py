@@ -29,6 +29,8 @@ class PackageTests(unittest.TestCase):
                 self.assertFalse(path.endswith((".pyc", ".env")))
             self.assertEqual(z.getinfo("scf_bootstrap").external_attr >> 16 & 0o777, 0o755)
             self.assertNotIn(b"\r", z.read("scf_bootstrap"))
+            self.assertIn("app.py", z.namelist())
+            self.assertIn(b"exec python3.12 app.py", z.read("scf_bootstrap"))
             self.assertNotIn("site/index.html", z.namelist())
             with tempfile.TemporaryDirectory() as tmp:
                 z.extractall(tmp)
@@ -39,6 +41,9 @@ class PackageTests(unittest.TestCase):
                         "assert r.status_code==200; assert r.json['meta']['version']=='" + snapshot["version"] + "'")
                 result = subprocess.run([sys.executable, "-I", "-c", code], cwd=tmp, capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
+                entry = subprocess.run([sys.executable, "app.py", "--help"], cwd=tmp, capture_output=True, text=True)
+                self.assertEqual(entry.returncode, 0, entry.stderr)
+                self.assertIn("--host", entry.stdout)
 
 
 if __name__ == "__main__":
