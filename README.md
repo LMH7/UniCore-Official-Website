@@ -48,6 +48,7 @@ npm run dev
 | `site/assets/js/app.js` | 栏目呈现、产品筛选、联系卡片 |
 | `site/assets/js/product-detail.js` | 产品详情与相关平台 |
 | `site/assets/js/interactions.js` | 搜索、弹窗、对比、分享与动效 |
+| `site/assets/js/page-transitions.js` | 跨页淡化与内嵌预览兼容；在首次绘制前执行 |
 | `site/assets/css/custom.css` | 基础排版与响应式布局 |
 | `site/assets/css/enhancements.css` | iNEX 视觉与交互样式 |
 | `site/assets/images/` | 自有产品图、Logo、二维码与插画 |
@@ -64,6 +65,10 @@ git pull --ff-only
 ```
 
 完成后检查实际页面与差异，再执行：
+
+修改 `layout.js` 的公共导航或 `site-content.js` 的品牌信息后，先运行 `npm run sync:nav`，将导航同步到各页 HTML，保证首次显示完整；`npm run check` 会检查同步状态。不要手动编辑各页生成的导航。
+
+修改 `site-content.js` 的 `solutions` 或 `app.js` 的方案模板后，运行 `npm run sync:solutions`。方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动；`npm run check` 同样检查方案同步状态。
 
 ```sh
 npm run check
