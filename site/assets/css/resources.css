@@ -1,0 +1,157 @@
+/* E 模块：资源页专用样式。支持路径、按平台查找与待补充资料清单。 */
+.support-paths {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 46px;
+}
+.support-path {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fbff;
+  color: var(--ink);
+  transition:
+    transform 0.2s var(--ease),
+    border-color 0.2s,
+    background 0.2s;
+}
+.support-path:hover {
+  border-color: #9dc1f6;
+  background: #f2f8ff;
+  color: var(--ink);
+  transform: translateY(-3px);
+}
+.support-path > span:first-child {
+  color: var(--blue);
+  font: 600 11px/1.4 monospace;
+  letter-spacing: 0.08em;
+}
+.support-path h2 {
+  margin: 0;
+  font-size: 19px;
+}
+.support-path p {
+  margin: 0;
+  font-size: 12px;
+}
+.support-path .text-link {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 11px;
+}
+.platform-resource-section,
+.resource-update-section {
+  margin-top: 48px;
+}
+.platform-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.platform-resource {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+  transition:
+    transform 0.2s var(--ease),
+    border-color 0.2s;
+}
+.platform-resource:hover {
+  border-color: #9dc1f6;
+  color: var(--ink);
+  transform: translateY(-3px);
+}
+.platform-resource strong {
+  font-size: 18px;
+}
+.platform-resource-more {
+  color: var(--blue);
+  font-size: 11px;
+}
+.platform-resource .pending-badge {
+  align-self: flex-start;
+}
+.resource-update-list {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+.resource-update-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.resource-update-row:last-child {
+  border-bottom: 0;
+}
+.resource-update-row strong {
+  display: block;
+  font-size: 13px;
+}
+.resource-update-row p {
+  margin: 2px 0 0;
+  font-size: 11px;
+}
+.resource-pending-note {
+  margin-top: 12px;
+  color: #7b8ba0;
+  font-size: 11px;
+}
+.resource-pending-note a {
+  color: var(--blue);
+}
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px dashed #b9cde6;
+  border-radius: 999px;
+  color: #6b7f97;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.pending-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9fb4cc;
+}
+@media (max-width: 991px) {
+  .support-paths,
+  .platform-resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .support-paths,
+  .platform-resource-grid {
+    grid-template-columns: 1fr;
+  }
+  .support-paths {
+    margin-bottom: 36px;
+  }
+  .platform-resource-section,
+  .resource-update-section {
+    margin-top: 36px;
+  }
+  .resource-update-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
