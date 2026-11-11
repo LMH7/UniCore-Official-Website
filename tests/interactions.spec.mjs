@@ -197,12 +197,9 @@ test("静态模式不发起后端请求", async ({ page }) => {
 });
 
 async function apiMode(page, timeout = 500) {
-  await page.route("**/data-service.js", async (route) => {
+  await page.route("**/data-config.js", async (route) => {
     const response = await route.fetch();
-    const body = (await response.text()).replace(
-      /source:\s*"local",\s*apiBase:\s*"",\s*timeoutMs:\s*5000/,
-      `source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}`,
-    );
+    const body = `window.DATA_CONFIG = Object.freeze({source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}});`;
     await route.fulfill({ response, body });
   });
 }

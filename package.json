@@ -9,9 +9,15 @@
     "start": "node scripts/serve.mjs",
     "sync:nav": "node scripts/sync-navigation.mjs",
     "sync:solutions": "node scripts/sync-solutions.mjs",
-    "check": "node scripts/sync-navigation.mjs --check && node scripts/sync-solutions.mjs --check && node scripts/check.mjs",
+    "check": "node scripts/sync-content.mjs --check && node scripts/sync-navigation.mjs --check && node scripts/sync-solutions.mjs --check && node scripts/check.mjs",
     "package": "node scripts/package.mjs",
-    "test": "playwright test"
+    "test": "playwright test",
+    "sync:content": "node scripts/sync-content.mjs",
+    "sync": "npm run sync:content && npm run sync:nav && npm run sync:solutions",
+    "test:backend": "node scripts/backend-task.mjs test",
+    "dev:backend": "node scripts/backend-task.mjs preview",
+    "test:integration": "playwright test --config playwright.backend.config.mjs",
+    "package:backend": "node scripts/backend-task.mjs package"
   },
   "engines": {
     "node": ">=20"

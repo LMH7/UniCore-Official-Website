@@ -151,8 +151,8 @@ test("联系方式填写后可显示、点击和复制，并可安全处理文�
     await route.fulfill({
       response,
       body: (await response.text()).replace(
-        'email: ""',
-        'email: "research@example.com"',
+        '"email": ""',
+        '"email": "research@example.com"',
       ),
     });
   });

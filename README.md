@@ -1,11 +1,12 @@
 # iNEX 联核智域官网
 
-自主空中机器人展示网站，已完成整个前端的品牌、栏目与浏览交互。当前使用静态内容，后端尚未开发。
+自主空中机器人展示网站，包含完整网页与可部署的只读内容后端。当前公网网页使用静态内容；新版后端已实现，本地可直接联调，云端升级须另行部署验收。
 
 - [在线预览](https://lmh7.github.io/UniCore-Official-Website/)
 - [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
 - [内容维护说明](CONTENT_GUIDE.md)
-- [后端接入方案](BACKEND_PLAN.md)
+- [后端运行和部署](backend/README.md)
+- [后端实施结果](BACKEND_PLAN.md)
 - [检查记录](ACCEPTANCE.md)
 
 ## 本次前端能力
@@ -21,11 +22,13 @@
 - FAQ 展开、方案快捷导航、回到顶部、滚动进度。
 - 卡片、按钮、图片与导航 hover 反馈，轻量进入动效、鼠标轨迹反馈。
 - 键盘操作、弹窗焦点管理、Escape 关闭、减少动态效果设置。
-- 本地静态运行与 GitHub Pages 自动发布；未来 API 接入点、出错/超时回退。
+- 本地静态运行与 GitHub Pages 自动发布；真实 API 读取、出错/超时/版本不一致回退。
 
 功能适用于当前的展示官网。现阶段没有后台登录、在线表单收信、数据库或支付服务，页面不会模拟这些功能的成功结果。
 
 ## 本地打开
+
+**看本次修复后的真实后端：双击 `启动后端预览.cmd`，打开 <http://127.0.0.1:9000/>。** 网页和 API 同时运行，关于页含实验室介绍。当前电脑已安装后端依赖；换电脑的安装方法见 [backend/README.md](backend/README.md)。端口占用先关闭原来的预览窗口，不在旧 4174 页面反复刷新。
 
 双击 `启动预览.cmd`，浏览器打开 http://127.0.0.1:4173 。需要 Node.js 20 或以上；当前电脑已安装。保持预览窗口打开。
 
@@ -41,9 +44,12 @@ npm run dev
 
 | 文件 | 用途 |
 | --- | --- |
-| `site/assets/js/products.js` | 产品记录；首页、列表、详情、搜索与对比共用 |
-| `site/assets/js/site-content.js` | 团队、方案、资源、微信/LinkedIn、FAQ |
-| `site/assets/js/data-service.js` | 本地与未来 API 数据源切换；目前为 local |
+| `content/products.json` | 产品内容源；首页、列表、详情、搜索与对比共用 |
+| `content/site-content.json` | 团队、方案、资源、微信/LinkedIn、FAQ 的内容源 |
+| `config/public.json` | 正式网页数据源、接口与图片地址配置；目前 local |
+| `site/assets/js/products.js`、`site-content.js`、`data-config.js` | 自动生成的网页副本，不直接编辑 |
+| `site/assets/js/data-service.js`、`content-contract.js` | API 读取、内容检查与整体回退 |
+| `backend/` | 后端、锁定依赖、快照、测试和云部署说明 |
 | `site/assets/js/layout.js` | 公共导航、品牌、页脚与转义工具 |
 | `site/assets/js/app.js` | 栏目呈现、产品筛选、联系卡片 |
 | `site/assets/js/product-detail.js` | 产品详情与相关平台 |
@@ -66,12 +72,15 @@ git pull --ff-only
 
 完成后检查实际页面与差异，再执行：
 
-修改 `layout.js` 的公共导航或 `site-content.js` 的品牌信息后，先运行 `npm run sync:nav`，将导航同步到各页 HTML，保证首次显示完整；`npm run check` 会检查同步状态。不要手动编辑各页生成的导航。
+修改 `content/` 内容、`config/public.json` 配置、公共导航或方案模板后，先运行 `npm run sync`，同步网页、后端、接口示例和网络配置；`npm run check` 会检查同步状态。不要手动编辑生成文件和各页的生成导航。
 
-修改 `site-content.js` 的 `solutions` 或 `app.js` 的方案模板后，运行 `npm run sync:solutions`。方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动；`npm run check` 同样检查方案同步状态。
+方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动。
 
 ```sh
 npm run check
+npm run test:backend
+npm test
+npm run test:integration
 git add .
 git commit -m "说明本次修改"
 git push
@@ -97,6 +106,8 @@ npm run package
 ```
 
 `release/` 中会得到可解压的通用网站包；仅含 `site/` 的公开内容。GitHub Pages 由工作流自动准备子目录错误页，无需手动上传 ZIP。发布、迁移与回退见 [DEPLOY.md](DEPLOY.md)。
+
+后端部署包使用 `npm run package:backend`，带 Linux Python 3.12 依赖的包使用 `npm run package:backend -- --linux`。上传前先确认云端运行环境，详见 [backend/README.md](backend/README.md)。
 
 ## 后续内容
 

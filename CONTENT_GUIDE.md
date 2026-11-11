@@ -1,10 +1,10 @@
 # 内容维护说明
 
-开始前 `git pull --ff-only`，本地用 `npm run dev` 预览。全站内容按下面的文件位置统一维护。
+开始前 `git pull --ff-only`，本地用 `npm run dev:backend` 联调预览，或 `npm run dev` 静态预览。全站内容按下面的文件位置统一维护。修改内容后运行 `npm run sync`，不要直接改标有 Generated 的文件。
 
 ## 改产品与换图
 
-打开 `site/assets/js/products.js`。`summary` 是一句话介绍，`description` 是详情。首页、列表、详情、搜索、筛选与对比都从这里读取，通常只改一次。
+打开 `content/products.json`。`summary` 是一句话介绍，`description` 是详情。首页、列表、详情、搜索、筛选与对比共用这份源内容；`npm run sync` 会同时生成网页副本与后端快照。
 
 - `id` 必须唯一，只用小写英文、数字和短横线。上线后尽量不改，避免旧分享链接失效。
 - `image` 使用 `assets/images/文件名.webp`，`imageAlt` 用简短文字说明图片。
@@ -23,7 +23,7 @@
 
 ## 改团队、方案、资源与 FAQ
 
-`site/assets/js/site-content.js` 集中保存：
+`content/site-content.json` 集中保存：
 
 - `name` / `shortName` / `brand` / `logo`：团队名称、简称、iNEX 与 Logo 路径。
 - `intro`：首页与关于页共用简介。
@@ -31,7 +31,7 @@
 - `resources`：公开资源与全站搜索内容。
 - `faqs`：资源和联系页的常见问题；每条包含 `question`、`answer`。
 
-修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync:solutions`，将同一份模板生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
+修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync`，将同一份内容生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
 
 独立页面标题和页面引导文字在相应 HTML 中；品牌改名还要检查 `<title>`、description、Open Graph 文案，以及 `product-detail.js` 的动态标题。公司主体与资质不要从 Logo 推断，应以负责人确认的对外表述为准。
 
@@ -58,7 +58,7 @@
 
 基础布局在 `custom.css`，iNEX 品牌、hover、对比、二维码和动效在 `enhancements.css`。公共导航和页脚在 `layout.js`；全站搜索、弹窗、对比和分享在 `interactions.js`。不要修改第三方 `vendor` 文件。
 
-公共导航由 `layout.js` 统一生成并预置在各页 HTML 中。修改导航或 `site-content.js` 中的品牌名称、Logo 后运行 `npm run sync:nav`，再运行 `npm run check`；不要直接编辑各页的导航 HTML。
+公共导航由 `layout.js` 统一生成并预置在各页 HTML 中。修改导航或 `content/site-content.json` 中的品牌名称、Logo 后运行 `npm run sync`，再运行 `npm run check`；不要直接编辑各页的导航 HTML。
 
 页面转场由 `page-transitions.js` 与 `enhancements.css` 管理：支持的浏览器交叠淡化前后页面，内嵌预览使用正文淡出、淡入，导航保持显示。该脚本在各页 head 中同步执行，避免内容先显示再隐藏。减少动态效果时关闭转场，站内锚点、外链、下载与新标签页操作保留浏览器行为。
 
@@ -68,11 +68,13 @@
 
 ## 后端准备
 
-`data-service.js` 目前配置 `source:"local"`，不会发起后端请求。需要接入时先阅读 `BACKEND_PLAN.md`，实现并测试真实 API 后再切换，不要把示例域名直接投入使用。JSON 示例用于接口对照，不是第二份实时内容源；更新内容后如需交接后端，要同步示例。
+后端已实现，操作见 `backend/README.md`。正式配置在 `config/public.json`，目前 `source:"local"`；9000 联调预览会自动读取本机真实后端。云端验收后再将正式配置切为 `api` 并重新生成发布。
+
+运行 `npm run sync` 自动更新接口示例、网页副本及后端快照。更新后端内容需重新打包发布；已启动进程不会热更新。发布图片和网页时使用同一提交，特别是撤下内容时同时更新回退副本。API 故障会显示“最新内容暂时无法获取，当前展示已保存的版本。”，访客仍可浏览。
 
 ## 发布前检查
 
-1. `npm run check` 通过。
+1. `npm run sync` 后，`npm run check`、`npm run test:backend`、`npm test`、`npm run test:integration` 通过。
 2. 手机和电脑打开关键页面，检查产品图、筛选、二维码、链接与新增文字。
 3. 产品详情打开和刷新，点击咨询后型号正确。
 4. 新资源链接实际可访问；新产品参数与素材已获准公开。

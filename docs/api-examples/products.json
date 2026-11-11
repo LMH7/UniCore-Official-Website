@@ -81,5 +81,9 @@
       "resources": [],
       "status": "platform"
     }
-  ]
+  ],
+  "meta": {
+    "version": "d858ad922405d8d9",
+    "apiVersion": "v1"
+  }
 }
