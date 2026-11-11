@@ -38,7 +38,7 @@ npm run package
 
 `release/unicore-site-时间戳.zip` 的根目录就是网站文件。这个通用包适合网站根路径托管，不应直接用于 GitHub Pages 的手动子目录发布；GitHub Pages 请使用上面的工作流。
 
-解压后应当直接看见 `index.html`，不要多套一层 `site/`。原始会议材料与开发文件不应进入站点。部署包与本地截图已被 Git 忽略，需要分享时单独复制。
+解压后应当直接看见 `index.html`，不要多套一层 `site/`。`index.html` 是互动封面，原官网首页为 `home.html`，请同时保留两个文件及资源目录。修改封面结构后先运行 `npm run sync:cover`，再检查、打包。原始会议材料与开发文件不应进入站点。部署包与本地截图已被 Git 忽略，需要分享时单独复制。
 
 ## 迁移到 Cloudflare Pages（备用）
 
