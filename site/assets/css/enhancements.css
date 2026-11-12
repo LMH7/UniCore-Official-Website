@@ -657,8 +657,8 @@ a.project-image {
   bottom: 0;
   margin: auto 0;
   padding: 20px 14px 16px;
-  background: #f2f7ff;
-  border: 1px solid #e2edfb;
+  background: #ffffff;
+  border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: 0 10px 28px rgba(23, 62, 116, 0.06);
 }
@@ -682,14 +682,15 @@ a.project-image {
 .page-index nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 .page-index a {
   display: block;
   padding: 10px 12px;
   border-radius: 9px;
   font-size: 13.5px;
-  color: #5c7091;
+  font-weight: 500;
+  color: #5b6775;
   text-decoration: none;
   transition:
     color 0.2s,
@@ -697,14 +698,21 @@ a.project-image {
     box-shadow 0.2s;
 }
 .page-index a:hover {
-  background: #e4effe;
   color: var(--blue);
+  background: #f2f7ff;
 }
 .page-index a[aria-current="location"] {
-  background: #ffffff;
   color: var(--blue);
-  box-shadow: 0 4px 14px rgba(23, 62, 116, 0.1);
+  background: #edf5ff;
+  box-shadow: inset 3px 0 0 var(--blue);
   font-weight: 600;
+}
+.page-index .page-index-num {
+  color: #9aa7b5;
+}
+.page-index a:hover .page-index-num,
+.page-index a[aria-current="location"] .page-index-num {
+  color: var(--blue);
 }
 .about-partners > h2 {
   margin-bottom: 12px;
@@ -767,7 +775,7 @@ a.project-image {
   }
   .page-index a[aria-current="location"] {
     box-shadow: none;
-    background: #e4effe;
+    background: #edf5ff;
   }
   .about-partners > h2 {
     font-size: 28px;
