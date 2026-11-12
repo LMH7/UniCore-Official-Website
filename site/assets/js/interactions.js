@@ -342,17 +342,15 @@ window.INTERACTIONS_READY = (async () => {
         const vh = window.innerHeight;
         const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
         const footerTop = footer ? footer.getBoundingClientRect().top : Infinity;
-        // 顶端最低位置：深色横幅下方 16px，且不低于顶部导航（89px）+余量
+        // 可用垂直区间：[topMin, bottomLimit]，面板必须完整落在这个区间内，超出就内部滚动
         const topMin = Math.max(heroBottom + 16, 112);
-        // 面板高度优先适配“顶端在横幅下方”：超出部分在面板内部滚动，而不是把面板顶上横幅
-        const maxPanelH = Math.max(260, vh - topMin - 16);
+        const bottomLimit = Math.min(vh - 16, footerTop - 16);
+        const maxPanelH = Math.max(220, bottomLimit - topMin);
         indexEl.style.maxHeight = `${Math.round(maxPanelH)}px`;
         const panelH = indexEl.getBoundingClientRect().height;
         let top = vh / 2 + 96 - panelH / 2;
         top = Math.max(top, topMin);
-        top = Math.min(top, vh - panelH - 16);
-        if (top + panelH + 16 > footerTop)
-          top = Math.max(112, footerTop - panelH - 16);
+        top = Math.min(top, bottomLimit - panelH);
         indexEl.style.top = `${Math.round(top)}px`;
       };
       window.addEventListener("scroll", placeSidebar, { passive: true });
