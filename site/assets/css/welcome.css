@@ -24,6 +24,8 @@
 }
 * { box-sizing: border-box; }
 html { min-height: 100%; background: var(--cover-bg); }
+/* 天空封面无需主站的常驻滚动条占位；内容较长时仍可正常滚动。 */
+html[data-cover-theme] { scrollbar-gutter: auto; overflow-y: auto; }
 body {
   position: relative;
   display: flex;
@@ -249,7 +251,8 @@ h1 .cover-line:nth-child(2) { color: var(--cover-accent); }
   animation: cover-arrive 800ms 1020ms both;
   transition: color .2s, background .2s, border-color .2s;
 }
-.entry-arrow { font-size: 21px; line-height: 1; transition: transform .2s; }
+.cover-arrow { display: block; width: 100%; height: 100%; pointer-events: none; }
+.entry-arrow { display: inline-flex; flex: 0 0 auto; width: 21px; height: 21px; line-height: 1; transition: transform .2s; }
 .cover-entry:is(:hover, [data-cover-hover]) { background: #e8f8ff24; border-color: #fff; color: #fff; }
 .cover-entry:is(:hover, [data-cover-hover]) .entry-arrow { transform: translate(2px, -2px); }
 html[data-cover-entering] .cover-entry { cursor: progress; border-color: #d4eeff; }
@@ -330,7 +333,7 @@ body.is-returning .flight-launch-point { opacity: .9; }
   animation: cover-arrive 850ms 1200ms both;
 }
 .flight-instructions { display: flex; align-items: center; gap: 14px; }
-.instruction-icon { font-size: 25px; color: #cdeaff; }
+.instruction-icon { display: inline-flex; flex: 0 0 auto; width: 25px; height: 25px; color: #cdeaff; }
 .flight-instructions p { margin: 0; color: var(--cover-muted); font-size: 10px; line-height: 1.9; }
 .flight-instructions p span { color: var(--cover-dim); }
 .flight-controls { display: flex; align-items: center; gap: 17px; }
@@ -339,7 +342,7 @@ body.is-returning .flight-launch-point { opacity: .9; }
 body.is-following .status-light { background: #aff6de; box-shadow: 0 0 10px #b2ffe270; }
 .flight-toggle { display: inline-flex; justify-content: space-between; align-items: center; min-height: 44px; min-width: 116px; padding: 9px 13px; background: var(--cover-button-bg); border: 1px solid var(--cover-line); border-radius: 5px; font-size: 11px; }
 .flight-toggle:is(:hover, [data-cover-hover]) { background: #d2f0ff20; border-color: #d2f0ff80; }
-.flight-toggle > span:last-child { font-size: 17px; color: #c1efff; }
+.flight-toggle-icon { display: inline-flex; flex: 0 0 auto; width: 17px; height: 17px; color: #c1efff; }
 .flight-reset { min-height: 44px; padding: 8px; border: 0; background: none; color: var(--cover-dim); font-size: 11px; }
 .flight-reset:is(:hover, [data-cover-hover]) { color: #fff; }
 .cover-caption { margin: 0; color: var(--cover-muted); font-size: 9px; line-height: 1.9; text-align: right; }
@@ -398,7 +401,7 @@ body.is-following .status-light { background: #aff6de; box-shadow: 0 0 10px #b2f
   .cover-carousel-controls { margin-top: 16px; gap: 18px; }
   .carousel-toggle { font-size: 10px; }
   .cover-entry { min-width: 164px; min-height: 46px; margin-top: 23px; padding-block: 9px; font-size: 12px; gap: 29px; }
-  .entry-arrow { font-size: 19px; }
+  .entry-arrow { width: 19px; height: 19px; }
   .cover-disciplines { gap: 12px; margin-top: 20px; font-size: 8px; }
   .flight-origin { top: 51%; left: 85%; }
   .aircraft { width: 60px; padding: 3px; }
@@ -410,7 +413,7 @@ body.is-following .status-light { background: #aff6de; box-shadow: 0 0 10px #b2f
   .flight-launch-point > span { top: 52px; font-size: 9px; }
   .cover-footer { min-height: 0; padding-block: 18px 24px; gap: 17px; }
   .flight-instructions { gap: 11px; }
-  .instruction-icon { font-size: 22px; }
+  .instruction-icon { width: 22px; height: 22px; }
   .flight-instructions p { font-size: 9px; }
   .flight-controls { width: 100%; justify-content: space-between; gap: 14px; }
   .flight-toggle { margin-left: auto; min-width: 112px; }
