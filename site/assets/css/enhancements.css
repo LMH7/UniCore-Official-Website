@@ -655,7 +655,7 @@ a.project-image {
 }
 .page-index {
   position: fixed;
-  top: 50%;
+  top: calc(50% + 42px);
   left: auto;
   width: 216px;
   transform: translateY(-50%);
@@ -795,7 +795,8 @@ a.project-image {
   .about-partners > h2 {
     font-size: 28px;
   }
-  .page-index-card {
+  .page-index-card,
+  .page-index-card.page-index-brandviz {
     display: none;
   }
 }
@@ -866,26 +867,29 @@ a.project-image {
   color: var(--blue);
 }
 .page-index-card {
-  margin-top: 28px;
-  padding: 20px 16px 16px;
-  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding: 14px 12px 12px;
+  background: #0d1826;
+  border-radius: 12px;
 }
 .page-index-card.page-index-brandviz {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 22px 10px 10px;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 18px 10px 12px;
 }
 .page-index-brandviz .page-index-logo {
-  width: 132px;
+  width: 118px;
   height: auto;
 }
 .page-index-drones {
   position: relative;
   width: 100%;
   height: 118px;
-  margin-top: 8px;
-  color: var(--blue);
+  margin-top: 4px;
+  color: #7fa4d8;
 }
 .page-index-drone {
   --tilt: 0deg;
