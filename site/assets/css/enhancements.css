@@ -655,7 +655,7 @@ a.project-image {
 }
 .page-index {
   position: fixed;
-  top: calc(50% + 42px);
+  top: calc(50% + 56px);
   left: auto;
   width: 216px;
   transform: translateY(-50%);

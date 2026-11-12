@@ -332,6 +332,25 @@ window.INTERACTIONS_READY = (async () => {
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
+    // 避让页脚：滚到底部时侧边栏自动上移，避免遮挡页脚内容（仅 fixed 桌面端需要）
+    if (getComputedStyle(indexEl).position === "fixed") {
+      const footer = document.querySelector(".site-footer");
+      if (footer) {
+        const avoidFooter = () => {
+          const fr = footer.getBoundingClientRect();
+          const r = indexEl.getBoundingClientRect();
+          const gap = 16;
+          const shift =
+            fr.top < r.bottom + gap && fr.top > r.top
+              ? r.bottom + gap - fr.top
+              : 0;
+          indexEl.style.marginTop = shift ? `${-shift}px` : "";
+        };
+        window.addEventListener("scroll", avoidFooter, { passive: true });
+        window.addEventListener("resize", avoidFooter);
+        avoidFooter();
+      }
+    }
   });
   function initHeroWave() {
     const canvas = document.getElementById("hero-wave");
