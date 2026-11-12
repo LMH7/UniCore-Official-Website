@@ -233,3 +233,169 @@ test("图片与脚本使用本地资源，站点能在子目录下浏览", async
     expect(remote).toEqual([]);
   }
 });
+
+async function measureContentLayout(page) {
+  return page.evaluate(async () => {
+    await document.fonts.ready;
+    const measureContainer = (selector) => {
+      const element = document.querySelector(selector);
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const leftInset = parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth);
+      const rightInset = parseFloat(style.paddingRight) + parseFloat(style.borderRightWidth);
+      return {
+        left: rect.left,
+        width: rect.width,
+        contentLeft: rect.left + leftInset,
+        contentWidth: rect.width - leftInset - rightInset,
+      };
+    };
+    return {
+      hero: measureContainer("#main > .page-hero > .container"),
+      content: measureContainer("#main > .page-content > .container"),
+      titleLeft: document.querySelector(".page-hero h1").getBoundingClientRect().left,
+    };
+  });
+}
+
+function expectStandardContentLayout(actual, standard, label) {
+  for (const section of ["hero", "content"])
+    for (const metric of ["left", "width", "contentLeft", "contentWidth"])
+      expect(Math.abs(actual[section][metric] - standard[section][metric]), `${label} ${section} ${metric} 与标准栏目一致`).toBeLessThan(1);
+  expect(Math.abs(actual.titleLeft - standard.titleLeft), `${label} 大标题左边线与标准栏目一致`).toBeLessThan(1);
+}
+
+test("团队介绍与标准栏目对齐，正文随容器自然换行", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const readings = [];
+  for (const width of [390, 768, 1440, 1920, 2560]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/publications.html");
+    const standard = await measureContentLayout(page);
+    await page.goto("/about.html");
+    await page.locator(".about-page-intro").waitFor({ state: "visible" });
+    expectStandardContentLayout(await measureContentLayout(page), standard, `${width}px 关于我们`);
+    const reading = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const intro = document.querySelector(".about-page-intro");
+      const container = intro.parentElement;
+      const containerBox = container.getBoundingClientRect();
+      const containerStyle = getComputedStyle(container);
+      const insetLeft = parseFloat(containerStyle.paddingLeft) + parseFloat(containerStyle.borderLeftWidth);
+      const insetRight = parseFloat(containerStyle.paddingRight) + parseFloat(containerStyle.borderRightWidth);
+      const introBox = intro.getBoundingClientRect();
+      const paragraphs = [...intro.querySelectorAll(":scope > p")];
+      const range = document.createRange();
+      range.selectNodeContents(paragraphs[0]);
+      const lineTops = [...range.getClientRects()]
+        .filter((rect) => rect.width > .5 && rect.height > 0)
+        .map((rect) => Math.round(rect.top));
+      return {
+        containerWidth: containerBox.width - insetLeft - insetRight,
+        containerLeft: containerBox.left + insetLeft,
+        width: introBox.width,
+        left: introBox.left,
+        lineCount: new Set(lineTops).size,
+        paragraphWidths: paragraphs.map((p) => p.getBoundingClientRect().width),
+        paragraphsFit: paragraphs.every((p) => p.scrollWidth <= p.clientWidth + 1),
+        pageFits: document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+        styleVersions: [...document.querySelectorAll('link[rel="stylesheet"]')]
+          .map((link) => new URL(link.href))
+          .filter((url) => /\/(custom|enhancements)\.css$/.test(url.pathname))
+          .map((url) => url.searchParams.get("v")),
+      };
+    });
+    expect(Math.abs(reading.width - reading.containerWidth), `${width}px 介绍宽度`).toBeLessThan(1);
+    expect(Math.abs(reading.left - reading.containerLeft), `${width}px 介绍左对齐`).toBeLessThan(1);
+    for (const paragraphWidth of reading.paragraphWidths)
+      expect(Math.abs(paragraphWidth - reading.width), `${width}px 正文宽度`).toBeLessThan(1);
+    expect(reading.paragraphsFit, `${width}px 正文换行`).toBe(true);
+    expect(reading.pageFits, `${width}px 页面不溢出`).toBe(true);
+    expect(reading.styleVersions).toHaveLength(2);
+    expect(reading.styleVersions.every(Boolean), "关键样式有版本标记以避开旧缓存").toBe(true);
+    readings.push(reading);
+  }
+  expect(readings[1].width).toBeGreaterThan(readings[0].width);
+  expect(readings[2].width).toBeGreaterThan(readings[1].width);
+  // 只比较相对行数，不把测试绑定到某台设备的中文字体度量。
+  expect(readings[0].lineCount).toBeGreaterThan(readings[2].lineCount);
+});
+
+for (const width of [390, 768, 1440, 1920, 2560]) {
+  test(`重点项目在 ${width}px 保持横向关键词与对齐图片`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/publications.html");
+    const standard = await measureContentLayout(page);
+    await page.goto("/projects.html");
+    await page.locator(".project-entry").first().waitFor({ state: "visible" });
+    expectStandardContentLayout(await measureContentLayout(page), standard, `${width}px 重点项目`);
+    const layout = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const box = (element) => {
+        const rect = element.getBoundingClientRect();
+        return { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right, width: rect.width, height: rect.height };
+      };
+      const container = document.querySelector(".page-content > .container");
+      const containerStyle = getComputedStyle(container);
+      const contentWidth = container.getBoundingClientRect().width
+        - parseFloat(containerStyle.paddingLeft) - parseFloat(containerStyle.paddingRight);
+      return {
+        pageFits: document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+        contentWidth,
+        copyWidths: [...document.querySelectorAll(".project-copy, .project-copy > p")].map((element) => element.getBoundingClientRect().width),
+        styleVersions: [...document.querySelectorAll('link[rel="stylesheet"]')]
+          .map((link) => new URL(link.href))
+          .filter((url) => /\/(custom|enhancements)\.css$/.test(url.pathname))
+          .map((url) => url.searchParams.get("v")),
+        topics: [...document.querySelectorAll(".project-topics")].map((list) => ({
+          marker: getComputedStyle(list).listStyleType,
+          bounds: box(list),
+          tags: [...list.children].map(box),
+        })),
+        galleries: [...document.querySelectorAll(".project-gallery:not(.project-gallery-single)")].map((gallery) => ({
+          bounds: box(gallery),
+          frames: [...gallery.querySelectorAll(".project-image")].map(box),
+          images: [...gallery.querySelectorAll(".project-image img")].map(box),
+        })),
+      };
+    });
+    expect(layout.pageFits).toBe(true);
+    for (const copyWidth of layout.copyWidths) {
+      expect(Math.abs(copyWidth - layout.contentWidth), `${width}px 项目正文跟随容器`).toBeLessThan(1);
+    }
+    expect(layout.styleVersions).toHaveLength(2);
+    expect(layout.styleVersions.every(Boolean), "关键样式有版本标记以避开旧缓存").toBe(true);
+    expect(layout.topics).toHaveLength(4);
+    for (const topic of layout.topics) {
+      expect(topic.marker).toBe("none");
+      expect(topic.tags).toHaveLength(3);
+      expect(Math.abs(topic.tags[0].top - topic.tags[1].top)).toBeLessThan(1);
+      expect(topic.tags[1].left).toBeGreaterThanOrEqual(topic.tags[0].right);
+      for (const tag of topic.tags) {
+        expect(tag.left).toBeGreaterThanOrEqual(topic.bounds.left - 1);
+        expect(tag.right).toBeLessThanOrEqual(topic.bounds.right + 1);
+      }
+    }
+    expect(layout.galleries).toHaveLength(2);
+    for (const gallery of layout.galleries) {
+      expect(gallery.frames).toHaveLength(2);
+      const [first, second] = gallery.frames;
+      expect(Math.abs(first.width - second.width)).toBeLessThan(1);
+      expect(Math.abs(first.height - second.height)).toBeLessThan(1);
+      if (width >= 768) {
+        expect(Math.abs(first.top - second.top)).toBeLessThan(1);
+        expect(second.left).toBeGreaterThanOrEqual(first.right);
+      } else {
+        expect(Math.abs(first.left - second.left)).toBeLessThan(1);
+        expect(second.top).toBeGreaterThan(first.bottom);
+      }
+      for (const [index, image] of gallery.images.entries()) {
+        const frame = gallery.frames[index];
+        expect(Math.abs(image.width - frame.width)).toBeLessThan(1);
+        expect(Math.abs(image.height - frame.height)).toBeLessThan(1);
+        expect(frame.right).toBeLessThanOrEqual(gallery.bounds.right + 1);
+      }
+    }
+  });
+}
