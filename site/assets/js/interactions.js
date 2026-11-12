@@ -336,15 +336,20 @@ window.INTERACTIONS_READY = (async () => {
       const footer = document.querySelector(".site-footer");
       const heroEl = document.querySelector(".page-hero");
       const placeSidebar = () => {
-        // 复位内联 top/transform 后测量基准高度，避免使用已偏移的位置
+        // 复位内联 top/transform 后测量，避免使用已偏移的位置
         indexEl.style.top = "";
         indexEl.style.transform = "none";
-        const panelH = indexEl.getBoundingClientRect().height;
         const vh = window.innerHeight;
         const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
         const footerTop = footer ? footer.getBoundingClientRect().top : Infinity;
+        // 顶端最低位置：深色横幅下方 16px，且不低于顶部导航（89px）+余量
+        const topMin = Math.max(heroBottom + 16, 112);
+        // 面板高度优先适配“顶端在横幅下方”：超出部分在面板内部滚动，而不是把面板顶上横幅
+        const maxPanelH = Math.max(260, vh - topMin - 16);
+        indexEl.style.maxHeight = `${Math.round(maxPanelH)}px`;
+        const panelH = indexEl.getBoundingClientRect().height;
         let top = vh / 2 + 96 - panelH / 2;
-        top = Math.max(top, heroBottom + 16, 112);
+        top = Math.max(top, topMin);
         top = Math.min(top, vh - panelH - 16);
         if (top + panelH + 16 > footerTop)
           top = Math.max(112, footerTop - panelH - 16);
