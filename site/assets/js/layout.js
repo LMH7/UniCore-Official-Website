@@ -60,7 +60,7 @@ window.LAYOUT_READY = (async () => {
   const data = SITE_CONTENT;
   const page = document.body.dataset.page;
   const nav = [
-    ["home", "index.html", "首页"],
+    ["home", "home.html", "首页"],
     ["products", "products.html", "产品中心"],
     ["solutions", "solutions.html", "解决方案"],
     ["resources", "resources.html", "资源与支持"],
@@ -71,7 +71,7 @@ window.LAYOUT_READY = (async () => {
   const brand = `<img class="brand-logo" src="${UI.url(data.logo)}" alt="${e(data.brand)} 联核智域" width="260" height="70"><span class="brand-caption">联核智域<span>INTELLIGENCE IN FLIGHT</span></span>`;
   const header = document.getElementById("site-header");
   const headerMarkup =
-    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="index.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => `<li class="nav-item"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul><button class="icon-button nav-search" type="button" data-open-search aria-label="搜索全站">${icon("search", 19)}</button><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav><div class="reading-progress" aria-hidden="true"></div>`;
+    `<nav class="navbar navbar-expand-lg" aria-label="主导航"><div class="container"><a class="navbar-brand brand" href="home.html" aria-label="${e(data.name)}首页">${brand}</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="展开导航菜单"><span class="menu-bars"></span></button><div class="collapse navbar-collapse" id="main-navigation"><ul class="navbar-nav ms-auto">${nav.map(([id, href, label]) => `<li class="nav-item"><a class="nav-link ${page === id || (page === "product" && id === "products") ? "active" : ""}" href="${href}" ${page === id || (page === "product" && id === "products") ? 'aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul><button class="icon-button nav-search" type="button" data-open-search aria-label="搜索全站">${icon("search", 19)}</button><a class="btn btn-nav ${page === "contact" ? "active" : ""}" href="contact.html" ${page === "contact" ? 'aria-current="page"' : ""}>联系我们 ${icon("diagonal", 15)}</a></div></div></nav><div class="reading-progress" aria-hidden="true"></div>`;
   // Keep the prerendered navigation intact when its template and data match.
   let headerHash = 0x811c9dc5;
   for (let i = 0; i < headerMarkup.length; i++) {
@@ -87,7 +87,7 @@ window.LAYOUT_READY = (async () => {
     window.restoreNavigationState?.();
   }
   document.getElementById("site-footer").innerHTML =
-    `<div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="index.html">${brand}</a><p>${e(data.tagline)}<br>让每一个研究想法，都有起飞的可能。</p><div class="footer-socials">${data.contacts.some((c) => c.id === "wechat") ? `<button class="icon-button" type="button" data-contact-qr="wechat" aria-label="查看微信二维码">${icon("wechat", 20)}</button>` : ""}${data.contacts
+    `<div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="home.html">${brand}</a><p>${e(data.tagline)}<br>让每一个研究想法，都有起飞的可能。</p><div class="footer-socials">${data.contacts.some((c) => c.id === "wechat") ? `<button class="icon-button" type="button" data-contact-qr="wechat" aria-label="查看微信二维码">${icon("wechat", 20)}</button>` : ""}${data.contacts
       .filter((c) => c.url && UI.url(c.url))
       .map(
         (c) =>

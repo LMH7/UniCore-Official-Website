@@ -37,6 +37,8 @@ npm run dev
 
 预览无需先安装依赖。端口被占用时用 `npm run dev -- --port 4174`。直接双击 `site/index.html` 可查看基础页面，但推荐使用预览服务检查复制、分享、错误页等行为。
 
+默认打开 `http://127.0.0.1:4173/` 会先显示互动封面，按住右上角按钮约 1.5 秒可切换蓝天与真实夜空，提前松开会恢复；目标背景从按钮所在角落向外展开，边缘带柔光。左侧文案约每 7 秒逐行轮换，也可暂停或手动选择；进入时背景、文字与按钮依次入场。单色小飞机随昼夜变色，在出发点显示脉动圆圈与点击提示；点击飞机或空白处开启跟随，再次点击暂停，重置时平滑飞回出发点。“进入首页”先自动切换到夜间，再淡化跳转到 `home.html`。`welcome.html` 保留为同一封面的预览地址，站内“首页”直接返回 `home.html`。
+
 ## 文件位置
 
 | 文件 | 用途 |
@@ -49,6 +51,9 @@ npm run dev
 | `site/assets/js/product-detail.js` | 产品详情与相关平台 |
 | `site/assets/js/interactions.js` | 搜索、弹窗、对比、分享与动效 |
 | `site/assets/js/page-transitions.js` | 跨页淡化与内嵌预览兼容；在首次绘制前执行 |
+| `site/assets/css/page-transitions.css` | 封面与主站共用的页面淡化样式 |
+| `site/welcome.html` | 互动封面模板；修改后运行 `npm run sync:cover` 同步默认入口 |
+| `site/home.html` | 原有官网首页；产品、方案和团队内容 |
 | `site/assets/css/custom.css` | 基础排版与响应式布局 |
 | `site/assets/css/enhancements.css` | iNEX 视觉与交互样式 |
 | `site/assets/images/` | 自有产品图、Logo、二维码与插画 |
@@ -69,6 +74,8 @@ git pull --ff-only
 修改 `layout.js` 的公共导航或 `site-content.js` 的品牌信息后，先运行 `npm run sync:nav`，将导航同步到各页 HTML，保证首次显示完整；`npm run check` 会检查同步状态。不要手动编辑各页生成的导航。
 
 修改 `site-content.js` 的 `solutions` 或 `app.js` 的方案模板后，运行 `npm run sync:solutions`。方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动；`npm run check` 同样检查方案同步状态。
+
+修改 `welcome.html` 的封面结构后运行 `npm run sync:cover`，将封面同步到默认入口 `index.html`；不要分别维护两份 HTML。轮播文案集中在 `welcome.js` 的 `slides` 中。`npm run check` 会检查默认入口是否同步。
 
 ```sh
 npm run check
