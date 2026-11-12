@@ -305,38 +305,39 @@ window.INTERACTIONS_READY = (async () => {
       .map((a) => document.getElementById(a.hash.slice(1)))
       .filter(Boolean);
     if (!links.length || !targets.length) return;
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (entry.isIntersecting)
-            links.forEach((a) => {
-              if (a.hash === "#" + entry.target.id)
-                a.setAttribute("aria-current", "location");
-              else a.removeAttribute("aria-current");
-            });
-        }),
-      { rootMargin: "-110px 0px -55% 0px", threshold: 0 },
-    );
-    targets.forEach((t) => observer.observe(t));
-    // 接近页底时点亮最后一个条目：末尾板块可能进不到监听判定区域
-    const lastLink = links[links.length - 1];
-    const onScroll = () => {
+    const setCurrent = (target) =>
+      links.forEach((a) => {
+        if (target && a.hash === "#" + target.id)
+          a.setAttribute("aria-current", "location");
+        else a.removeAttribute("aria-current");
+      });
+    // 基于滚动位置计算当前板块：避免 IntersectionObserver 事件式高亮在回滚时卡住
+    const updateCurrent = () => {
       const nearBottom =
         window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 4;
-      if (nearBottom)
-        links.forEach((a) => {
-          if (a === lastLink) a.setAttribute("aria-current", "location");
-          else a.removeAttribute("aria-current");
-        });
+      if (nearBottom) {
+        setCurrent(targets[targets.length - 1]);
+        return;
+      }
+      const line = 168;
+      let current = targets[0];
+      for (const t of targets) {
+        if (t.getBoundingClientRect().top <= line) current = t;
+        else break;
+      }
+      setCurrent(current);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    window.addEventListener("scroll", updateCurrent, { passive: true });
+    window.addEventListener("resize", updateCurrent);
+    updateCurrent();
     // 避让页脚：滚到底部时侧边栏自动上移，避免遮挡页脚内容（仅 fixed 桌面端需要）
     if (getComputedStyle(indexEl).position === "fixed") {
       const footer = document.querySelector(".site-footer");
       if (footer) {
         const avoidFooter = () => {
+          // 先归零再测量基准位置，避免偏移量被自身测量吃掉导致振荡
+          indexEl.style.marginTop = "";
           const fr = footer.getBoundingClientRect();
           const r = indexEl.getBoundingClientRect();
           const gap = 16;
