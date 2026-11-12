@@ -658,6 +658,8 @@ a.project-image {
   top: calc(50% + 56px);
   left: auto;
   width: 216px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
   transform: translateY(-50%);
   padding: 20px 14px 16px;
   background: #ffffff;
@@ -761,6 +763,8 @@ a.project-image {
     position: sticky;
     top: 78px;
     width: auto;
+    max-height: none;
+    overflow: visible;
     transform: none;
     margin: 0 0 28px;
     z-index: 15;
