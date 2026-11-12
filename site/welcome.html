@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN" data-cover-theme="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#79b6df" />
+    <meta name="description" content="iNEX 联核智域互动飞行封面。点击小飞机，开启一段由你指引的飞行，再进入官网探索更多。" />
+    <meta name="robots" content="noindex,follow" />
+    <title>让想法，自由飞行 · iNEX 互动封面</title>
+    <script>
+      try {
+        if (sessionStorage.getItem("inex-cover-theme:v1") === "night") {
+          document.documentElement.dataset.coverTheme = "night";
+          document.querySelector('meta[name="theme-color"]').content = "#06111f";
+        }
+      } catch (_) {}
+    </script>
+    <link rel="icon" href="assets/images/favicon.png" type="image/png" />
+    <link rel="preload" as="image" href="assets/images/cover-sky-day.png" />
+    <link rel="preload" as="image" href="assets/images/cover-sky-night-realistic.png" />
+    <link rel="stylesheet" href="assets/css/page-transitions.css" />
+    <link rel="stylesheet" href="assets/css/welcome.css" />
+    <script src="assets/js/page-transitions.js"></script>
+    <script src="assets/js/cover-palette.js" defer></script>
+    <script src="assets/js/welcome.js" defer></script>
+  </head>
+  <body data-page="welcome" data-layout="standalone">
+    <a class="cover-skip" href="#main">跳到封面内容</a>
+    <div class="cover-skies" aria-hidden="true">
+      <div class="cover-sky cover-sky-base" id="cover-sky-base"></div>
+      <img id="cover-sky-day-image" src="assets/images/cover-sky-day.png" alt="" hidden decoding="async" />
+      <img id="cover-sky-night-image" src="assets/images/cover-sky-night-realistic.png" alt="" hidden decoding="async" />
+    </div>
+    <div class="cover-sky cover-sky-reveal" id="cover-sky-reveal" data-sky="night" aria-hidden="true" inert></div>
+      <svg class="cover-theme-boundary" id="cover-theme-boundary" aria-hidden="true">
+        <defs>
+          <linearGradient id="cover-wipe-spectrum" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#a5ecff" />
+            <stop offset=".5" stop-color="#fff" />
+            <stop offset="1" stop-color="#8ebcff" />
+          </linearGradient>
+        </defs>
+        <use class="theme-ring-bloom" href="#cover-theme-ring" />
+        <circle class="theme-ring-line" id="cover-theme-ring" fill="none" />
+      </svg>
+    <div class="cover-scene" id="cover-scene">
+    <div class="cover-world" id="flight-world">
+      <div class="flight-launch-point" id="flight-launch-point" hidden aria-hidden="true"><span>出发点</span></div>
+      <svg class="flight-trail" id="flight-trail" aria-hidden="true">
+        <path id="flight-trail-path" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="flight-target" id="flight-target" hidden aria-hidden="true"></span>
+      <button class="aircraft" id="flight-aircraft" type="button" aria-label="让飞机跟随指针" aria-pressed="false" aria-describedby="flight-help" hidden>
+        <span class="aircraft-arrival"><svg class="aircraft-model" id="aircraft-model" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><use href="assets/images/cover-aircraft.svg#aircraft-shape" /></svg></span>
+        <span class="aircraft-idle-hint" id="flight-idle-hint" hidden aria-hidden="true"><span class="aircraft-idle-ring"></span><span class="aircraft-idle-copy" id="flight-idle-label">点击飞机开始跟随</span></span>
+      </button>
+    </div>
+
+    <header class="cover-header">
+      <a class="cover-brand" href="home.html" data-cover-entry aria-label="进入 iNEX 联核智域首页">
+        <img src="assets/images/inex-logo.webp" alt="iNEX" width="260" height="70" />
+        <span>联核智域<small>INTELLIGENCE IN FLIGHT</small></span>
+      </a>
+      <button class="cover-theme-toggle" id="cover-theme-toggle" type="button" aria-label="长按 1.5 秒切换为夜间" aria-pressed="false" aria-describedby="cover-theme-help" hidden>
+        <span class="theme-toggle-icon" aria-hidden="true">
+          <svg class="theme-icon-moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.4A8.5 8.5 0 0 1 9.6 3.5a8.5 8.5 0 1 0 10.9 10.9Z" /></svg>
+          <svg class="theme-icon-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg>
+        </span>
+        <span id="cover-theme-label">长按切换夜空</span>
+        <span class="cover-theme-progress" id="cover-theme-progress" aria-hidden="true"></span>
+      </button>
+      <span class="visually-hidden" id="cover-theme-help">按住约 1.5 秒完成昼夜切换，提前松开将恢复。键盘可按住空格或回车，Esc 取消。</span>
+    </header>
+
+    <main class="cover-main" id="main">
+      <div class="cover-copy">
+        <p class="cover-eyebrow">INTELLIGENCE IN FLIGHT</p>
+        <div class="cover-message" id="cover-message">
+          <h1 id="cover-title">
+            <span class="cover-line" data-line-order="0" style="--line-delay: 0ms"><span class="line-inner">联核智域</span></span>
+            <span class="cover-line" data-line-order="1" style="--line-delay: 220ms"><span class="line-inner">iNEX</span></span>
+          </h1>
+          <p class="cover-description" id="cover-description">
+            <span class="cover-line" data-line-order="2" style="--line-delay: 440ms"><span class="line-inner">连接感知、算法与飞行实验，</span></span>
+            <span class="cover-line" data-line-order="3" style="--line-delay: 660ms"><span class="line-inner">探索自主空中机器人的更多可能。</span></span>
+          </p>
+        </div>
+        <div class="cover-carousel-controls" id="cover-carousel-controls" hidden aria-label="封面文案切换">
+          <div class="carousel-dots" role="group" aria-label="选择封面文案">
+            <button type="button" data-cover-slide-index="0" aria-label="显示联核智域品牌介绍" aria-pressed="true"><span></span></button>
+            <button type="button" data-cover-slide-index="1" aria-label="显示科研与教育介绍" aria-pressed="false"><span></span></button>
+            <button type="button" data-cover-slide-index="2" aria-label="显示集群协同介绍" aria-pressed="false"><span></span></button>
+          </div>
+          <button class="carousel-toggle" id="cover-carousel-toggle" type="button" aria-pressed="false"><span id="cover-carousel-label">暂停轮播</span></button>
+        </div>
+        <a class="cover-entry" href="home.html" data-cover-entry><span>进入首页</span><span class="entry-arrow" aria-hidden="true"><svg class="cover-arrow" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 18 18 6M6 6h12v12" /></svg></span></a>
+        <p class="cover-disciplines">自主感知<span>/</span>智能飞行<span>/</span>集群协同</p>
+      </div>
+      <div class="flight-display" id="flight-display">
+        <div class="flight-origin" id="flight-origin" aria-hidden="true"></div>
+      </div>
+    </main>
+
+    <footer class="cover-footer">
+      <div class="flight-instructions">
+        <span class="instruction-icon" aria-hidden="true"><svg class="cover-arrow" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M18 18 6 6M6 18V6h12" /></svg></span>
+        <p id="flight-help">点击飞机或空白处，开启跟随<br /><span>移动指针来引导，再点一下暂停</span></p>
+      </div>
+      <div class="flight-controls" id="flight-controls" hidden>
+        <p class="flight-status"><span class="status-light"></span><span id="flight-status" role="status" aria-live="polite">等待起飞</span></p>
+        <button class="flight-toggle" id="flight-toggle" type="button" aria-pressed="false"><span id="flight-toggle-label">开始跟随</span><span class="flight-toggle-icon" aria-hidden="true"><svg class="cover-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 18 18 6M6 6h12v12" /></svg></span></button>
+        <button class="flight-reset" id="flight-reset" type="button" aria-label="让飞机平滑返回出发点">重置</button>
+      </div>
+      <p class="cover-caption">交互飞行演示<span>概念模型 · 非产品实测</span></p>
+    </footer>
+    <noscript><p class="cover-noscript">开启 JavaScript 可体验飞机跟随；也可以直接点击“进入首页”。</p></noscript>
+    </div>
+  </body>
+</html>

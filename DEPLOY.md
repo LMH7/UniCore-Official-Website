@@ -21,7 +21,9 @@
 
 仓库 Settings → Pages 的 Build and deployment 应为 **GitHub Actions**。若迁移到另一个仓库，需要管理员在该仓库重新启用 Pages。
 
-`scripts/prepare-pages.mjs` 只在发布副本里修改错误页的 `<base>` 路径，适配 `/<仓库名>/`。普通页面使用相对路径，可直接用于项目子目录；请勿全局改成 `/assets/...`。
+`scripts/prepare-pages.mjs` 在复制前后核对入口：根路径 `/` 和 `index.html` 展示互动封面，点击“进入首页”后才打开 `home.html`，不会按访问记录跳过封面。发布副本里的错误页 `<base>` 适配 `/<仓库名>/`；所有本地 CSS 和 JavaScript 引用自动追加由文件内容生成的 `v` 参数，文件更新时版本随之变化，减少沿用旧脚本、旧排版的情况。这些生成修改不写回 `site/`。普通页面仍使用相对路径；请勿全局改成 `/assets/...`。
+
+版本参数不能清除浏览器已经缓存的旧 HTML。部署成功后若仍看到旧入口，可对原来的 `index.html` 地址执行一次强制刷新或用无痕窗口打开，无需长期改用另一个网址。
 
 发布成功后打开首页、三款详情并刷新，再打开 `预览地址/not-a-real-page/deep`，确认自定义错误页能返回首页。404 错误页在根域托管时使用源文件的 `/` 路径，在 GitHub Pages 下使用发布副本的仓库路径。
 
@@ -38,7 +40,7 @@ npm run package
 
 `release/unicore-site-时间戳.zip` 的根目录就是网站文件。这个通用包适合网站根路径托管，不应直接用于 GitHub Pages 的手动子目录发布；GitHub Pages 请使用上面的工作流。
 
-解压后应当直接看见 `index.html`，不要多套一层 `site/`。原始会议材料与开发文件不应进入站点。部署包与本地截图已被 Git 忽略，需要分享时单独复制。
+解压后应当直接看见 `index.html`，不要多套一层 `site/`。`index.html` 是互动封面，原官网首页为 `home.html`，请同时保留两个文件及资源目录。修改封面结构后先运行 `npm run sync:cover`，再检查、打包。原始会议材料与开发文件不应进入站点。部署包与本地截图已被 Git 忽略，需要分享时单独复制。
 
 ## 迁移到 Cloudflare Pages（备用）
 
@@ -59,9 +61,9 @@ npm run package
 
 后端不上传 GitHub Pages。完整步骤、依赖 ZIP、容器入口、云账号交接及上线检查见 [backend/README.md](backend/README.md)。旧函数不能仅替换单个 app.py；新包需要 Python 3.12 环境。
 
-腾讯云 **SCF 镜像 Web 函数 + 公网函数 URL** 已在用户自己的广州账号可访问，2026-11-12 基础公网接口与浏览器跨域读取检查通过，见 [公网检查](deploy/tencent-scf/2026-11-12-公网检查.md)。网页仍使用静态数据，本次尚未发布前端 API 配置。镜像摘要见 [上传记录](deploy/tencent-scf/2026-11-12-上传记录.md)，完整配置见 [部署说明](deploy/tencent-scf/README.md)。单独函数用量费不是总价，旧服务器配置仅为备份。
+腾讯云 **SCF 镜像 Web 函数 + 公网函数 URL** 已在用户自己的广州账号可访问，2026-11-12 基础公网接口与浏览器跨域读取检查通过，见 [公网检查](deploy/tencent-scf/2026-11-12-公网检查.md)。本次前端已配置用户新账号 API，且增加了网页与 API 内容版本匹配保护；最新镜像、部署和发布状态见 [整体验收](docs/2026-11-12-整体验收.md)。镜像摘要见 [上传记录](deploy/tencent-scf/2026-11-12-上传记录.md)，完整配置见 [部署说明](deploy/tencent-scf/README.md)。单独函数用量费不是总价，旧服务器配置仅为备份。
 
-正式切到 API 前，先完成新版服务公网检查，再改 `config/public.json` 的 `apiBase` 与 `source`，执行 `npm run sync`。生成的 `_headers` 同时包含准确的接口连接和图片来源，避免迁移到 Cloudflare 后被浏览器拦截。发布同一版图片、网页回退副本与后端快照。
+后续更新时先在控制台部署新镜像并做公网检查，再发布同一版网页。数据源和 API 地址仍只改 `config/public.json`，之后执行 `npm run sync`。生成的 `_headers` 同时包含准确的接口连接和图片来源，避免迁移到 Cloudflare 后被浏览器拦截。发布同一版图片、网页回退副本与后端快照。
 
 云端故障时可先将配置 source 改回 local，重新生成发布网页，再恢复已验收的后端包；旧云服务验收不代表新包已部署。
 

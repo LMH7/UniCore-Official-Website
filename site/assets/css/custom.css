@@ -1068,7 +1068,8 @@ p {
   font-size: 11px;
 }
 .about-page-intro {
-  max-width: 730px;
+  width: 100%;
+  max-width: none;
   margin-bottom: 55px;
 }
 .about-page-intro h2 {
@@ -1077,7 +1078,10 @@ p {
 }
 .about-page-intro > p {
   font-size: 15px;
-  line-height: 2.15;
+  line-height: 1.95;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 .value-grid {
   display: grid;
@@ -2049,7 +2053,7 @@ p {
     font-size: 27px;
   }
   .about-page-intro > p {
-    font-size: 13px;
+    font-size: 14px;
   }
   .about-full-visual img {
     height: 265px;

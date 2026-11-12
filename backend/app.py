@@ -55,6 +55,10 @@ def public_images(snapshot, base):
     for contact in content["contacts"]:
         if contact["qrImage"]:
             contact["qrImage"] = urljoin(base, contact["qrImage"])
+    for solution in content["solutions"]:
+        case = solution.get("case", {})
+        if case.get("image"):
+            case["image"] = urljoin(base, case["image"])
     return result
 
 

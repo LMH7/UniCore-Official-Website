@@ -83,6 +83,17 @@ class GenerationTests(unittest.TestCase):
         path.write_text(json.dumps(config), encoding="utf-8")
         self.run_generator(success=False)
 
+    def test_invalid_case_and_ready_download_are_rejected(self):
+        path = self.root / "content/site-content.json"
+        original = json.loads(path.read_text(encoding="utf-8"))
+        original["solutions"][0]["case"]["link"] = "javascript:alert(1)"
+        path.write_text(json.dumps(original), encoding="utf-8")
+        self.run_generator(success=False)
+        original["solutions"][0]["case"]["link"] = ""
+        original["resourceUpdates"][0].update(status="ready", url="")
+        path.write_text(json.dumps(original), encoding="utf-8")
+        self.run_generator(success=False)
+
 
 if __name__ == "__main__":
     unittest.main()

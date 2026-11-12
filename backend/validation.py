@@ -101,6 +101,16 @@ def validate(products, content):
             if group == "solutions":
                 for topic in records(item.get("topics"), "topics"):
                     text(topic, "topic", required=True)
+                for platform in records(item.get("platforms", []), "platforms"):
+                    identifier(platform, "platform.id")
+                if "case" in item:
+                    case = item["case"]
+                    if not isinstance(case, dict) or case.get("status") not in ("pending", "ready"):
+                        raise ValueError("Invalid solution case")
+                    for key in ("title", "summary", "imageAlt", "note"):
+                        text(case.get(key), "case." + key, required=case["status"] == "ready" and key == "title")
+                    asset(case.get("image"), "case.image", allow_empty=True)
+                    link(case.get("link"), "case.link")
             else:
                 asset(item.get("qrImage"), "contact.qrImage", allow_empty=True)
                 link(item.get("url"), "contact.url")
@@ -110,6 +120,14 @@ def validate(products, content):
         for key in ("title", "type", "description", "label"):
             text(item.get(key), "resource." + key, required=True)
         link(item.get("url"), "resource.url")
+    for item in records(content.get("resourceUpdates", []), "resourceUpdates"):
+        if not isinstance(item, dict) or item.get("status") not in ("pending", "ready"):
+            raise ValueError("Invalid resource update")
+        text(item.get("title"), "resourceUpdate.title", required=True)
+        text(item.get("note"), "resourceUpdate.note")
+        link(item.get("url"), "resourceUpdate.url")
+        if item["status"] == "ready" and not item["url"]:
+            raise ValueError("Ready resource requires a URL")
     for item in records(content.get("faqs"), "faqs"):
         if not isinstance(item, dict):
             raise ValueError("Invalid FAQ object")

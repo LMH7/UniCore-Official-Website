@@ -1,118 +1,76 @@
 # iNEX 联核智域官网
 
-自主空中机器人展示网站，包含完整网页与可部署的只读内容后端。当前公网网页使用静态内容；新版后端已实现，本地可直接联调，云端升级须另行部署验收。
+可浏览、可持续补充内容的团队展示网站。包含互动封面、首页、产品中心和详情、方案、资源、学术成果、重点项目、团队与实验室介绍、联系方式及错误页；配套 Python 3.12 只读内容后端。
 
-2026-11-12：用户自己的广州云函数已可公网访问，接口、版本、跨域、缓存和真实浏览器图片读取通过基础检查，见 [公网检查记录](deploy/tencent-scf/2026-11-12-公网检查.md)。官网仍使用静态内容，尚未切换到该后端。镜像上传过程见 [上传记录](deploy/tencent-scf/2026-11-12-上传记录.md)。
+- [网站预览](https://lmh7.github.io/UniCore-Official-Website/)
+- [项目交付说明](项目交付说明.md)：先读这一份，含查看、维护、验收与剩余账号事项。
+- [内容维护](CONTENT_GUIDE.md) · [交接与分工](HANDOFF.md) · [发布和回退](DEPLOY.md)
+- [后端运行](backend/README.md) · [腾讯云部署](deploy/tencent-scf/README.md)
+- [最终验收记录](docs/2026-11-12-整体验收.md) · [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
 
-- [在线预览](https://lmh7.github.io/UniCore-Official-Website/)
-- [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
-- [内容维护说明](CONTENT_GUIDE.md)
-- [后端运行和部署](backend/README.md)
-- [腾讯云函数部署与账号操作](deploy/tencent-scf/README.md)
-- [腾讯云与阿里云选型调查](deploy/tencent-scf/选型调查.md)
-- [后端实施结果](BACKEND_PLAN.md)
-- [检查记录](ACCEPTANCE.md)
+## 本机查看
 
-## 本次前端能力
+**双击 `启动后端预览.cmd`，打开 <http://127.0.0.1:9000/>。** 这是本机网页加真实后端；关闭窗口后本机服务停止，不影响公网网站。网页入口先显示互动封面，“进入首页”打开 `home.html`，实验室介绍在“关于我们”。
 
-- iNEX 正式标识、深蓝与青蓝品牌配色、移动端导航、统一页脚。
-- 首页、产品中心、产品详情、解决方案、公开资源、关于、联系、错误页。
-- 产品关键词搜索、感知类型筛选、分享筛选地址、零结果恢复。
-- 最多三款平台对比，支持手机上左右查看表格。
-- 全站搜索（顶部放大镜，或在非输入框时按 `/`）。
-- 产品图片放大、分享链接复制、相关平台推荐。
-- 微信与 LinkedIn 二维码放大和原图保存；LinkedIn 主页直达。
-- 产品咨询入口保留所选型号，可复制咨询内容。
-- FAQ 展开、方案快捷导航、回到顶部、滚动进度。
-- 卡片、按钮、图片与导航 hover 反馈，轻量进入动效、鼠标轨迹反馈。
-- 键盘操作、弹窗焦点管理、Escape 关闭、减少动态效果设置。
-- 本地静态运行与 GitHub Pages 自动发布；真实 API 读取、出错/超时/版本不一致回退。
+只看网页也可双击 `启动预览.cmd`，打开 <http://127.0.0.1:4173/>。不要继续刷新以前的 4174 窗口；它可能属于其他目录或旧服务。以新窗口打印的地址为准。
 
-功能适用于当前的展示官网。现阶段没有后台登录、在线表单收信、数据库或支付服务，页面不会模拟这些功能的成功结果。
+换电脑时安装 Node.js 20+（建议 24 LTS）、Python 3.12，并在项目目录执行：
 
-## 本地打开
-
-**看本次修复后的真实后端：双击 `启动后端预览.cmd`，打开 <http://127.0.0.1:9000/>。** 网页和 API 同时运行，关于页含实验室介绍。当前电脑已安装后端依赖；换电脑的安装方法见 [backend/README.md](backend/README.md)。端口占用先关闭原来的预览窗口，不在旧 4174 页面反复刷新。
-
-双击 `启动预览.cmd`，浏览器打开 http://127.0.0.1:4173 。需要 Node.js 20 或以上；当前电脑已安装。保持预览窗口打开。
-
-也可在 VS Code 打开此目录，终端执行：
-
-```sh
-npm run dev
-```
-
-预览无需先安装依赖。端口被占用时用 `npm run dev -- --port 4174`。直接双击 `site/index.html` 可查看基础页面，但推荐使用预览服务检查复制、分享、错误页等行为。
-
-## 文件位置
-
-| 文件 | 用途 |
-| --- | --- |
-| `content/products.json` | 产品内容源；首页、列表、详情、搜索与对比共用 |
-| `content/site-content.json` | 团队、方案、资源、微信/LinkedIn、FAQ 的内容源 |
-| `config/public.json` | 正式网页数据源、接口与图片地址配置；目前 local |
-| `site/assets/js/products.js`、`site-content.js`、`data-config.js` | 自动生成的网页副本，不直接编辑 |
-| `site/assets/js/data-service.js`、`content-contract.js` | API 读取、内容检查与整体回退 |
-| `backend/` | 后端、锁定依赖、快照、测试和云部署说明 |
-| `site/assets/js/layout.js` | 公共导航、品牌、页脚与转义工具 |
-| `site/assets/js/app.js` | 栏目呈现、产品筛选、联系卡片 |
-| `site/assets/js/product-detail.js` | 产品详情与相关平台 |
-| `site/assets/js/interactions.js` | 搜索、弹窗、对比、分享与动效 |
-| `site/assets/js/page-transitions.js` | 跨页淡化与内嵌预览兼容；在首次绘制前执行 |
-| `site/assets/css/custom.css` | 基础排版与响应式布局 |
-| `site/assets/css/enhancements.css` | iNEX 视觉与交互样式 |
-| `site/assets/images/` | 自有产品图、Logo、二维码与插画 |
-| `site/*.html` | 各页面的标题、结构与独立文字 |
-
-`site/` 是唯一网站发布源。原始会议材料、PDF、开发依赖不放入站点。素材与组件来源见 [ASSET_SOURCES.md](ASSET_SOURCES.md) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-
-## 日常同步、检查和上传
-
-开始编辑前：
-
-```sh
-git pull --ff-only
-```
-
-完成后检查实际页面与差异，再执行：
-
-修改 `content/` 内容、`config/public.json` 配置、公共导航或方案模板后，先运行 `npm run sync`，同步网页、后端、接口示例和网络配置；`npm run check` 会检查同步状态。不要手动编辑生成文件和各页的生成导航。
-
-方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动。
-
-```sh
-npm run check
-npm run test:backend
-npm test
-npm run test:integration
-git add .
-git commit -m "说明本次修改"
-git push
-```
-
-推送 main 后自动检查并发布。上传成功不等于发布成功，须等待 Actions 的 deploy 步骤成功，再打开线上网址复查。
-
-## 浏览器检查和截图
-
-```sh
+```powershell
+py -3.12 -m venv .venv-backend
+.venv-backend/Scripts/python.exe -m pip install -r backend/requirements.lock
 npm ci
-npm test
+npm run dev:backend
 ```
 
-Windows 默认使用已安装的 Edge，GitHub 云端使用 Chromium。Windows 没有 Edge 时可调整 `playwright.config.mjs` 并执行 `npx playwright install chromium`。
+macOS/Linux 用 `python3.12 -m venv .venv-backend`，安装依赖时使用 `.venv-backend/bin/python`。仅预览静态网页无需安装 Python 或开发依赖，直接 `npm run dev`。
 
-本地开启预览后，用 `node scripts/capture.mjs` 保存电脑、手机和联系页截图，保存在 `artifacts/screenshots/`。用于截图的浏览器选择减少动态效果，以免全页截图包含未进入视野的过渡状态；正式页面仍按访客设备偏好显示。
+## 内容只有一个维护入口
 
-## 部署与备份
+| 要修改什么 | 文件 |
+| --- | --- |
+| 产品名称、图片、参数、资料 | `content/products.json` |
+| 简介、联系、方案、资源、FAQ | `content/site-content.json` |
+| 数据源与云接口地址 | `config/public.json` |
+| 实验室详细介绍 | `site/about.html` |
+| 重点项目 | `site/projects.html` |
+| 学术成果 | `site/publications.html` |
+| 封面结构与轮播文案 | `site/welcome.html`、`site/assets/js/welcome.js` |
+| 图片 | `site/assets/images/` |
+
+修改后执行 `npm run sync`。`site/assets/js/products.js`、`site-content.js`、`data-config.js`、后端快照及接口示例由源文件生成，不直接编辑。公共导航和方案正文也由同步命令生成。
+
+## 检查、协作和交付
+
+开始工作先 `git pull --ff-only`，每项工作新建分支；完成后：
 
 ```sh
-npm run package
+npm run sync
+npm run verify
 ```
 
-`release/` 中会得到可解压的通用网站包；仅含 `site/` 的公开内容。GitHub Pages 由工作流自动准备子目录错误页，无需手动上传 ZIP。发布、迁移与回退见 [DEPLOY.md](DEPLOY.md)。
+`verify` 依次检查生成内容、静态路径、后端、浏览器和真实 HTTP 联调。Windows 默认使用 Edge；如果 Edge 启动异常，可以安装测试浏览器后运行：
 
-后端部署包使用 `npm run package:backend`，带 Linux Python 3.12 依赖的包使用 `npm run package:backend -- --linux`。上传前先确认云端运行环境，详见 [backend/README.md](backend/README.md)。
+```powershell
+npx playwright install chromium
+$env:PLAYWRIGHT_CHANNEL = 'chromium'
+npm run verify
+```
 
-## 后续内容
+向团队仓库提交 Pull Request，检查通过后合并 main，GitHub Actions 自动发布网页。没有通过检查的版本不发布。函数镜像通过独立流程更新，网页工作流不持有云账号权限。
 
-可以继续补充高清产品原图、经确认参数、公开资料、真实案例和邮箱。仅添加已经确认可公开的内容，避免把研究方向写成实际性能或已完成案例。后端接口规划和切换方法见 [BACKEND_PLAN.md](BACKEND_PLAN.md)，目前不需要架设服务器即可使用本站。
+```sh
+npm run release
+```
+
+生成 `release/` 下的通用网站 ZIP、后端源码 ZIP 和 `artifacts/github-pages/` 的 Pages 发布副本。源码与文档备份也随本次交付提供，具体文件见交付说明。不要把虚拟环境、账号或原始内部材料放进网站包。
+
+## 网站与云函数
+
+网页唯一发布源是 `site/`，托管在 GitHub Pages；后端为你的广州腾讯云 SCF，使用个人版镜像仓库，无数据库和常驻服务器。本次没有购买企业版仓库或其他新资源。
+
+`config/public.json` 已配置新账号 API。网页同时保留完整内容副本，接口出错、超时、缺版本，或接口版本与网页不一致时，整体使用已保存版本并提示访客。图片由网站托管，不通过云函数中转。
+
+最终云端版本、上传镜像及公网结果以 [整体验收](docs/2026-11-12-整体验收.md) 为准。网站没有管理登录、在线收信、订单或支付；维护内容通过文件、审阅和发布完成。
+
+正式内容仍可继续补充：高清产品照片、经核实参数、已获准公开的案例与成果、真实联系邮箱。没有提供的资料保留明确空状态，不编造性能、客户、文件或提交成功结果。素材出处见 [ASSET_SOURCES.md](ASSET_SOURCES.md) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

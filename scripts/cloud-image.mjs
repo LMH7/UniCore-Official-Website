@@ -8,11 +8,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 let repository = "inex-api";
 let push = false;
+let baseImage;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--image" && args[i + 1]) repository = args[++i];
   else if (args[i] === "--push") push = true;
-  else throw new Error("Usage: npm run build:cloud -- [--image registry/namespace/repository] [--push]");
+  else if (args[i] === "--base" && args[i + 1]) baseImage = args[++i];
+  else throw new Error("Usage: npm run build:cloud -- [--image registry/namespace/repository] [--base python-image] [--push]");
 }
+if (baseImage && !/^[a-z0-9][a-z0-9._/:@-]*$/.test(baseImage)) throw new Error("Invalid base image reference");
 if (!/^[a-z0-9][a-z0-9._/-]*$/.test(repository) || repository.includes("..")) {
   throw new Error("Use a lowercase image repository, without a tag or password.");
 }
@@ -33,7 +36,7 @@ if (run("docker", ["info", "--format", "{{.OSType}}"], true) !== "linux") {
 const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "z").toLowerCase();
 const tag = `v-${snapshot.version}-${stamp}`;
 const image = `${repository}:${tag}`;
-run("docker", ["build", "--pull", "--platform", "linux/amd64", "-f", "backend/Dockerfile", "-t", image, "."]);
+run("docker", ["build", "--pull", "--platform", "linux/amd64", ...(baseImage ? ["--build-arg", `PYTHON_BASE=${baseImage}`] : []), "-f", "backend/Dockerfile", "-t", image, "."]);
 const info = JSON.parse(run("docker", ["image", "inspect", image], true))[0];
 if (info.Architecture !== "amd64" || info.Os !== "linux") throw new Error("Expected a Linux amd64 image.");
 const runtime = run("docker", ["run", "--rm", image, "python", "--version"], true);
@@ -72,7 +75,7 @@ if (push) {
 }
 mkdirSync(resolve(root, "release"), { recursive: true });
 const record = {
-  image, imageId: info.Id, architecture: info.Architecture, runtime,
+  image, imageId: info.Id, architecture: info.Architecture, runtime, baseImage: baseImage || "python:3.12-slim-bookworm",
   contentVersion: snapshot.version, createdAt: new Date().toISOString(),
   localContainerSmoke: "passed", pushed: push, registryDigests,
   cloudDeployment: "pending-account-console-and-public-smoke",

@@ -25,7 +25,7 @@ if (!["local", "api"].includes(config.source)) throw new Error("source must be l
 if (!Number.isInteger(config.timeoutMs) || config.timeoutMs < 250 || config.timeoutMs > 10000) throw new Error("timeoutMs must be 250..10000");
 const api = base(config.apiBase, "apiBase");
 const assets = base(config.assetBase, "assetBase");
-const images = [content.logo, content.qrImage, ...products.map(p => p.image), ...content.contacts.map(c => c.qrImage)].filter(Boolean);
+const images = [content.logo, content.qrImage, ...products.map(p => p.image), ...content.contacts.map(c => c.qrImage), ...content.solutions.map(s => s.case?.image)].filter(Boolean);
 for (const path of images) {
   if (path.startsWith("assets/images/")) await access(resolve(root, "site", path));
   else if (new URL(path).protocol !== "https:") throw new Error("Public image URLs must use HTTPS");

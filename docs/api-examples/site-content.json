@@ -66,6 +66,19 @@
           "机器人感知",
           "自主导航",
           "算法实验"
+        ],
+        "case": {
+          "status": "pending",
+          "title": "",
+          "summary": "",
+          "image": "",
+          "imageAlt": "",
+          "link": "",
+          "note": "用于放置课程实践或科研课题案例，建议 16:9 图片与 100–150 字说明；内容经团队确认后再公开。"
+        },
+        "platforms": [
+          "nex-250",
+          "nex-30"
         ]
       },
       {
@@ -81,6 +94,19 @@
           "环境感知",
           "自主建图",
           "路径规划"
+        ],
+        "case": {
+          "status": "pending",
+          "title": "",
+          "summary": "",
+          "image": "",
+          "imageAlt": "",
+          "link": "",
+          "note": "用于放置自主探索或巡检方向的实验案例，建议 16:9 图片与 100–150 字说明；未确认前不填写客户名称与成果数据。"
+        },
+        "platforms": [
+          "nex-500",
+          "nex-250"
         ]
       },
       {
@@ -96,6 +122,18 @@
           "多机协同",
           "编队研究",
           "仿真验证"
+        ],
+        "case": {
+          "status": "pending",
+          "title": "",
+          "summary": "",
+          "image": "",
+          "imageAlt": "",
+          "link": "",
+          "note": "用于放置集群协同方向的演示或合作案例，建议 16:9 图片与 100–150 字说明；仅收录经团队确认可公开的内容。"
+        },
+        "platforms": [
+          "nex-30"
         ]
       }
     ],
@@ -105,26 +143,58 @@
         "type": "实验室网站",
         "description": "跨域智能飞行器技术实验室的公开研究与项目介绍。",
         "url": "https://cdiflab.github.io/",
-        "label": "访问网站"
+        "label": "访问网站",
+        "id": "cdif-lab",
+        "icon": "layers"
       },
       {
         "title": "PX4 文档",
         "type": "飞行控制学习",
         "description": "PX4 官方中文文档，了解开源飞行控制与开发基础。",
         "url": "https://docs.px4.io/main/zh/",
-        "label": "阅读文档"
+        "label": "阅读文档",
+        "id": "px4-docs",
+        "icon": "book"
       },
       {
         "title": "ROS 2 文档",
         "type": "机器人开发学习",
         "description": "ROS 2 官方文档与教程，了解机器人软件开发的基础概念。",
         "url": "https://docs.ros.org/en/jazzy/",
-        "label": "阅读文档"
+        "label": "阅读文档",
+        "id": "ros2-docs",
+        "icon": "nodes"
+      }
+    ],
+    "resourceUpdates": [
+      {
+        "title": "快速入门",
+        "note": "开箱、充电、首次飞行与安全事项。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "使用文档",
+        "note": "平台手册、参数说明与维护建议。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "代码仓库",
+        "note": "示例代码、开发接口与仿真配置。",
+        "status": "pending",
+        "url": ""
+      },
+      {
+        "title": "软件下载",
+        "note": "固件、地面站工具与仿真环境。",
+        "status": "pending",
+        "url": ""
       }
     ]
   },
   "meta": {
-    "version": "d858ad922405d8d9",
+    "version": "a56f29d171df80e5",
     "apiVersion": "v1"
   }
 }

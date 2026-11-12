@@ -59,6 +59,15 @@
     for (const s of unique(data.solutions, "solutions")) {
       for (const k of ["number", "title", "english", "icon", "summary", "audience", "description"]) text(s[k], `solution.${k}`, true);
       for (const t of array(s.topics, "topics")) text(t, "topic", true);
+      if (s.platforms !== undefined)
+        for (const id of array(s.platforms, "platforms"))
+          if (typeof id !== "string" || !/^[a-z0-9-]{1,80}$/.test(id)) fail("platform.id");
+      if (s.case !== undefined) {
+        const c = s.case; object(c, "case");
+        if (!["pending", "ready"].includes(c.status)) fail("case.status");
+        for (const k of ["title", "summary", "imageAlt", "note"]) text(c[k], `case.${k}`, c.status === "ready" && k === "title");
+        asset(c.image, "case.image", true); link(c.link, "case.link");
+      }
     }
     for (const c of unique(data.contacts, "contacts")) {
       for (const k of ["label", "name", "icon", "description", "action", "downloadName"]) text(c[k], `contact.${k}`, true);
@@ -68,6 +77,11 @@
       object(r, "resource");
       for (const k of ["title", "type", "description", "label"]) text(r[k], `resource.${k}`, true);
       link(r.url, "resource.url");
+    }
+    for (const u of array(data.resourceUpdates || [], "resourceUpdates")) {
+      object(u, "resourceUpdate"); text(u.title, "resourceUpdate.title", true); text(u.note, "resourceUpdate.note");
+      if (!["pending", "ready"].includes(u.status) || (u.status === "ready" && !u.url)) fail("resourceUpdate.status/url");
+      link(u.url, "resourceUpdate.url");
     }
     for (const f of array(data.faqs, "faqs")) {
       object(f, "faq"); text(f.question, "faq.question", true); text(f.answer, "faq.answer", true);

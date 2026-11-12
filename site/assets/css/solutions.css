@@ -1,0 +1,214 @@
+/* E 模块：解决方案页专属样式。案例位与长标题适配；公共样式仍由 custom.css / enhancements.css 提供。 */
+.solution-detail {
+  row-gap: 30px;
+}
+.solution-detail-copy h2,
+.solution-case-copy h3 {
+  overflow-wrap: anywhere;
+}
+.solution-case {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 26px;
+  align-items: center;
+  padding: 20px;
+  border: 1px dashed #c7d7e9;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+.solution-case-media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  padding: 18px;
+  border: 1px dashed #b9cde6;
+  border-radius: 8px;
+  background: #f2f7fe;
+  color: #7b8ca3;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.solution-case-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.solution-case-copy h3 {
+  margin: 8px 0 10px;
+  font-size: 22px;
+}
+.solution-case-copy p {
+  max-width: 560px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.solution-case.is-ready {
+  border-style: solid;
+  background: #fff;
+}
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px dashed #b9cde6;
+  border-radius: 999px;
+  color: #6b7f97;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.pending-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9fb4cc;
+}
+.solution-links {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.solution-link-group {
+  display: grid;
+  gap: 7px;
+}
+.solution-link-group .micro-label {
+  color: #8a97a6;
+  font-size: 9px;
+}
+.platform-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.platform-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid #dbe7f5;
+  border-radius: 6px;
+  background: #f7fbff;
+  color: var(--ink);
+  font-size: 11px;
+}
+.platform-chip strong {
+  font-size: 12px;
+}
+.platform-chip span {
+  color: #7b8ba0;
+  font-size: 10px;
+}
+.platform-chip:hover {
+  border-color: #9dc1f6;
+  background: #eef6ff;
+  color: var(--ink);
+}
+.solution-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.solution-link-row .text-link {
+  font-size: 11px;
+}
+.solution-start {
+  margin-top: 46px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+.solution-start-head {
+  max-width: 720px;
+  margin-bottom: 26px;
+}
+.solution-start-head h2 {
+  margin: 8px 0 10px;
+  font-size: 32px;
+}
+.solution-start-head p {
+  font-size: 13px;
+}
+.solution-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.solution-steps li {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fbff;
+}
+.solution-steps li > span {
+  color: var(--blue);
+  font: 600 11px/1.4 monospace;
+  letter-spacing: 0.08em;
+}
+.solution-steps h3 {
+  margin: 10px 0 8px;
+  font-size: 19px;
+}
+.solution-steps p {
+  min-height: 60px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.solution-steps .text-link {
+  font-size: 11px;
+}
+.solution-start-cta {
+  margin-top: 38px;
+}
+.solution-cta-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+}
+@media (max-width: 991px) {
+  .solution-case {
+    grid-template-columns: 1fr;
+  }
+  .solution-steps {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .solution-detail {
+    row-gap: 22px;
+  }
+  .solution-case {
+    gap: 18px;
+    padding: 15px;
+  }
+  .solution-case-copy h3 {
+    font-size: 20px;
+  }
+  .solution-case-copy p {
+    font-size: 12px;
+  }
+  .solution-start {
+    margin-top: 36px;
+    padding-top: 30px;
+  }
+  .solution-start-head h2 {
+    font-size: 27px;
+  }
+  .solution-steps p {
+    min-height: 0;
+  }
+  .solution-start-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -2,12 +2,14 @@ import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 
 // 在独立的无头浏览器中保存本地页面截图；先运行 npm run dev。
-const browser = await chromium.launch({ channel: "msedge" });
+const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || (process.platform === "win32" ? "msedge" : undefined) });
 await mkdir("artifacts/screenshots", { recursive: true });
 try {
   for (const [name, width, height, url] of [
-    ["home-desktop", 1440, 1000, "/"],
-    ["home-mobile", 390, 844, "/"],
+    ["cover-desktop", 1440, 1000, "/"],
+    ["cover-mobile", 390, 844, "/"],
+    ["home-desktop", 1440, 1000, "/home.html"],
+    ["home-mobile", 390, 844, "/home.html"],
     ["product-mobile", 390, 844, "/product.html?id=nex-500"],
     ["solutions-desktop", 1440, 1000, "/solutions.html"],
     ["contact-desktop", 1440, 1000, "/contact.html"],

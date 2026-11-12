@@ -27,13 +27,14 @@ window.SiteData = (() => {
       ]);
       const pVersion = products.meta?.version;
       const cVersion = content.meta?.version;
-      // Both absent supports the old cloud service during migration.
-      if (pVersion !== cVersion || (pVersion !== undefined && (typeof pVersion !== "string" || !/^[a-f0-9]{16}$/.test(pVersion))))
+      if (pVersion !== cVersion || typeof pVersion !== "string" || !/^[a-f0-9]{16}$/.test(pVersion))
         throw new Error("API content versions differ");
+      if (pVersion !== local.version)
+        throw new Error("API release does not match website");
       state = {
         products: contract.validateProducts(products.data),
         content: contract.validateContent(content.data),
-        version: pVersion || "legacy", source: "api", fallback: false,
+        version: pVersion, source: "api", fallback: false,
       };
     } catch (error) {
       controller.abort();

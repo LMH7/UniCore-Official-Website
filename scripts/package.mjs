@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(fileURLToPath(new URL("../", import.meta.url)));
-for (const script of ["sync-content.mjs", "sync-navigation.mjs", "sync-solutions.mjs"]) {
+for (const script of ["sync-content.mjs", "sync-cover.mjs", "sync-navigation.mjs", "sync-solutions.mjs"]) {
   execFileSync(process.execPath, [path.join(root, "scripts", script), "--check"], { stdio: "inherit" });
 }
 execFileSync(process.execPath, [path.join(root, "scripts/check.mjs")], {

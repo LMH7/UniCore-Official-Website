@@ -1,140 +1,78 @@
-# 腾讯云 SCF 镜像方案：公网后端可用，网页尚未切换
+# 腾讯云广州云函数部署与维护
 
-2026-11-12 最新结果：用户已创建自己的广州 Web 函数并提供公网 URL，随后要求尝试访问。**公网接口、版本、缓存、跨域和真实浏览器读取已通过基础检查**，实际地址和结果见 [公网检查记录](2026-11-12-公网检查.md)。此前上传时暂不测试的要求，已由本次明确的公网检查请求更新；本次仅检查接口和浏览器读取，不代表完整网站切换。
+当前使用用户个人账号的广州 SCF Web 函数及个人版镜像仓库。新镜像已上传且公网升级检查通过；[最终验收记录](../../docs/2026-11-12-整体验收.md) 是当前状态入口。早期成本调查和上传记录只描述当时状态。
 
-部署实现：**腾讯云 SCF → Web 函数 → 容器镜像部署 → 公网函数 URL**。镜像提供 Python 3.12、Flask、Waitress，监听 `0.0.0.0:9000`。两家比较、单价和官方依据见 [选型调查](选型调查.md)。
+## 当前资源
 
-网页和图片继续在 GitHub Pages；函数只提供公开 JSON。运行环境与代码一起发版，不依赖控制台里标公测的 Python 模板。**后端已能访问，公网网页仍是静态数据源，尚未自动连接它。**
-
-之前已完成的网站内容/图片检查、18 项后端测试和 4 项本地真实后端浏览器联调通过，工作流 YAML 可解析。2026-11-12 完成镜像构建上传及基础公网检查，内容版本 `d858ad922405d8d9`。前端仍使用 `source: local`，代码保持独立开发分支；本次没有发布网页或进行压力测试。
-
-## 先纠正总成本判断
-
-截图中同学反馈约 **665 元/月**，没有展示具体商品和订单，因此不能据此确认收费项目。重新核对官方文档，TCR 企业版基础实例在大陆常见地域按量价 **0.97 元/小时，30 天约 698.40 元**，另可能有 COS 存储及流量；这个量级确实与反馈接近。
-
-此前约 2.21 元/月的示例仅计算函数的运行、调用和响应流量，前提是镜像仓库无额外固定费用，**不能当作整个部署的总价**。若实际必须购买 665 元/月的仓库，同样负载的整套费用就是至少约 667 元/月，再加其他项目；不适合当前展示站。暂停这条付费依赖路线。
-
-2026-11-11 的同学账号反馈不能推广到所有个人账号。2026-11-12 用户新建自己的个人账号，已通过个人版仓库登录并实际上传，原先的仓库可用性阻碍已解除。此前关于“必须支付企业版固定费”的条件估算不适用于此次上传，但函数运行、流量与日志仍按实际用量计费。
-
-上传权限不等于云控制台操作权限。用户决定启用服务时按上传记录完成函数配置；不要在聊天中继续发送密码或云 API 密钥。函数是否能拉取该私有镜像、实际计费和公网响应仍需控制台及后续验收确认。
-
-旧的成都函数 `inexapi2` 未由本次操作修改。用户已自行创建广州函数，其基础公网检查见上方最新记录。
-
-## 构建与上传镜像
-
-这部分可由我在本机继续执行。账号持有人只需要在自己的终端完成登录。电脑已有 Docker Desktop 客户端，但必须先启动 **Linux 容器引擎**；若弹出 WSL 安装/更新或重启要求，按界面完成。检查 `docker info` 能正常显示服务端信息后再继续。源码 ZIP 不能代替容器镜像上传。
-
-在仓库根目录执行：
-
-以下 Node 命令使用完整 Git 仓库。`source.zip` 是后端源码包，不包含网站图片和完整 Node 构建上下文，不能直接在解压目录执行本段命令。
-
-```powershell
-npm run check
-npm run test:backend
-npm run build:cloud
-```
-
-`build:cloud` 会拉取 `python:3.12-slim-bookworm` 当前补丁、安装锁定依赖、构建 Linux/amd64 镜像、启动临时容器并检查真实 HTTP、CORS、缓存、健康和错误响应，随后停止临时容器。只有检查通过才生成 `release/cloud-image-版本-时间.json`。基础镜像可通过 Docker build 的 `PYTHON_BASE` 参数指定审核过的摘要；线上回退使用实际镜像摘要和专属标签，不依赖会变化的基础镜像标签。
-
-账号持有人在自己的终端执行控制台给出的 `docker login` 指令，**通过交互提示输入仓库密码**。不要把密码放在命令参数、聊天或仓库里。个人版通常类似：
-
-```powershell
-docker login ccr.ccs.tencentyun.com --username 你的账号ID
-```
-
-登录后，用实际仓库地址执行：
-
-```powershell
-npm run build:cloud -- --image ccr.ccs.tencentyun.com/你的命名空间/inex-api --push
-```
-
-脚本再次构建并验收，成功后才上传，并打印完整标签及保存镜像摘要。每次使用新标签，保留上次验收通过的镜像。此脚本不会创建云函数、开通收费实例或修改线上配置。
-
-若 Docker 未能启动，本地测试和源码包仍然有效，但**不能把镜像构建记为成功**。也可让队友在 Linux/amd64 Docker 环境运行相同脚本；无需购买云服务器来构建。
-
-### 本机 Docker 启动不了时：GitHub 构建
-
-仓库另有 `.github/workflows/cloud-image.yml`，可在 GitHub 的临时 Linux 运行器中执行同一个构建和真实 HTTP 验收，无须在自己的电脑配置 Docker。此流程仅手动触发，不会随每次网页发布上传镜像。
-
-1. 将本次代码正常提交到团队 GitHub 仓库并经队友审核合并。新工作流通常需在默认分支上才能显示手动运行按钮。
-2. 仓库 Settings → Secrets and variables → Actions → New repository secret，分别添加 `TCR_USERNAME`（镜像仓库登录用户名）和 `TCR_PASSWORD`（仓库登录密码）。只在 GitHub 密钥框输入；不要贴到聊天、文件或工作流正文。此处不需要腾讯云 SecretId/SecretKey。
-3. Actions → **Build and verify cloud image** → Run workflow，选择包含本次代码的分支，`image_repository` 填真实仓库地址，勾选 `push_image`。不勾选时只测试、不上传。
-4. 成功后下载 `verified-cloud-image-record`，其中 JSON 记录专属标签、镜像摘要、Python 补丁版本和本地容器测试结果。在腾讯云控制台选择其中的专属标签。
-
-云端构建也可能因镜像网络或账号登录失败而中止，以实际成功结果为准。GitHub Actions 是否收费取决于仓库可见性和账号额度；不购买额外运行器或使用第三方构建服务。当前工作流尚未在 GitHub 实际运行。
-
-## 在控制台创建函数
-
-以下为将来费用前提满足后的配置参考，当前不执行。进入 [云函数控制台](https://console.cloud.tencent.com/scf)，函数服务 → 与可用仓库相同地域 → 新建。个人版旧文档的大陆部署地为广州；若使用其他仓库，以实际地域为准。界面名称可能略有调整，以 Web 函数、镜像部署两个条件为准。
-
-| 项目 | 值 |
+| 项目 | 当前值 |
 | --- | --- |
-| 函数名称 | `inex-api-prod` |
-| 地域、命名空间 | 广州 `ap-guangzhou`、`default` |
-| 函数类型 | **Web 函数**，不是事件函数或 Job |
-| 部署方式 | **容器镜像**，不是 Python 3.10/3.12 代码模板，也不是 Custom Runtime |
-| 镜像 | 已确认可用且费用合适的私有仓库，选择构建脚本输出的专属标签，勿用 `latest` |
-| Entrypoint / CMD | 留空，使用 Dockerfile 中的启动配置 |
+| 地域 | 广州 `ap-guangzhou` |
+| 仓库 | `ccr.ccs.tencentyun.com/limuheng/test-nginx`，个人版 |
+| 当前标签 | `v-a56f29d171df80e5-20261112t151218z` |
+| 当前摘要 | `sha256:fe47e9c0064d940adb809a225022b17839333e120cee0d3c5fd47ec89eb8e1ec` |
+| 内容版本 | `a56f29d171df80e5` |
+| 函数 URL | `https://1531026871-73sj75z34t.ap-guangzhou.tencentscf.com` |
+| 运行方式 | Linux/amd64 容器，Python 3.12.16、Flask、Waitress |
 | 监听端口 | 9000 |
-| 内存 | 初始 512MB；上线后根据实际内存、延迟调整 |
-| 执行超时 | 初始 15 秒 |
-| 预置并发 / 最小常驻实例 | 不配置预置，最小实例若有此项设 0 |
-| 请求并发 | 初始静态单实例并发 4，与 Waitress 4 线程一致 |
-| 并发配额 | 若提供实例并发配额，初始限制为 5；保存后核实限制的单位和作用范围 |
-| 会话模式、WebSocket、GPU | 不启用 |
-| VPC、固定公网 IP、NAT、文件系统 | 不需要创建或挂载；API 不向外抓取图片 |
-| 日志 | 便于初期排错可开启 CLS，保留 7 天，核实日志服务单独费用 |
+| 上一版标签 | `inex-backend-d858ad922405d8d9-20261112`，保留回退 |
 
-函数需要的环境变量：
+本次没有购买企业版 TCR、服务器、数据库、API 网关或常驻实例。个人版仓库现已能实际上传；早期按企业版固定价算的每月数百元不适用于当前仓库。函数计算、调用、响应流量与日志仍按实际用量计费，不承诺永久免费。[原始选型调查](选型调查.md) 保留作出处和选型历史。
 
-```text
-ALLOWED_ORIGINS=https://lmh7.github.io
-PUBLIC_ASSET_BASE=https://lmh7.github.io/UniCore-Official-Website/
-PORT=9000
-```
+## 更新镜像
 
-`ALLOWED_ORIGINS` 不包含网页路径；`PUBLIC_ASSET_BASE` 则包含仓库路径和结尾 `/`。本次函数不需要读写其他业务云资源；仅按平台镜像拉取要求授权，不添加无关的管理员权限。
-
-### 建立公网入口
-
-函数详情 → **函数 URL** → 新建：开启 **公网访问**，授权类型 **开放**。这是公开只读官网接口，访客无需腾讯账号。不要选 CAM 鉴权，也不要把云账号凭据写进网页。
-
-平台 CORS 先保持关闭，由应用按 `ALLOWED_ORIGINS` 返回响应头，避免两个地方叠加不同规则。如果平台要求配置，则只允许 `https://lmh7.github.io`、GET/HEAD/OPTIONS、请求头 `Accept, Content-Type, If-None-Match`，暴露 `ETag, X-Content-Version, X-Request-ID`，不携带凭据。保存后以实际响应验收。
-
-初次可绑定 `$LATEST` 验证；验收后发布不可变版本，创建指向该版本的 `prod` 别名，再把正式函数 URL 绑定 `prod`。前端固定调用这个别名的 URL，后续改别名指向就能更新或回退。不同版本/别名的 URL 可能不同，**以 prod 的 URL 为准**。
-
-入口格式类似 `https://账号-随机值.ap-guangzhou.tencentscf.com`。函数 URL 可以直接提供 HTTPS，不必购买 API 网关。将控制台给出的实际 URL 发给我，我继续完成公网验收和前端对接。
-
-## 验收通过再启用
-
-将下面的 URL 换成真实服务根地址，版本换成 `backend/data/snapshot.json` 或本次镜像记录的 `contentVersion`：
-
-```powershell
-node scripts/backend-task.mjs smoke https://实际服务域名 --version 实际内容版本
-```
-
-必须验证：`/healthz`、两个 `/api/v1/` 接口和旧路径一致；内容版本一致；正确 CORS；ETag/304；HEAD、OPTIONS；不存在路径返回 JSON 404；POST 返回 405。容器和本地通过不能替代公网通过。若平台阻断某些方法，先核实入口设置并记录，不伪造通过结果。
-
-随后修改 `config/public.json`：`source` 为 `api`，`apiBase` 为实际正式 URL 加 `/api/v1/`，再执行：
+在完整 Git 仓库中执行：
 
 ```powershell
 npm run sync
-npm run check
-npm run test:backend
-npm test
-npm run test:integration
+npm run verify
+docker login ccr.ccs.tencentyun.com --username 你的账号ID
+npm run build:cloud -- --image ccr.ccs.tencentyun.com/limuheng/test-nginx --push
 ```
 
-发布同一提交的网页、内容副本和图片。从公网电脑及手机查看首页、产品详情、实验室介绍、联系方式和图片。浏览器网络面板中两个接口须从新域名成功返回；断网/接口失败时页面仍有本地内容。`meta.version` 应与本次记录一致。`/about.html` 的实验室介绍是网页内容，不在这两个 API 中。
+登录密码在交互提示中输入，不放在命令、聊天或文件中。Docker Desktop 使用 Linux 容器。构建脚本会检查内容、构建 Linux/amd64 镜像、启动临时容器、验证真实 HTTP，再上传；失败不上传。输出专属标签、摘要和 `release/cloud-image-*.json`，不覆盖旧标签，也不自动修改云函数。
 
-## 更新、回退和长期运行
+默认拉取 Docker 官方 `python:3.12-slim-bookworm` 的当前补丁。若本地网络无法正常拉取，可使用经审核的官方镜像地址与摘要：
 
-内容修改仍从 `content/` 和 `site/assets/images/` 开始 → `npm run sync` → 检查 → 新镜像 → 测试 URL 验收 → 发布版本 → 将 `prod` 别名指向新版本 → 发布同一版网页。内容版本仅标识内容，代码变更以独立镜像标签/摘要区分。
+```powershell
+npm run build:cloud -- --image ccr.ccs.tencentyun.com/limuheng/test-nginx --base public.ecr.aws/docker/library/python@sha256:935c3c5b12357a7e10caa9c1e6ca5692344d97cf229832ef584be2cec9fc03df --push
+```
 
-出问题时将 `prod` 指回上一个已验收版本；保留其镜像、函数配置和记录。网页可先将 `source` 改回 `local` 并发布，浏览不中断。不要删除仍被函数版本引用的镜像，否则下一次冷启动可能拉取失败。
+上述摘要对应本次构建；长期维护时定期审核并更新补丁摘要，不永久冻结到该镜像。不能关闭 TLS 校验绕过网络问题。
 
-每月查看账单、调用量、失败率、冷启动延迟和 CLS 用量；关注安全公告，定期重建镜像更新 Python 3.12 的补丁并完整验收。Python 3.12 的官方安全维护至 2028-10，提前安排升级。不要通过每分钟定时访问强行保活；低流量允许缩容至零，首个请求可能较慢，网页已有 5 秒超时回退。
+本机没有 Docker 时，可用仓库 Actions 的 **Build and verify cloud image**。默认只构建验收；需要上传时，由账号持有人在仓库 Secrets 配置 `TCR_USERNAME`、`TCR_PASSWORD`，填写实际仓库地址并勾选上传。此工作流不需要云 API 管理密钥。
 
-官方所列个人版镜像仓库限额免费且无 SLA/赔偿承诺，当前已用新账号完成实际上传。“长期维护”不等于保证永不故障或永久免费。未来若有合同可用性要求，再比较企业版仓库及平台 SLA 的总成本；当前不购买。
+## 账号持有人操作控制台
 
-正式长期域名建议使用团队控制的 API 子域名并绑定 `prod`；大陆自定义域名须先满足备案要求，香港/境外绑定规则不同。首轮验收可用平台 HTTPS 地址，无须先买域名。备案与域名准备另见 [腾讯云自定义域名说明](https://cloud.tencent.com/document/product/583/110861)。
+[函数控制台](https://console.cloud.tencent.com/scf) → 广州 → 当前函数 → 镜像配置 → 编辑 → 个人版仓库 `limuheng/test-nginx` → 本次专属标签 → 提交 → 保存部署。
+
+- 函数为 Web 函数、容器镜像部署；端口 9000，Entrypoint/CMD 留空使用镜像入口。
+- 初始建议 512MB、15 秒超时，不配置预置并发/常驻实例；实际设置由账号持有人核实。
+- 业务不需要 VPC、NAT、数据库、持久磁盘或公网固定 IP，不创建这些资源。
+- 保留环境变量：`ALLOWED_ORIGINS=https://lmh7.github.io`、`PUBLIC_ASSET_BASE=https://lmh7.github.io/UniCore-Official-Website/`、`PORT=9000`。
+- CORS 由应用处理，不在平台重复添加 `*`；公开接口使用 GET/HEAD/OPTIONS，不携带云账号凭据。
+
+已有 HTTPS 函数 URL 无需重建。直接打开函数地址可能下载 JSON，这是平台添加的响应行为；网页用 fetch 读取，不把该地址当成网站首页。
+
+稳定后可发布不可变函数版本并建立 `prod` 别名，保留上一个已验收版本。若别名 URL 不同，要以实际 URL 更新 `config/public.json`、同步网络配置并发布网页；不要未经检查更换现有入口。
+
+## 公网验收与网页发布
+
+版本号取当前快照或本次镜像记录：
+
+```powershell
+node scripts/backend-task.mjs smoke https://1531026871-73sj75z34t.ap-guangzhou.tencentscf.com --version a56f29d171df80e5
+```
+
+检查覆盖健康、两个接口、旧地址别名、版本、CORS、ETag/304、HEAD、OPTIONS、JSON 404 和写方法拒绝。之后发布同一版网页与图片，从公网实际验证搜索、详情刷新、实验室、方案推荐、资源和二维码。
+
+官网 `config/public.json` 已使用 `source: api` 和此 URL 下的 `/api/v1/`。两个 API 与网页内容版本必须一致，否则使用网页本地副本，避免把新方案或资源降回旧版。图片由网站托管，函数不下载或转发图片。
+
+## 运维和回退
+
+每次内容发布保存 Git 提交、镜像专属标签、摘要、内容版本及验收结果。旧镜像在仍被函数版本引用时不要删除，避免冷启动拉取失败。
+
+后端故障时恢复上一个已验收标签/版本及其配置；网页可先把 `source` 改回 `local`，同步后发布维持浏览。使用 `git revert` 回退代码，不强推覆盖队友历史。
+
+账号持有人设置预算提醒，检查请求量、失败率、延迟、并发和 CLS 日志费用；初期日志可按需保留 7 天。不要每分钟访问强行保活。低流量允许缩到零，冷启动时网页有超时回退。
+
+Python 3.12 官方安全维护到 2028-10，需提前计划升级，并定期重建、验收补丁版本。现有平台 HTTPS 地址可用于本轮展示；将来使用团队域名时再确认归属及相应备案规则。

@@ -8,7 +8,7 @@ export default defineConfig({
   outputDir: "artifacts/backend-test-results",
   use: {
     baseURL: "http://127.0.0.1:4180",
-    channel: process.platform === "win32" ? "msedge" : undefined,
+    channel: process.env.PLAYWRIGHT_CHANNEL || (process.platform === "win32" ? "msedge" : undefined),
     headless: true, trace: "retain-on-failure",
   },
   webServer: [{

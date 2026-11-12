@@ -100,6 +100,22 @@ class ApiTests(unittest.TestCase):
         self.assertTrue(r.json["data"][0]["image"].startswith("https://cdn.example/site/"))
         self.assertEqual(SNAPSHOT["version"], r.json["meta"]["version"])
 
+    def test_case_images_resolve_against_the_public_site(self):
+        snapshot = copy.deepcopy(SNAPSHOT)
+        snapshot["content"]["solutions"][0]["case"] = {
+            "status": "ready", "title": "公开案例", "summary": "简介",
+            "image": "assets/images/nex-500.webp", "imageAlt": "平台",
+            "link": "projects.html", "note": "",
+        }
+        snapshot["version"] = content_version(snapshot["products"], snapshot["content"])
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "snapshot.json"
+            path.write_text(json.dumps(snapshot), encoding="utf-8")
+            app = create_app({"SNAPSHOT_PATH": str(path), "PUBLIC_ASSET_BASE": "https://cdn.example/site/"})
+            case = app.test_client().get("/site-content").json["data"]["solutions"][0]["case"]
+            self.assertEqual(case["image"], "https://cdn.example/site/assets/images/nex-500.webp")
+            self.assertEqual(snapshot["content"]["solutions"][0]["case"]["image"], "assets/images/nex-500.webp")
+
 
 class SnapshotTests(unittest.TestCase):
     def test_generated_snapshot_matches_canonical_source(self):
@@ -124,6 +140,8 @@ class SnapshotTests(unittest.TestCase):
             lambda d: d["products"][0].update(image="assets/images/../../secret"),
             lambda d: d["content"]["resources"][0].update(url="javascript:alert(1)"),
             lambda d: d["content"]["faqs"][0].update(answer=None),
+            lambda d: d["content"]["solutions"][0]["case"].update(link="javascript:alert(1)"),
+            lambda d: d["content"]["resourceUpdates"][0].update(status="ready", url=""),
             lambda d: d["content"]["contacts"].append(copy.deepcopy(d["content"]["contacts"][0])),
         ]
         for mutate in cases:
