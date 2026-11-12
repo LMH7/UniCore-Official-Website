@@ -31,6 +31,7 @@ test("网站默认入口是互动封面，进入主站后首页链接不会返�
     await expect(page).toHaveURL(/\/home\.html$/);
     await expect(page.locator("h1")).toHaveText(views[0][1]);
     await expect(page.locator("html")).toHaveCSS("scrollbar-gutter", "stable");
+    await expect(page.locator("html")).toHaveCSS("scrollbar-width", "auto");
     await page.locator('#main-navigation a[href="products.html"]').click();
     await expect(page).toHaveURL(/\/products\.html$/);
     await page.locator('#main-navigation a[href="home.html"]').click();
@@ -38,6 +39,43 @@ test("网站默认入口是互动封面，进入主站后首页链接不会返�
     await expect(page.locator("body")).toHaveAttribute("data-page", "home");
   }
   expect(errors).toEqual([]);
+});
+
+test("封面在矮窗口中保留正常滚动条，能滚动到操作区", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const height of [480, 900]) {
+    await page.setViewportSize({ width: 1280, height });
+    await page.goto("/index.html");
+    await expect(page.locator("#flight-controls")).toBeVisible();
+    await expect(page.locator("html")).toHaveCSS("overflow-y", "auto");
+    await expect(page.locator("html")).toHaveCSS("scrollbar-width", "auto");
+    const bounds = await page.evaluate(() => {
+      const root = document.documentElement;
+      const sky = document.querySelector(".cover-skies").getBoundingClientRect();
+      return {
+        viewport: window.innerWidth,
+        content: root.clientWidth,
+        scrollWidth: root.scrollWidth,
+        skyLeft: sky.left,
+        skyRight: sky.right,
+        overflow: root.scrollHeight - root.clientHeight,
+      };
+    });
+    expect(bounds.content).toBeLessThanOrEqual(bounds.viewport);
+    expect(Math.abs(bounds.skyLeft)).toBeLessThan(1);
+    expect(Math.abs(bounds.skyRight - bounds.content), "天空铺到滚动条内侧的内容边缘").toBeLessThan(1);
+    expect(bounds.scrollWidth).toBeLessThanOrEqual(bounds.content + 1);
+    if (height === 480) {
+      expect(bounds.overflow).toBeGreaterThan(0);
+      await page.mouse.move(100, 200);
+      await page.mouse.wheel(0, 1000);
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+      await expect(page.locator("#flight-reset")).toBeInViewport();
+    } else {
+      expect(bounds.overflow).toBeLessThanOrEqual(1);
+      expect(Math.abs(bounds.viewport - bounds.content), "没有溢出时不预留空轨道").toBeLessThan(1);
+    }
+  }
 });
 
 for (const width of [375, 390, 768, 1440]) {

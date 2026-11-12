@@ -24,8 +24,8 @@
 }
 * { box-sizing: border-box; }
 html { min-height: 100%; background: var(--cover-bg); }
-/* 天空封面无需主站的常驻滚动条占位；内容较长时仍可正常滚动。 */
-html[data-cover-theme] { scrollbar-gutter: auto; overflow-y: auto; }
+/* 内容超出视口时显示正常滚动条，不额外预留空轨道。 */
+html[data-cover-theme] { scrollbar-gutter: auto; overflow-y: auto; scrollbar-width: auto; }
 body {
   position: relative;
   display: flex;
@@ -99,10 +99,10 @@ button:focus-visible, a:focus-visible, .cover-scene-preview [data-cover-focus-vi
 .cover-sky[data-sky="night"]::after {
   background: linear-gradient(90deg, #06111f30, transparent 62%), linear-gradient(0deg, #06111f40, transparent 28%);
 }
-.cover-sky-reveal { position: fixed; z-index: 10; visibility: hidden; pointer-events: none; }
+.cover-sky-reveal { position: fixed; z-index: 10; overflow: hidden; visibility: hidden; pointer-events: none; }
 .cover-sky-reveal.is-background-only { z-index: 0; }
 .cover-sky-reveal.is-revealing { visibility: visible; will-change: clip-path; }
-.cover-theme-boundary { position: fixed; inset: 0; z-index: 11; width: 100%; height: 100%; overflow: visible; visibility: hidden; color: #caf1ff; pointer-events: none; }
+.cover-theme-boundary { position: fixed; inset: 0; z-index: 11; width: 100%; height: 100%; overflow: hidden; visibility: hidden; color: #caf1ff; pointer-events: none; }
 .cover-theme-boundary.is-active { visibility: visible; }
 .theme-ring-line { stroke: url(#cover-wipe-spectrum); stroke-width: 2; filter: drop-shadow(0 0 5px #a8e8ff) drop-shadow(0 0 15px #629df4aa); }
 .theme-ring-bloom { opacity: .65; filter: blur(6px); }
