@@ -644,8 +644,8 @@ a.project-image {
 }
 .page-layout {
   display: grid;
-  grid-template-columns: 216px minmax(0, 1fr);
-  gap: 56px;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 64px;
   align-items: start;
 }
 .page-layout-main {
@@ -655,13 +655,13 @@ a.project-image {
 }
 .page-index {
   position: fixed;
-  top: calc(50% + 56px);
+  top: calc(50% + 64px);
   left: auto;
-  width: 216px;
-  max-height: calc(100vh - 160px);
+  width: 248px;
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
   transform: translateY(-50%);
-  padding: 20px 14px 16px;
+  padding: 24px 16px 18px;
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -669,8 +669,8 @@ a.project-image {
 }
 .page-index-title {
   display: block;
-  margin: 0 8px 12px;
-  font-size: 11px;
+  margin: 0 10px 14px;
+  font-size: 12px;
   letter-spacing: 0.18em;
   color: var(--muted);
 }
@@ -691,9 +691,9 @@ a.project-image {
 }
 .page-index a {
   display: block;
-  padding: 10px 12px;
-  border-radius: 9px;
-  font-size: 13.5px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14.5px;
   font-weight: 500;
   color: #5b6775;
   text-decoration: none;
@@ -881,11 +881,11 @@ a.project-image {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-top: 22px;
-  padding: 18px 10px 12px;
+  margin-top: 24px;
+  padding: 20px 12px 14px;
 }
 .page-index-brandviz .page-index-logo {
-  width: 118px;
+  width: 134px;
   height: auto;
 }
 .page-index-drones {
