@@ -15,7 +15,7 @@
 
 ## 自动发布
 
-推送 main 后，工作流依次：取得代码 → 安装检查依赖 → 检查静态资源和数据 → 在 Chromium 检查主要页面 → 准备 GitHub Pages 子目录路径 → 上传网站文件 → 发布。
+推送 main 后，工作流依次：取得代码 → 安装 Node/Python 3.12 检查依赖 → 检查内容生成、静态资源和数据 → 后端自动测试 → Chromium 页面回归与真实后端联调 → 生成后端源码包 → 准备 GitHub Pages 子目录路径 → 上传网站文件 → 发布。工作流不持有云账号权限，不会自动升级腾讯云函数。
 
 检查未通过就不会执行部署。Pull Request 只检查，不发布。无需添加账号密码或访问令牌到仓库；发布使用 GitHub 自带的工作流权限。
 
@@ -50,12 +50,22 @@ npm run package
 | --- | --- |
 | Production branch | main |
 | Framework preset | None |
-| Build command | exit 0 |
+| Build command | npm ci && npm run check |
 | Build output directory | site |
 
 也可以在 Cloudflare Pages 的 Direct Upload 中上传通用部署包。账号登录由账号持有人操作，不把访问令牌发到聊天或写进源码。Git 集成与 Direct Upload 的管理方式不同，新建项目时按长期维护方式选择。
 
 站点的 `_headers` 适用于 Cloudflare，GitHub Pages 不会应用该文件里的响应头；两种托管的基础浏览均已避免外部脚本、远程字体和混合内容。
+
+## 独立部署后端
+
+后端不上传 GitHub Pages。完整步骤、依赖 ZIP、容器入口、云账号交接及上线检查见 [backend/README.md](backend/README.md)。旧函数不能仅替换单个 app.py；新包需要 Python 3.12 环境。
+
+腾讯云 **SCF 镜像 Web 函数 + 公网函数 URL** 已在用户自己的广州账号可访问，2026-11-12 基础公网接口与浏览器跨域读取检查通过，见 [公网检查](deploy/tencent-scf/2026-11-12-公网检查.md)。本次前端已配置用户新账号 API，且增加了网页与 API 内容版本匹配保护；最新镜像、部署和发布状态见 [整体验收](docs/2026-11-12-整体验收.md)。镜像摘要见 [上传记录](deploy/tencent-scf/2026-11-12-上传记录.md)，完整配置见 [部署说明](deploy/tencent-scf/README.md)。单独函数用量费不是总价，旧服务器配置仅为备份。
+
+后续更新时先在控制台部署新镜像并做公网检查，再发布同一版网页。数据源和 API 地址仍只改 `config/public.json`，之后执行 `npm run sync`。生成的 `_headers` 同时包含准确的接口连接和图片来源，避免迁移到 Cloudflare 后被浏览器拦截。发布同一版图片、网页回退副本与后端快照。
+
+云端故障时可先将配置 source 改回 local，重新生成发布网页，再恢复已验收的后端包；旧云服务验收不代表新包已部署。
 
 官方说明：
 

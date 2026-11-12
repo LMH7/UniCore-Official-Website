@@ -16,9 +16,9 @@ window.APP_READY = (async () => {
     if (c.status === "ready" && c.title) {
       const image = UI.url(c.image);
       const link = UI.url(c.link);
-      return `<article class="solution-case is-ready">${image ? `<div class="solution-case-media"><img src="${image}" alt="${e(c.imageAlt || c.title)}" width="640" height="360" loading="lazy"></div>` : '<div class="solution-case-media" role="img" aria-label="案例图片待补充"><span>案例图片待补充</span></div>'}<div class="solution-case-copy"><span class="micro-label">CASE / ${e(s.title)}</span><h3>${e(c.title)}</h3><p>${e(c.summary || "")}</p>${link ? resourceLink(link, "查看案例", /^https?:/i.test(link)) : ""}</div></article>`;
+      return `<article class="solution-case is-ready">${image ? `<div class="solution-case-media"><img src="${image}" alt="${e(c.imageAlt || c.title)}" width="640" height="360" loading="lazy"></div>` : ""}<div class="solution-case-copy"><span class="micro-label">CASE / ${e(s.title)}</span><h3>${e(c.title)}</h3><p>${e(c.summary || "")}</p>${link ? resourceLink(link, "查看案例", /^https?:/i.test(link)) : ""}</div></article>`;
     }
-    return `<div class="solution-case is-pending"><div class="solution-case-media" role="img" aria-label="案例图片待补充，建议比例十六比九"><span>案例图片待补充 · 16:9</span></div><div class="solution-case-copy"><span class="micro-label">CASE / 待补充</span><h3>案例位置</h3><p>${e(c.note || "用于放置经团队确认可公开的应用案例，建议 16:9 图片与 100–150 字说明。")}</p><span class="pending-badge">资料待补充</span></div></div>`;
+    return "";
   };
   const solutionLinks = (s) => {
     const platforms = (s.platforms || [])

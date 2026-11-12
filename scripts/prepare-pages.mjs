@@ -1,4 +1,4 @@
-import { cp, readFile, readdir, writeFile } from "node:fs/promises";
+import { cp, readFile, readdir, writeFile, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,6 +77,7 @@ await checkEntry(source);
 const errorPage = await readFile(path.join(source, "404.html"), "utf8");
 if (!baseElement.test(errorPage))
   throw new Error("404 页面缺少根路径 base，停止发布以免错误页链接失效。");
+await rm(output, { recursive: true, force: true });
 await cp(source, output, { recursive: true });
 const filename = path.join(output, "404.html");
 await writeFile(

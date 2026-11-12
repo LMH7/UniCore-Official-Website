@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures.mjs";
 
 const ready = (page) => page.evaluate(() => window.INTERACTIONS_READY);
 
@@ -574,6 +574,9 @@ test("减少动态效果时内容可直接阅读，hover仍有反馈", async ({ 
 });
 
 test("静态模式不发起后端请求", async ({ page }) => {
+  await page.route("**/data-config.js*", route => route.fulfill({
+    contentType: "text/javascript", body: 'window.DATA_CONFIG = Object.freeze({source:"local",apiBase:"",timeoutMs:5000});',
+  }));
   const apiCalls = [];
   page.on("request", (req) => {
     if (req.url().includes("/api/")) apiCalls.push(req.url());
@@ -587,12 +590,9 @@ test("静态模式不发起后端请求", async ({ page }) => {
 });
 
 async function apiMode(page, timeout = 500) {
-  await page.route("**/data-service.js", async (route) => {
+  await page.route("**/data-config.js", async (route) => {
     const response = await route.fetch();
-    const body = (await response.text()).replace(
-      /source:\s*"local",\s*apiBase:\s*"",\s*timeoutMs:\s*5000/,
-      `source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}`,
-    );
+    const body = `window.DATA_CONFIG = Object.freeze({source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}});`;
     await route.fulfill({ response, body });
   });
 }
@@ -602,17 +602,17 @@ test("预留数据层能读取API返回并同步列表与详情，无需真实�
 }) => {
   await page.goto("/home.html");
   await ready(page);
-  const { products, content } = await page.evaluate(async () => {
+  const { products, content, version } = await page.evaluate(async () => {
     const d = await SiteData.ready;
-    return { products: d.products, content: d.content };
+    return { products: d.products, content: d.content, version: d.version };
   });
   products[0].name = "接口测试平台";
   await apiMode(page);
   await page.route("**/api/v1/products", (r) =>
-    r.fulfill({ json: { data: products } }),
+    r.fulfill({ json: { data: products, meta: {version} } }),
   );
   await page.route("**/api/v1/site-content", (r) =>
-    r.fulfill({ json: { data: content } }),
+    r.fulfill({ json: { data: content, meta: {version} } }),
   );
   await page.goto("/home.html");
   await ready(page);
@@ -637,13 +637,14 @@ test("有效的空产品列表显示空状态，不显示被接口撤下的本�
   await page.goto("/home.html");
   await ready(page);
   const content = await page.evaluate(() => SITE_CONTENT);
+  const version = await page.evaluate(() => CONTENT_VERSION);
   content.contacts = [];
   await apiMode(page);
   await page.route("**/api/v1/products", (r) =>
-    r.fulfill({ json: { data: [] } }),
+    r.fulfill({ json: { data: [], meta: {version} } }),
   );
   await page.route("**/api/v1/site-content", (r) =>
-    r.fulfill({ json: { data: content } }),
+    r.fulfill({ json: { data: content, meta: {version} } }),
   );
   await page.goto("/products.html");
   await ready(page);

@@ -24,15 +24,32 @@ jobs:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.lock
+      - run: python -m pip install -r backend/requirements.lock
+      - run: python -m pip check
       - run: npm run check
+      - run: npm run test:backend
       - run: npx playwright install --with-deps chromium
       - run: npm test
+      - run: npm run test:integration
+      - run: npm run package:backend
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: browser-test-report
-          path: artifacts/test-report
+          path: |
+            artifacts/test-report
+            artifacts/backend-test-report
           retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-source-package
+          path: release/inex-backend-*
+          retention-days: 14
       - run: node scripts/prepare-pages.mjs
         if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3

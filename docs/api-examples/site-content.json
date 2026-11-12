@@ -62,6 +62,11 @@
         "summary": "从理解算法，到开展真实飞行实验。",
         "audience": "高校课程、科研课题与机器人实验教学",
         "description": "围绕自主飞行与机器人感知，将硬件平台、算法学习与仿真验证衔接起来，为课程实践和科研探索提供清晰的起点。",
+        "topics": [
+          "机器人感知",
+          "自主导航",
+          "算法实验"
+        ],
         "case": {
           "status": "pending",
           "title": "",
@@ -71,11 +76,6 @@
           "link": "",
           "note": "用于放置课程实践或科研课题案例，建议 16:9 图片与 100–150 字说明；内容经团队确认后再公开。"
         },
-        "topics": [
-          "机器人感知",
-          "自主导航",
-          "算法实验"
-        ],
         "platforms": [
           "nex-250",
           "nex-30"
@@ -90,6 +90,11 @@
         "summary": "让空中机器人感知并理解环境。",
         "audience": "自主导航、环境探测与巡检方向的研发团队",
         "description": "围绕激光雷达或深度相机的环境感知，探索自主建图、环境理解与飞行规划。具体场景与交付内容可结合实验需求进一步讨论。",
+        "topics": [
+          "环境感知",
+          "自主建图",
+          "路径规划"
+        ],
         "case": {
           "status": "pending",
           "title": "",
@@ -99,11 +104,6 @@
           "link": "",
           "note": "用于放置自主探索或巡检方向的实验案例，建议 16:9 图片与 100–150 字说明；未确认前不填写客户名称与成果数据。"
         },
-        "topics": [
-          "环境感知",
-          "自主建图",
-          "路径规划"
-        ],
         "platforms": [
           "nex-500",
           "nex-250"
@@ -118,6 +118,11 @@
         "summary": "从单机智能，走向多机协同。",
         "audience": "多机器人系统与集群算法研究人员",
         "description": "面向多机任务分配、协同感知与编队飞行等研究方向，探索仿真实验与实体平台之间的衔接，支持研究思路的逐步验证。",
+        "topics": [
+          "多机协同",
+          "编队研究",
+          "仿真验证"
+        ],
         "case": {
           "status": "pending",
           "title": "",
@@ -127,11 +132,6 @@
           "link": "",
           "note": "用于放置集群协同方向的演示或合作案例，建议 16:9 图片与 100–150 字说明；仅收录经团队确认可公开的内容。"
         },
-        "topics": [
-          "多机协同",
-          "编队研究",
-          "仿真验证"
-        ],
         "platforms": [
           "nex-30"
         ]
@@ -139,31 +139,31 @@
     ],
     "resources": [
       {
-        "id": "cdif-lab",
-        "icon": "layers",
         "title": "CDIF-Lab",
         "type": "实验室网站",
         "description": "跨域智能飞行器技术实验室的公开研究与项目介绍。",
         "url": "https://cdiflab.github.io/",
-        "label": "访问网站"
+        "label": "访问网站",
+        "id": "cdif-lab",
+        "icon": "layers"
       },
       {
-        "id": "px4-docs",
-        "icon": "book",
         "title": "PX4 文档",
         "type": "飞行控制学习",
         "description": "PX4 官方中文文档，了解开源飞行控制与开发基础。",
         "url": "https://docs.px4.io/main/zh/",
-        "label": "阅读文档"
+        "label": "阅读文档",
+        "id": "px4-docs",
+        "icon": "book"
       },
       {
-        "id": "ros2-docs",
-        "icon": "nodes",
         "title": "ROS 2 文档",
         "type": "机器人开发学习",
         "description": "ROS 2 官方文档与教程，了解机器人软件开发的基础概念。",
         "url": "https://docs.ros.org/en/jazzy/",
-        "label": "阅读文档"
+        "label": "阅读文档",
+        "id": "ros2-docs",
+        "icon": "nodes"
       }
     ],
     "resourceUpdates": [
@@ -192,5 +192,9 @@
         "url": ""
       }
     ]
+  },
+  "meta": {
+    "version": "a56f29d171df80e5",
+    "apiVersion": "v1"
   }
 }
