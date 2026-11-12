@@ -652,10 +652,11 @@ a.project-image {
   min-width: 0;
 }
 .page-index {
-  position: sticky;
-  top: 0;
-  bottom: 0;
-  margin: auto 0;
+  position: fixed;
+  top: 50%;
+  left: auto;
+  width: 216px;
+  transform: translateY(-50%);
   padding: 20px 14px 16px;
   background: #ffffff;
   border: 1px solid var(--line);
@@ -736,7 +737,13 @@ a.project-image {
 #faq-section,
 #contact-card,
 #contact-topics,
-#contact-faq {
+#contact-faq,
+#product-list,
+#product-cta,
+#simulation,
+#se3-controller,
+#micro-aerial-robot,
+#brain-inspired-flight {
   scroll-margin-top: 128px;
 }
 @media (max-width: 991px) {
@@ -745,8 +752,10 @@ a.project-image {
     gap: 0;
   }
   .page-index {
+    position: sticky;
     top: 78px;
-    bottom: auto;
+    width: auto;
+    transform: none;
     margin: 0 0 28px;
     z-index: 15;
     padding: 10px 10px;
