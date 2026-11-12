@@ -796,7 +796,7 @@ a.project-image {
     font-size: 28px;
   }
   .page-index-card,
-  .page-index-card.page-index-brandviz {
+  .page-index .page-index-card.page-index-brandviz {
     display: none;
   }
 }
