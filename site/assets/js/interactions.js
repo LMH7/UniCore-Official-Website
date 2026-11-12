@@ -331,26 +331,28 @@ window.INTERACTIONS_READY = (async () => {
     window.addEventListener("scroll", updateCurrent, { passive: true });
     window.addEventListener("resize", updateCurrent);
     updateCurrent();
-    // 避让页脚：滚到底部时侧边栏自动上移，避免遮挡页脚内容（仅 fixed 桌面端需要）
+    // 侧边栏垂直定位：基准略低于屏幕正中，动态避开深色横幅、顶部导航与页脚（仅 fixed 桌面端）
     if (getComputedStyle(indexEl).position === "fixed") {
       const footer = document.querySelector(".site-footer");
-      if (footer) {
-        const avoidFooter = () => {
-          // 先归零再测量基准位置，避免偏移量被自身测量吃掉导致振荡
-          indexEl.style.marginTop = "";
-          const fr = footer.getBoundingClientRect();
-          const r = indexEl.getBoundingClientRect();
-          const gap = 16;
-          const shift =
-            fr.top < r.bottom + gap && fr.top > r.top
-              ? r.bottom + gap - fr.top
-              : 0;
-          indexEl.style.marginTop = shift ? `${-shift}px` : "";
-        };
-        window.addEventListener("scroll", avoidFooter, { passive: true });
-        window.addEventListener("resize", avoidFooter);
-        avoidFooter();
-      }
+      const heroEl = document.querySelector(".page-hero");
+      const placeSidebar = () => {
+        // 复位内联 top/transform 后测量基准高度，避免使用已偏移的位置
+        indexEl.style.top = "";
+        indexEl.style.transform = "none";
+        const panelH = indexEl.getBoundingClientRect().height;
+        const vh = window.innerHeight;
+        const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
+        const footerTop = footer ? footer.getBoundingClientRect().top : Infinity;
+        let top = vh / 2 + 96 - panelH / 2;
+        top = Math.max(top, heroBottom + 16, 112);
+        top = Math.min(top, vh - panelH - 16);
+        if (top + panelH + 16 > footerTop)
+          top = Math.max(112, footerTop - panelH - 16);
+        indexEl.style.top = `${Math.round(top)}px`;
+      };
+      window.addEventListener("scroll", placeSidebar, { passive: true });
+      window.addEventListener("resize", placeSidebar);
+      placeSidebar();
     }
   });
   function initHeroWave() {
