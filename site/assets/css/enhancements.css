@@ -800,7 +800,8 @@ a.project-image {
     font-size: 28px;
   }
   .page-index-card,
-  .page-index .page-index-card.page-index-brandviz {
+  .page-index .page-index-card.page-index-brandviz,
+  .page-index .page-index-drones {
     display: none;
   }
 }
@@ -892,8 +893,12 @@ a.project-image {
   position: relative;
   width: 100%;
   height: 118px;
-  margin-top: 4px;
+  margin-top: 10px;
   color: #7fa4d8;
+}
+/* 白底下加重无人机投影，保证悬浮阴影清晰可见 */
+.page-index-drones svg > ellipse[opacity] {
+  opacity: 0.3;
 }
 .page-index-drone {
   --tilt: 0deg;
