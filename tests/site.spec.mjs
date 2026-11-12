@@ -23,10 +23,14 @@ test("网站默认入口是互动封面，进入主站后首页链接不会返�
     await expect(page.locator("body")).toHaveAttribute("data-layout", "standalone");
     await expect(page.locator("#cover-title")).toHaveText("联核智域 iNEX");
     await expect(page.locator("[data-cover-slide-index]")).toHaveCount(3);
+    await expect(page.locator("html")).toHaveCSS("scrollbar-gutter", "auto");
+    await expect(page.locator(".entry-arrow svg, .instruction-icon svg, .flight-toggle-icon svg")).toHaveCount(3);
+    await expect(page.locator(".entry-arrow, .instruction-icon, .flight-toggle-icon")).toHaveText(["", "", ""]);
     await expect(page.locator(".cover-entry")).toHaveAttribute("href", "home.html");
     await page.locator(".cover-entry").click();
     await expect(page).toHaveURL(/\/home\.html$/);
     await expect(page.locator("h1")).toHaveText(views[0][1]);
+    await expect(page.locator("html")).toHaveCSS("scrollbar-gutter", "stable");
     await page.locator('#main-navigation a[href="products.html"]').click();
     await expect(page).toHaveURL(/\/products\.html$/);
     await page.locator('#main-navigation a[href="home.html"]').click();
