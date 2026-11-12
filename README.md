@@ -49,13 +49,15 @@ npm run sync
 npm run verify
 ```
 
-`verify` 依次检查生成内容、静态路径、后端、浏览器和真实 HTTP 联调。Windows 默认使用 Edge；如果 Edge 启动异常，可以安装测试浏览器后运行：
+`verify` 依次检查生成内容、静态路径、后端、浏览器和真实 HTTP 联调。Windows 默认使用 Edge；本机 Edge 若启动异常，已安装 Chrome 时可设置 `$env:PLAYWRIGHT_CHANNEL = 'chrome'`。也可以安装独立测试浏览器后运行：
 
 ```powershell
 npx playwright install chromium
 $env:PLAYWRIGHT_CHANNEL = 'chromium'
 npm run verify
 ```
+
+发布后可用 `npm run verify:live` 只读复查公网电脑/手机页面、API 内容版本和图片，结果保存在 `artifacts/live-final/`。
 
 向团队仓库提交 Pull Request，检查通过后合并 main，GitHub Actions 自动发布网页。没有通过检查的版本不发布。函数镜像通过独立流程更新，网页工作流不持有云账号权限。
 

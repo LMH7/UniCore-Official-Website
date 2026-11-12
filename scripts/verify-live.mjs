@@ -12,10 +12,11 @@ const browser = await chromium.launch({
 const results = [];
 await mkdir("artifacts/live-final", { recursive: true });
 try {
+  const page = await browser.newPage({ viewport: { width: 390, height: 960 }, reducedMotion: "reduce" });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
   for (const width of [390, 1440]) {
-    const page = await browser.newPage({ viewport: { width, height: 960 }, reducedMotion: "reduce" });
-    const errors = [];
-    page.on("pageerror", error => errors.push(error.message));
+    await page.setViewportSize({ width, height: 960 });
     for (const path of ["index.html", "home.html", "products.html", "product.html?id=nex-500",
       "solutions.html", "resources.html", "projects.html", "publications.html", "about.html", "contact.html"]) {
       const url = new URL(path, base);
@@ -45,7 +46,6 @@ try {
       results.push({ path, width, status: response.status(), source: state?.source, version: state?.version, images: "passed" });
       console.log(`PASS ${width}px ${path}${state ? " source=" + state.source : ""}`);
     }
-    await page.close();
   }
 } finally {
   await browser.close();
