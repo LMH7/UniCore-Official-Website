@@ -10,11 +10,11 @@
 
 | 需要做什么 | 修改/查看哪里 |
 | --- | --- |
-| 改产品、图、参数 | `site/assets/js/products.js` |
-| 改简介、方案、资源、联系、FAQ | `site/assets/js/site-content.js` |
+| 改产品、图、参数 | `content/products.json`，然后运行 `npm run sync` |
+| 改简介、方案、资源、联系、FAQ | `content/site-content.json`，然后运行 `npm run sync` |
 | 改全站品牌和布局 | `layout.js`、`custom.css`、`enhancements.css` |
 | 改页面交互 | `interactions.js`，产品筛选在 `app.js` |
-| 接后端 | `data-service.js` 与 `BACKEND_PLAN.md` |
+| 运行/维护后端 | `backend/README.md`、`config/public.json` 和 `BACKEND_PLAN.md` |
 | 发布和恢复旧版 | `DEPLOY.md` |
 | 查看实际检查证据 | `ACCEPTANCE.md`、`docs/screenshots/`、Actions |
 
@@ -37,4 +37,4 @@ git push
 - 如需邮箱联系，提供允许公开的邮箱；现有二维码可正常浏览和保存。
 - 手机移动网络、校园网的实际可达性反馈。
 
-以上为内容与真实设备验收事项；当前页面没有留给其他成员继续完成的必需前端模块。后端没有开发，接入方案已单独写明。
+以上为内容与真实设备验收事项。2026-11-12 已整合同学的只读后端、统一内容生成和部署候选，本机 9000 可同时预览网页与真实 API；发布数据仍为 local，新云端部署暂缓。完整团队介绍、重点项目正文和封面仍在各自 HTML/样式中维护，参见 CONTENT_GUIDE。

@@ -7,3 +7,6 @@ release/
 .DS_Store
 Thumbs.db
 *.log
+.venv-backend/
+__pycache__/
+*.pyc

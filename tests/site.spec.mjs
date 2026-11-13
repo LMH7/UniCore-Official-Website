@@ -216,8 +216,8 @@ test("联系方式填写后可显示、点击和复制，并可安全处理文�
     await route.fulfill({
       response,
       body: (await response.text()).replace(
-        'email: ""',
-        'email: "research@example.com"',
+        '"email": ""',
+        '"email": "research@example.com"',
       ),
     });
   });
@@ -295,28 +295,34 @@ async function measureContentLayout(page) {
     return {
       hero: measureContainer("#main > .page-hero > .container"),
       content: measureContainer("#main > .page-content > .container"),
+      main: measureContainer(".page-layout-main"),
       titleLeft: document.querySelector(".page-hero h1").getBoundingClientRect().left,
+      viewportWidth: document.documentElement.clientWidth,
+      sidebar: {
+        position: getComputedStyle(document.querySelector(".page-index")).position,
+        right: document.querySelector(".page-index").getBoundingClientRect().right,
+      },
     };
   });
 }
 
-function expectStandardContentLayout(actual, standard, label) {
-  for (const section of ["hero", "content"])
-    for (const metric of ["left", "width", "contentLeft", "contentWidth"])
-      expect(Math.abs(actual[section][metric] - standard[section][metric]), `${label} ${section} ${metric} 与标准栏目一致`).toBeLessThan(1);
-  expect(Math.abs(actual.titleLeft - standard.titleLeft), `${label} 大标题左边线与标准栏目一致`).toBeLessThan(1);
+function expectCenteredContentLayout(actual, label) {
+  for (const metric of ["left", "width", "contentLeft", "contentWidth"])
+    expect(Math.abs(actual.hero[metric] - actual.content[metric]), `${label} 标题与正文容器 ${metric} 一致`).toBeLessThan(1);
+  expect(Math.abs(actual.titleLeft - actual.main.contentLeft), `${label} 标题与正文左边线对齐`).toBeLessThan(1);
+  expect(Math.abs(actual.main.left + actual.main.width / 2 - actual.viewportWidth / 2), `${label} 正文整体居中`).toBeLessThan(1);
+  if (actual.sidebar.position === "fixed")
+    expect(actual.sidebar.right, `${label} 侧栏位于正文之外`).toBeLessThan(actual.main.left);
 }
 
-test("团队介绍与标准栏目对齐，正文随容器自然换行", async ({ page }) => {
+test("团队介绍居中且与标题对齐，正文随容器自然换行", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const readings = [];
-  for (const width of [390, 768, 1440, 1920, 2560]) {
+  for (const width of [390, 768, 1200, 1440, 1920, 2560]) {
     await page.setViewportSize({ width, height: 1000 });
-    await page.goto("/publications.html");
-    const standard = await measureContentLayout(page);
     await page.goto("/about.html");
     await page.locator(".about-page-intro").waitFor({ state: "visible" });
-    expectStandardContentLayout(await measureContentLayout(page), standard, `${width}px 关于我们`);
+    expectCenteredContentLayout(await measureContentLayout(page), `${width}px 关于我们`);
     const reading = await page.evaluate(async () => {
       await document.fonts.ready;
       const intro = document.querySelector(".about-page-intro");
@@ -363,22 +369,20 @@ test("团队介绍与标准栏目对齐，正文随容器自然换行", async ({
   expect(readings[0].lineCount).toBeGreaterThan(readings[2].lineCount);
 });
 
-for (const width of [390, 768, 1440, 1920, 2560]) {
+for (const width of [390, 768, 1200, 1440, 1920, 2560]) {
   test(`重点项目在 ${width}px 保持横向关键词与对齐图片`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width, height: 1000 });
-    await page.goto("/publications.html");
-    const standard = await measureContentLayout(page);
     await page.goto("/projects.html");
     await page.locator(".project-entry").first().waitFor({ state: "visible" });
-    expectStandardContentLayout(await measureContentLayout(page), standard, `${width}px 重点项目`);
+    expectCenteredContentLayout(await measureContentLayout(page), `${width}px 重点项目`);
     const layout = await page.evaluate(async () => {
       await document.fonts.ready;
       const box = (element) => {
         const rect = element.getBoundingClientRect();
         return { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right, width: rect.width, height: rect.height };
       };
-      const container = document.querySelector(".page-content > .container");
+      const container = document.querySelector(".page-layout-main") || document.querySelector(".page-content > .container");
       const containerStyle = getComputedStyle(container);
       const contentWidth = container.getBoundingClientRect().width
         - parseFloat(containerStyle.paddingLeft) - parseFloat(containerStyle.paddingRight);
@@ -404,7 +408,7 @@ for (const width of [390, 768, 1440, 1920, 2560]) {
     });
     expect(layout.pageFits).toBe(true);
     for (const copyWidth of layout.copyWidths) {
-      expect(Math.abs(copyWidth - layout.contentWidth), `${width}px 项目正文跟随容器`).toBeLessThan(1);
+      expect(Math.abs(copyWidth - layout.contentWidth), `${width}px 项目正文跟随主内容列`).toBeLessThan(1);
     }
     expect(layout.styleVersions).toHaveLength(2);
     expect(layout.styleVersions.every(Boolean), "关键样式有版本标记以避开旧缓存").toBe(true);

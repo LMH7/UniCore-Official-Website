@@ -1,0 +1,57 @@
+name: inex-production
+
+services:
+  api:
+    image: inex-api:${RELEASE_TAG:?Set RELEASE_TAG to the tested Git commit}
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    environment:
+      PORT: "9000"
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?Set the frontend origins}
+      PUBLIC_ASSET_BASE: ${PUBLIC_ASSET_BASE:?Set the published image directory}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, python, -c, "import json,urllib.request; r=urllib.request.urlopen('http://127.0.0.1:9000/healthz',timeout=3); assert json.load(r)['data']['ok'] is True"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  https:
+    image: caddy:2-alpine
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?Set the real API domain}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  caddy_data:
+  caddy_config:

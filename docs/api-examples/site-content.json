@@ -192,5 +192,9 @@
         "url": ""
       }
     ]
+  },
+  "meta": {
+    "version": "f921bcace46768e8",
+    "apiVersion": "v1"
   }
 }

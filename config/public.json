@@ -1,0 +1,6 @@
+{
+  "source": "local",
+  "apiBase": "",
+  "timeoutMs": 5000,
+  "assetBase": "https://lmh7.github.io/UniCore-Official-Website/"
+}

@@ -2,6 +2,27 @@ import { test, expect } from "@playwright/test";
 
 const ready = (page) => page.evaluate(() => window.INTERACTIONS_READY);
 
+for (const width of [390, 1440]) {
+  test(`侧边栏目在 ${width}px 点击后高亮对应项，往返切换不落到上一项`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const path of ["about", "products", "projects", "solutions", "resources", "contact"]) {
+      await page.goto(`/${path}.html`);
+      await ready(page);
+      const links = page.locator(".page-index a");
+      const count = await links.count();
+      for (const index of [1, 0, count - 1, 1]) {
+        const link = links.nth(index);
+        const href = await link.getAttribute("href");
+        await link.click();
+        await expect(link, `${path}: ${href}`).toHaveAttribute("aria-current", "location");
+        await expect(page.locator('.page-index a[aria-current="location"]')).toHaveCount(1);
+        expect(new URL(page.url()).hash).toBe(href);
+      }
+    }
+  });
+}
+
 async function holdCoverTheme(page, expectedTheme) {
   const button = page.locator("#cover-theme-toggle");
   await button.hover();
@@ -587,12 +608,9 @@ test("静态模式不发起后端请求", async ({ page }) => {
 });
 
 async function apiMode(page, timeout = 500) {
-  await page.route("**/data-service.js", async (route) => {
+  await page.route("**/data-config.js", async (route) => {
     const response = await route.fetch();
-    const body = (await response.text()).replace(
-      /source:\s*"local",\s*apiBase:\s*"",\s*timeoutMs:\s*5000/,
-      `source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}`,
-    );
+    const body = `window.DATA_CONFIG = Object.freeze({source: "api", apiBase: "/api/v1/", timeoutMs: ${timeout}});`;
     await route.fulfill({ response, body });
   });
 }

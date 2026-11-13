@@ -21,7 +21,7 @@ for (const p of PRODUCTS) {
   for (const key of ["name", "summary", "image", "imageAlt", "sensor"])
     if (!p[key]) errors.push(`${p.id} 缺少 ${key}`);
   try {
-    await stat(path.join(root, p.image));
+    if (!/^https:\/\//.test(p.image)) await stat(path.join(root, p.image));
   } catch {
     errors.push(`产品图片不存在：${p.image}`);
   }
@@ -47,6 +47,7 @@ for (const asset of [
   SITE_CONTENT.logo,
   ...SITE_CONTENT.contacts.map((c) => c.qrImage),
 ]) {
+  if (!asset || /^https:\/\//.test(asset)) continue;
   try {
     await stat(path.join(root, asset));
   } catch {

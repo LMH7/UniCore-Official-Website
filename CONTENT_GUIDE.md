@@ -26,7 +26,7 @@
 
 ## 改产品与换图
 
-打开 `site/assets/js/products.js`。`summary` 是一句话介绍，`description` 是详情。首页、列表、详情、搜索、筛选与对比都从这里读取，通常只改一次。
+打开 `content/products.json`。`summary` 是一句话介绍，`description` 是详情。修改后运行 `npm run sync`，生成首页、列表、详情、搜索、筛选、对比共用的网页数据和后端快照；不直接修改生成的 `site/assets/js/products.js`。
 
 - `id` 必须唯一，只用小写英文、数字和短横线。上线后尽量不改，避免旧分享链接失效。
 - `image` 使用 `assets/images/文件名.webp`，`imageAlt` 用简短文字说明图片。
@@ -45,7 +45,7 @@
 
 ## 改团队、方案、资源与 FAQ
 
-`site/assets/js/site-content.js` 集中保存：
+`content/site-content.json` 集中维护以下内容，运行 `npm run sync` 生成 `site/assets/js/site-content.js` 和同一版本的后端快照：
 
 - `name` / `shortName` / `brand` / `logo`：团队名称、简称、iNEX 与 Logo 路径。
 - `intro`：首页与全站搜索使用的简短简介。关于页的完整团队介绍在 `site/about.html` 的 `.about-page-intro` 中分段维护，避免长文被公共布局脚本覆盖。
@@ -53,7 +53,7 @@
 - `resources`：公开资源与全站搜索内容。
 - `faqs`：资源和联系页的常见问题；每条包含 `question`、`answer`。
 
-修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync:solutions`，将同一份模板生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
+修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync`，将同一份内容和模板生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
 
 独立页面标题和页面引导文字在相应 HTML 中；品牌改名还要检查 `<title>`、description、Open Graph 文案，以及 `product-detail.js` 的动态标题。公司主体与资质不要从 Logo 推断，应以负责人确认的对外表述为准。
 

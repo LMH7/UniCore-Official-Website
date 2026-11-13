@@ -43,9 +43,11 @@ npm run dev
 
 | 文件 | 用途 |
 | --- | --- |
-| `site/assets/js/products.js` | 产品记录；首页、列表、详情、搜索与对比共用 |
-| `site/assets/js/site-content.js` | 团队、方案、资源、微信/LinkedIn、FAQ |
-| `site/assets/js/data-service.js` | 本地与未来 API 数据源切换；目前为 local |
+| `content/products.json` | 产品唯一维护源；生成前端数据和后端快照 |
+| `content/site-content.json` | 团队、方案、资源、微信/LinkedIn、FAQ 的维护源 |
+| `site/assets/js/products.js` / `site-content.js` | 自动生成的网页本地数据，不直接编辑 |
+| `config/public.json` | 数据来源和接口配置；目前为 local，apiBase 留空 |
+| `site/assets/js/data-service.js` | 统一数据适配、契约校验和失败回退 |
 | `site/assets/js/layout.js` | 公共导航、品牌、页脚与转义工具 |
 | `site/assets/js/app.js` | 栏目呈现、产品筛选、联系卡片 |
 | `site/assets/js/product-detail.js` | 产品详情与相关平台 |
@@ -71,9 +73,9 @@ git pull --ff-only
 
 完成后检查实际页面与差异，再执行：
 
-修改 `layout.js` 的公共导航或 `site-content.js` 的品牌信息后，先运行 `npm run sync:nav`，将导航同步到各页 HTML，保证首次显示完整；`npm run check` 会检查同步状态。不要手动编辑各页生成的导航。
+修改 `content/*.json` 的产品或公共内容、`config/public.json` 配置、`layout.js` 公共导航后，运行 `npm run sync`。它会一次生成前端本地数据、后端快照、接口示例、配置，再同步封面、导航和方案；`npm run check` 会检查遗漏生成。不要直接编辑标记为 Generated 的文件和各页生成的导航。
 
-修改 `site-content.js` 的 `solutions` 或 `app.js` 的方案模板后，运行 `npm run sync:solutions`。方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动；`npm run check` 同样检查方案同步状态。
+修改 `content/site-content.json` 的 `solutions` 或 `app.js` 的方案模板后，运行 `npm run sync`。方案快捷导航与正文已预置在 `solutions.html`，避免加载后插入内容造成跳动；`npm run check` 同样检查方案同步状态。
 
 修改 `welcome.html` 的封面结构后运行 `npm run sync:cover`，将封面同步到默认入口 `index.html`；不要分别维护两份 HTML。轮播文案集中在 `welcome.js` 的 `slides` 中。`npm run check` 会检查默认入口是否同步。
 
@@ -107,4 +109,4 @@ npm run package
 
 ## 后续内容
 
-可以继续补充高清产品原图、经确认参数、公开资料、真实案例和邮箱。仅添加已经确认可公开的内容，避免把研究方向写成实际性能或已完成案例。后端接口规划和切换方法见 [BACKEND_PLAN.md](BACKEND_PLAN.md)，目前不需要架设服务器即可使用本站。
+可以继续补充高清产品原图、经确认参数、公开资料、真实案例和邮箱。仅添加已经确认可公开的内容，避免把研究方向写成实际性能或已完成案例。当前网站仍为本地数据模式；新增后端源码、统一内容生成和部署候选已整合，云端部署继续暂缓。本机真实后端预览使用 `启动后端预览.cmd` / `http://127.0.0.1:9000/`，仍先展示封面、再进入 `home.html`。环境安装和运行说明见 [backend/README.md](backend/README.md)，整体安排见 [BACKEND_PLAN.md](BACKEND_PLAN.md)。

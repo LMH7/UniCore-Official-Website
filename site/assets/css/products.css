@@ -1,0 +1,752 @@
+/* D 组块样式：产品详情新增组件。
+   只定义本组新增的类，不改 custom.css / enhancements.css 中的公共规则；
+   颜色、圆角、边框沿用站点变量，保证与首页、产品中心观感一致。
+   断点沿用全站习惯：991px / 767px / 359px。 */
+
+/* ---------- 详情页工具条 ---------- */
+.detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-toolbar .breadcrumbs {
+  padding: 22px 0;
+}
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #6482a8;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.detail-back svg {
+  transform: rotate(180deg);
+}
+.detail-back:hover {
+  color: var(--blue);
+}
+
+/* ---------- 首屏速览三项 ---------- */
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.detail-facts li {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fbfdff, #f3f8fe);
+}
+.detail-facts span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #6b7c92;
+}
+.detail-facts strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+/* ---------- 特点与参数：不套卡片，改用细分隔线 ---------- */
+.feature-grid,
+.spec-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+.feature-card,
+.spec-group {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 16px 0;
+  background: none;
+}
+.feature-card:first-child,
+.spec-group:first-child {
+  padding-top: 0;
+}
+.feature-card {
+  display: flex;
+  flex-direction: column;
+}
+.feature-index,
+.spec-index {
+  display: block;
+  margin-bottom: 10px;
+  font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em;
+  color: #8b9db3;
+}
+.feature-card h3,
+.spec-group summary h3 {
+  margin: 0 0 7px;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.feature-card p {
+  max-width: none;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+/* ---------- 左栏：标题垂直居中，补一行数据摘要 ---------- */
+#product-features > div:first-child,
+#product-specs > div:first-child {
+  align-self: center;
+}
+.section-meta {
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: #6b7c92;
+}
+
+/* ---------- 特点 / 参数：压缩垂直节奏 ---------- */
+#product-features,
+#product-specs {
+  padding: 32px 0;
+}
+.feature-card,
+.spec-group {
+  padding: 12px 0;
+}
+.feature-index,
+.spec-index {
+  margin-bottom: 6px;
+}
+.feature-card h3,
+.spec-group summary h3 {
+  margin-bottom: 4px;
+}
+.feature-card p {
+  line-height: 1.7;
+}
+.spec-group summary {
+  padding-bottom: 2px;
+}
+.spec-group .spec-list > div {
+  padding: 7px 0;
+}
+
+#product-specs .spec-group {
+  padding: 8px 0;
+}
+#product-specs .spec-group summary {
+  padding-bottom: 0;
+}
+#product-specs .spec-index {
+  margin-bottom: 2px;
+}
+#product-specs .spec-group .spec-list {
+  margin-top: 2px;
+}
+#product-specs .spec-group .spec-list > div {
+  padding: 5px 0;
+}
+
+/* ---------- 参数分组：与特点卡同款外壳，标题旁带折叠按钮 ---------- */
+.spec-group summary {
+  position: relative;
+  display: block;
+  padding-right: 30px;
+  cursor: pointer;
+  list-style: none;
+}
+.spec-group summary::-webkit-details-marker {
+  display: none;
+}
+.spec-group summary::after {
+  content: "−";
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #8b9db3;
+  font-size: 12px;
+  line-height: 1;
+}
+.spec-group:not([open]) summary::after {
+  content: "+";
+}
+.spec-group .spec-list {
+  margin-top: 4px;
+}
+.spec-group .spec-list > div {
+  padding: 10px 0;
+}
+.spec-group .spec-list > div:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- 演示视频预留区 ---------- */
+.video-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  aspect-ratio: 16 / 9;
+  border: 1px dashed #c9d8ea;
+  border-radius: 10px;
+  background-color: #f6faff;
+  background-image:
+    linear-gradient(180deg, #fbfdff, #eef4fb),
+    repeating-linear-gradient(0deg, rgba(24, 78, 140, 0.055) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, rgba(24, 78, 140, 0.055) 0 1px, transparent 1px 26px);
+  padding: 24px;
+  text-align: center;
+}
+.video-slot-corner {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 8px;
+  border: 1px solid #dbe6f3;
+  border-radius: 999px;
+  background: #ffffffbf;
+  font: 10px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+  color: #6b7c92;
+}
+.video-slot-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 2px;
+  border: 1px dashed #c3d4e8;
+  border-radius: 50%;
+  color: #7d97b8;
+}
+.video-slot strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.video-slot > span:last-child {
+  max-width: 420px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.video-frame {
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #0d2037;
+}
+.video-frame video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+/* ---------- 文档资料位 ---------- */
+.resource-placeholder-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+.resource-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 8px;
+  background: #eff5fd;
+  color: #4d78b3;
+}
+.resource-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.resource-item-text strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.resource-item-text span {
+  font-size: 11px;
+  color: var(--muted);
+}
+/* 资料类型底色：文档蓝 / 代码紫 / 安装包绿，占位与真实链接都保留类型提示 */
+.resource-item--doc .resource-item-icon {
+  background: #edf3fd;
+  color: #4a74b8;
+}
+.resource-item--code .resource-item-icon {
+  background: #f3effd;
+  color: #6d58b8;
+}
+.resource-item--pkg .resource-item-icon {
+  background: #ecf7f0;
+  color: #3f8358;
+}
+.resource-item.is-pending {
+  border-style: dashed;
+  background: #fbfdff;
+}
+.resource-item.is-pending .resource-item-icon {
+  opacity: 0.85;
+}
+.resource-item.is-pending .resource-item-text strong {
+  font-weight: 550;
+  color: #71829a;
+}
+a.resource-item:hover {
+  border-color: #b9d3f4;
+  background: #f6faff;
+}
+.resource-item > svg {
+  margin-left: auto;
+  flex: none;
+  color: #9db4cf;
+  transition: color 0.2s, transform 0.2s;
+}
+a.resource-item:hover > svg {
+  color: var(--blue);
+  transform: translateX(2px);
+}
+a.resource-item:hover .resource-item-text strong {
+  color: var(--blue);
+}
+
+/* ---------- 图片回退 ---------- */
+img.is-placeholder {
+  object-fit: contain;
+  opacity: 0.92;
+}
+.image-fallback-note {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: #fffaf0;
+  border: 1px solid #f0dfae;
+  font-size: 9px;
+  color: #8a6d22;
+}
+
+/* ---------- 联系条与相关平台 ---------- */
+.detail-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding: 46px 0;
+}
+.detail-contact h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.detail-contact p {
+  font-size: 12px;
+  margin-bottom: 0;
+  max-width: 430px;
+}
+.detail-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.related-products {
+  margin-top: 24px;
+}
+.related-products > .eyebrow {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ---------- 错误地址的候选平台 ---------- */
+.detail-suggest {
+  margin-top: 36px;
+}
+.suggest-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.suggest-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 15px;
+  font-size: 12px;
+  color: var(--ink);
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.suggest-link span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.suggest-link:hover {
+  border-color: #b9d3f4;
+  color: var(--blue);
+}
+
+/* ---------- 章节序号 ---------- */
+.section-index {
+  display: inline-block;
+  margin-right: 9px;
+  font: 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.12em;
+  color: #aab9cb;
+  vertical-align: 2px;
+}
+
+/* ---------- 资料元信息 ---------- */
+.resource-meta {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: #6b7c92;
+}
+
+/* ---------- 资料区底部：相关论文入口（细链接，不做卡片） ---------- */
+.resource-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+#product-detail .detail-section > div > .resource-more {
+  max-width: none;
+}
+.resource-more a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--blue);
+  white-space: nowrap;
+}
+.resource-more a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* ---------- 研究方向：整行可点 ---------- */
+.direction-list .direction-item {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  transition:
+    color 0.2s,
+    padding-left 0.2s;
+}
+.direction-list .direction-item > span {
+  font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #8b9db3;
+}
+.direction-list .direction-item > h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+}
+.direction-list .direction-item > svg {
+  color: #8096b2;
+}
+.direction-list .direction-item:hover {
+  padding-left: 6px;
+  color: var(--blue);
+}
+.direction-list .direction-item:hover > h3,
+.direction-list .direction-item:hover > svg {
+  color: var(--blue);
+}
+
+/* ---------- 其他平台：与上方同节奏，更小更弱 ---------- */
+#product-detail .related-products {
+  margin: 0 0 40px;
+  padding: 22px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+#product-detail .related-products::before {
+  content: none;
+}
+#product-detail .related-products > .eyebrow {
+  margin-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #8b9db3;
+}
+#product-detail .related-products > .eyebrow::before {
+  display: none;
+}
+#product-detail .related-products h2 {
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+#product-detail .related-grid {
+  gap: 12px;
+}
+#product-detail .related-card {
+  padding: 10px 14px;
+  border: 1px solid #eef2f8;
+  border-radius: 10px;
+  background: #fbfdff;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+#product-detail .related-card:hover {
+  border-color: #dbe7f6;
+  background: #f7fbff;
+}
+#product-detail .related-card img {
+  width: 76px;
+  height: 58px;
+}
+#product-detail .related-card h3 {
+  font-size: 15px;
+}
+#product-detail .related-card .micro-label {
+  font-size: 10px;
+  color: #8b9db3;
+}
+#product-detail .related-card > svg {
+  width: 16px;
+  height: 16px;
+  color: #a8bbd0;
+}
+
+/* ---------- 组件内字号统一：条目 16 / 正文 13 / 微型 11 ---------- */
+/* 只作用于详情页里本组块的组件，h1 / h2 / 段落仍用公共值 */
+#product-detail .feature-card h3,
+#product-detail .spec-group summary h3,
+#product-detail .direction-item h3,
+#product-detail .related-card h3,
+#product-detail .resource-item-text strong {
+  font-size: 16px;
+}
+#product-detail .resource-item-text > span:not(.resource-meta) {
+  font-size: 13px;
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 991px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .detail-contact {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 767px) {
+  .detail-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 14px;
+  }
+  .detail-toolbar .breadcrumbs {
+    padding: 16px 0 0;
+  }
+  .detail-back {
+    /* 手机端先面包屑、后返回，符合“先看位置再离开”的阅读顺序 */
+    order: 2;
+    margin-left: auto;
+  }
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .feature-card {
+    padding: 20px 18px;
+  }
+  .resource-placeholder-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .spec-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  #product-detail .related-products {
+    margin: 0 0 32px;
+    padding: 18px 0 0;
+  }
+  #product-detail .related-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  #product-detail .related-card {
+    padding: 12px;
+  }
+  #product-detail .related-card img {
+    width: 80px;
+    height: 62px;
+  }
+  #product-detail .related-card h3 {
+    font-size: 16px;
+  }
+  .detail-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .detail-facts li {
+    padding: 10px 11px;
+  }
+  .detail-facts strong {
+    font-size: 13px;
+  }
+
+  .detail-contact {
+    padding: 32px 0;
+  }
+  .detail-contact h2 {
+    font-size: 24px;
+  }
+  .detail-contact-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .video-slot {
+    padding: 16px;
+  }
+  .video-slot strong {
+    font-size: 14px;
+  }
+  .image-fallback-note {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+@media (max-width: 359px) {
+  .feature-card h3 {
+    font-size: 16px;
+  }
+  .resource-item {
+    gap: 10px;
+    padding: 11px 12px;
+  }
+  .detail-toolbar {
+    font-size: 10px;
+  }
+  .suggest-link {
+    padding: 7px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-back,
+  .resource-item,
+  .suggest-link {
+    transition: none;
+  }
+}
+
+/* ---------- 打印 / 导出 PDF：客户常把详情页存成文件 ---------- */
+@media print {
+  .site-header,
+  .site-footer,
+  .floating-tools,
+  .detail-toolbar,
+  .detail-actions,
+  .detail-contact-actions,
+  .video-slot,
+  .resource-placeholder-list,
+  .related-products {
+    display: none !important;
+  }
+  #product-detail .container {
+    max-width: none;
+    padding: 0;
+  }
+  .product-detail-grid,
+  .detail-section {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-color: #cccccc;
+  }
+  .product-detail-image {
+    min-height: 0;
+    padding: 0;
+    background: none;
+  }
+  .product-detail-image img {
+    max-height: 260px;
+  }
+  .detail-section p,
+  .feature-card p,
+  .detail-facts strong {
+    max-width: none;
+    color: #333333;
+  }
+  .feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .spec-list > div {
+    border-color: #dddddd;
+  }
+  body {
+    color: #000000;
+    background: #ffffff;
+  }
+}

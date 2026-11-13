@@ -5,6 +5,7 @@ window.INTERACTIONS_READY = (async () => {
     window.LAYOUT_READY,
     window.APP_READY,
     window.PRODUCT_READY,
+    window.PRODUCTS_PAGE_READY,
   ]);
   const { escape: e, icon, url } = UI;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
@@ -311,52 +312,150 @@ window.INTERACTIONS_READY = (async () => {
           a.setAttribute("aria-current", "location");
         else a.removeAttribute("aria-current");
       });
+    const headerEl = document.querySelector(".site-header");
+    const footerEl = document.querySelector(".site-footer");
+    const heroEl = document.querySelector(".page-hero");
+    const headerBottom = () =>
+      Math.max(0, headerEl?.getBoundingClientRect().bottom || 0);
+    const hashTarget = () =>
+      targets.find((target) => "#" + target.id === window.location?.hash) || null;
+    const anchorOffset = (target) =>
+      (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0) +
+      (parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+    let anchorTarget = hashTarget();
+    let anchorLanded = false;
     // 基于滚动位置计算当前板块：避免 IntersectionObserver 事件式高亮在回滚时卡住
     const updateCurrent = () => {
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      if (anchorTarget) {
+        const expectedScroll = Math.max(0, Math.min(
+          maxScroll,
+          anchorTarget.getBoundingClientRect().top + window.scrollY - anchorOffset(anchorTarget),
+        ));
+        const atAnchor = Math.abs(window.scrollY - expectedScroll) <= 3;
+        // 按真实落点跟踪锚点，不使用定时锁；也区分并排或因页底而落点相同的栏目。
+        if (!anchorLanded || atAnchor) {
+          anchorLanded = atAnchor;
+          setCurrent(anchorTarget);
+          return;
+        }
+        anchorTarget = null;
+      }
       const nearBottom =
+        maxScroll > 4 && window.scrollY > 0 &&
         window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 4;
       if (nearBottom) {
         setCurrent(targets[targets.length - 1]);
         return;
       }
-      const line = 168;
+      const visibleLine =
+        getComputedStyle(indexEl).position === "fixed"
+          ? headerBottom() + 16
+          : Math.max(headerBottom(), indexEl.getBoundingClientRect().bottom) + 16;
       let current = targets[0];
       for (const t of targets) {
+        // 浏览器的锚点落点包含根滚动留白和目标外边距，两者需要一起判断。
+        const line = Math.max(visibleLine, anchorOffset(t)) + 2;
         if (t.getBoundingClientRect().top <= line) current = t;
         else break;
       }
       setCurrent(current);
     };
-    window.addEventListener("scroll", updateCurrent, { passive: true });
-    window.addEventListener("resize", updateCurrent);
-    updateCurrent();
-    // 侧边栏垂直定位：基准略低于屏幕正中，动态避开深色横幅、顶部导航与页脚（仅 fixed 桌面端）
-    if (getComputedStyle(indexEl).position === "fixed") {
-      const footer = document.querySelector(".site-footer");
-      const heroEl = document.querySelector(".page-hero");
-      const placeSidebar = () => {
-        // 复位内联 top/transform 后测量，避免使用已偏移的位置
-        indexEl.style.top = "";
-        indexEl.style.transform = "none";
-        const vh = window.innerHeight;
-        const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
-        const footerTop = footer ? footer.getBoundingClientRect().top : Infinity;
-        // 可用垂直区间：[topMin, bottomLimit]，面板必须完整落在这个区间内，超出就内部滚动
-        const topMin = Math.max(heroBottom + 16, 112);
-        const bottomLimit = Math.min(vh - 16, footerTop - 16);
-        const maxPanelH = Math.max(220, bottomLimit - topMin);
-        indexEl.style.maxHeight = `${Math.round(maxPanelH)}px`;
-        const panelH = indexEl.getBoundingClientRect().height;
-        let top = vh / 2 + 96 - panelH / 2;
-        top = Math.max(top, topMin);
-        top = Math.min(top, bottomLimit - panelH);
-        indexEl.style.top = `${Math.round(top)}px`;
-      };
-      window.addEventListener("scroll", placeSidebar, { passive: true });
-      window.addEventListener("resize", placeSidebar);
+    // 每次重新判断布局模式；窗口跨过断点时不能沿用桌面的内联定位。
+    const placeSidebar = () => {
+      if (getComputedStyle(indexEl).position !== "fixed") {
+        for (const property of ["top", "transform", "max-height", "visibility"])
+          indexEl.style.removeProperty(property);
+        indexEl.style.setProperty(
+          "--page-index-top",
+          `${Math.ceil(headerBottom() + 12)}px`,
+        );
+        return;
+      }
+      indexEl.style.removeProperty("--page-index-top");
+      indexEl.style.transform = "none";
+      const vh = window.innerHeight;
+      const heroBottom = heroEl?.getBoundingClientRect().bottom || 0;
+      const footerTop = footerEl?.getBoundingClientRect().top ?? Infinity;
+      const topMin = Math.ceil(Math.max(heroBottom + 16, headerBottom() + 16));
+      const bottomLimit = Math.floor(Math.min(vh - 16, footerTop - 16));
+      const availableHeight = Math.max(0, bottomLimit - topMin);
+      indexEl.style.maxHeight = `${availableHeight}px`;
+      // 横幅或页脚几乎占满视口时暂不显示面板，避免侵入它们的区域。
+      // 主体进入视口后自动恢复；高度不足时仍可在面板内部滚动。
+      indexEl.style.visibility = availableHeight < 112 ? "hidden" : "";
+      const panelH = indexEl.getBoundingClientRect().height;
+      const preferredTop = vh / 2 + 64 - panelH / 2;
+      const top = Math.max(
+        topMin,
+        Math.min(preferredTop, bottomLimit - panelH),
+      );
+      indexEl.style.top = `${Math.round(top)}px`;
+    };
+    const updateSidebar = () => {
       placeSidebar();
-    }
+      updateCurrent();
+    };
+    let sidebarFrame = 0;
+    const scheduleSidebar = () => {
+      if (sidebarFrame) return;
+      sidebarFrame = requestAnimationFrame(() => {
+        sidebarFrame = 0;
+        updateSidebar();
+      });
+    };
+    const releaseAnchor = () => {
+      anchorTarget = null;
+      anchorLanded = false;
+      scheduleSidebar();
+    };
+    links.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.ctrlKey ||
+            event.metaKey || event.shiftKey || event.altKey ||
+            (link.target && link.target !== "_self")) return;
+        const target = targets.find((item) => "#" + item.id === link.hash);
+        if (!target) return;
+        anchorTarget = target;
+        anchorLanded = false;
+        setCurrent(target);
+        scheduleSidebar();
+      });
+    });
+    window.addEventListener("hashchange", () => {
+      anchorTarget = hashTarget();
+      anchorLanded = false;
+      scheduleSidebar();
+    });
+    window.addEventListener("pageshow", () => {
+      anchorTarget = hashTarget();
+      anchorLanded = true;
+      scheduleSidebar();
+    });
+    // 用户接管滚动时立即恢复按位置高亮，避免中途打断平滑滚动后仍停在点击项。
+    window.addEventListener("wheel", releaseAnchor, { passive: true });
+    window.addEventListener("touchmove", releaseAnchor, { passive: true });
+    window.addEventListener("keydown", (event) => {
+      if (!event.defaultPrevented &&
+          ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key))
+        releaseAnchor();
+    });
+    window.addEventListener("scroll", scheduleSidebar, { passive: true });
+    window.addEventListener("resize", releaseAnchor);
+    document.addEventListener("scrollend", (event) => {
+      if (event.target !== document || !anchorTarget) return;
+      anchorLanded = true;
+      scheduleSidebar();
+    });
+    window.addEventListener("load", scheduleSidebar, { once: true });
+    // 菜单展开或收起也会改变可用高度，无需等待下一次滚动。
+    if (headerEl && "ResizeObserver" in window)
+      new ResizeObserver(scheduleSidebar).observe(headerEl);
+    updateSidebar();
   });
   function initHeroWave() {
     const canvas = document.getElementById("hero-wave");

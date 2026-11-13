@@ -1,0 +1,4 @@
+# If backend/ is used as a build context by another builder.
+tests/
+__pycache__/
+*.pyc

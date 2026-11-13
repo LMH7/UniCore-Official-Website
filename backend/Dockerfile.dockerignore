@@ -1,0 +1,9 @@
+**
+!backend/
+!backend/__init__.py
+!backend/__main__.py
+!backend/app.py
+!backend/validation.py
+!backend/requirements.lock
+!backend/data/
+!backend/data/snapshot.json
