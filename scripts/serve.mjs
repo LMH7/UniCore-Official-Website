@@ -3,11 +3,14 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = path.resolve(fileURLToPath(new URL("../site/", import.meta.url)));
 const option = (key) =>
   process.argv.includes(key)
     ? process.argv[process.argv.indexOf(key) + 1]
     : undefined;
+const root = option("--dir") ? path.resolve(option("--dir")) : path.resolve(fileURLToPath(new URL("../site/", import.meta.url)));
+const extraHeaders = option("--headers")
+  ? Object.fromEntries(JSON.parse(await readFile(path.resolve(option("--headers")), "utf8")).headers.find(rule => rule.source === "/*").headers.map(({key, value}) => [key, value]))
+  : {};
 const port = Number(option("--port") || process.env.PORT || 4173);
 const host = option("--host") || "127.0.0.1";
 const types = {
@@ -21,6 +24,7 @@ const types = {
   ".txt": "text/plain; charset=utf-8",
   ".jpg": "image/jpeg",
   ".xml": "application/xml; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
 };
 const server = http.createServer(async (req, res) => {
   if (!["GET", "HEAD"].includes(req.method)) {
@@ -47,10 +51,11 @@ const server = http.createServer(async (req, res) => {
       "Content-Type": types[path.extname(file)] || "application/octet-stream",
       "Cache-Control": "no-cache",
       "X-Content-Type-Options": "nosniff",
+      ...extraHeaders,
     });
     res.end(req.method === "HEAD" ? undefined : data);
   } catch {
-    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8", ...extraHeaders });
     res.end(
       req.method === "HEAD"
         ? undefined

@@ -2,13 +2,16 @@
 
 可浏览、可持续补充内容的团队展示网站。包含互动封面、首页、产品中心和详情、方案、资源、学术成果、重点项目、团队与实验室介绍、联系方式及错误页；配套 Python 3.12 只读内容后端。
 
-- [网站预览](https://lmh7.github.io/UniCore-Official-Website/)
+- [现有网站预览](https://lmh7.github.io/UniCore-Official-Website/)
+- [EdgeOne 部署步骤](deploy/edgeone/README.md) · [按优先级的优化清单](docs/优化清单.md)
 - [项目交付说明](项目交付说明.md)：先读这一份，含查看、维护、验收与剩余账号事项。
 - [内容维护](CONTENT_GUIDE.md) · [交接与分工](HANDOFF.md) · [发布和回退](DEPLOY.md)
 - [后端运行](backend/README.md) · [腾讯云部署](deploy/tencent-scf/README.md)
 - [最终验收记录](docs/2026-11-12-整体验收.md) · [自动检查和发布](https://github.com/LMH7/UniCore-Official-Website/actions)
 
 ## 本机查看
+
+**查看本轮 EdgeOne 发布副本：双击 `启动EdgeOne预览.cmd`，打开 <http://127.0.0.1:4178/>。** 它启用发布安全策略并使用随站内容；不会更改原后端。
 
 **双击 `启动后端预览.cmd`，打开 <http://127.0.0.1:9000/>。** 这是本机网页加真实后端；关闭窗口后本机服务停止，不影响公网网站。网页入口先显示互动封面，“进入首页”打开 `home.html`，实验室介绍在“关于我们”。
 
@@ -31,7 +34,7 @@ macOS/Linux 用 `python3.12 -m venv .venv-backend`，安装依赖时使用 `.ven
 | --- | --- |
 | 产品名称、图片、参数、资料 | `content/products.json` |
 | 简介、联系、方案、资源、FAQ | `content/site-content.json` |
-| 数据源与云接口地址 | `config/public.json` |
+| 官网/图片/API 地址与数据源 | `config/public.json` |
 | 实验室详细介绍 | `site/about.html` |
 | 重点项目 | `site/projects.html` |
 | 学术成果 | `site/publications.html` |
@@ -49,7 +52,7 @@ npm run sync
 npm run verify
 ```
 
-`verify` 依次检查生成内容、静态路径、后端、浏览器和真实 HTTP 联调。Windows 默认使用 Edge；本机 Edge 若启动异常，已安装 Chrome 时可设置 `$env:PLAYWRIGHT_CHANNEL = 'chrome'`。也可以安装独立测试浏览器后运行：
+`verify` 依次检查生成内容、部署配置、静态路径、后端、浏览器、真实 HTTP 联调，以及启用安全策略的 EdgeOne 发布副本。Windows 默认使用 Edge；本机 Edge 若启动异常，已安装 Chrome 时可设置 `$env:PLAYWRIGHT_CHANNEL = 'chrome'`。也可以安装独立测试浏览器后运行：
 
 ```powershell
 npx playwright install chromium
@@ -59,7 +62,7 @@ npm run verify
 
 发布后可用 `npm run verify:live` 只读复查公网电脑/手机页面、API 内容版本和图片，结果保存在 `artifacts/live-final/`。
 
-向团队仓库提交 Pull Request，检查通过后合并 main，GitHub Actions 自动发布网页。没有通过检查的版本不发布。函数镜像通过独立流程更新，网页工作流不持有云账号权限。
+向团队仓库提交 Pull Request，检查通过后合并 main，GitHub Actions 发布备用网页，并在全部检查通过后更新 EdgeOne 跟踪的 `edgeone-release` 分支。没有通过检查的版本不发布。函数镜像通过独立流程更新，网页工作流不持有云账号权限。
 
 ```sh
 npm run release
@@ -69,7 +72,9 @@ npm run release
 
 ## 网站与云函数
 
-网页唯一发布源是 `site/`，托管在 GitHub Pages；后端为你的广州腾讯云 SCF，使用个人版镜像仓库，无数据库和常驻服务器。本次没有购买企业版仓库或其他新资源。
+网页唯一发布源是 `site/`，正式托管选择 EdgeOne Pages/Makers，GitHub Pages 保留备用；后端为你的广州腾讯云 SCF，使用个人版镜像仓库，无数据库和常驻服务器。本次没有购买企业版仓库或其他新资源。
+
+本轮用户尚无域名，先交付 `npm run package:edgeone` 生成的预览包；新云项目和正式切换待账号操作。EdgeOne 默认预览采用完整随站内容，不调用 SCF。
 
 `config/public.json` 已配置新账号 API。网页同时保留完整内容副本，接口出错、超时、缺版本，或接口版本与网页不一致时，整体使用已保存版本并提示访客。图片由网站托管，不通过云函数中转。
 

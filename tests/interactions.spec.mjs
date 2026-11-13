@@ -283,7 +283,7 @@ test("昼夜分界线内的文字和飞机同步换色，运动与轮播保持�
   expect(snapshot.palette).toBe("night");
   expect(snapshot.previewIsInsideReveal).toBe(true);
   expect(snapshot.clipPath).toMatch(/^circle\([1-9]/);
-  expect(snapshot.targetBackground).toContain("cover-sky-night-realistic.png");
+  expect(snapshot.targetBackground).toContain("cover-sky-night-realistic.webp");
   expect(snapshot.sourcePlaneColor).toBe("rgb(8, 43, 70)");
   expect(snapshot.previewPlaneColor).toBe("rgb(219, 242, 255)");
   expect(snapshot.previewDescriptionColor).not.toBe(snapshot.sourceDescriptionColor);
@@ -352,7 +352,7 @@ test("窄屏滚动后的夜转昼前景与原场景对齐，取消和完成切�
   expect(snapshot.offset).toBeLessThan(1);
   expect(snapshot.widthDifference).toBeLessThan(1);
   expect(snapshot.heightDifference).toBeLessThan(1);
-  expect(snapshot.targetBackground).toContain("cover-sky-day.png");
+  expect(snapshot.targetBackground).toContain("cover-sky-day.webp");
   expect(snapshot.sourceColor).toBe("rgb(219, 242, 255)");
   expect(snapshot.previewColor).toBe("rgb(8, 43, 70)");
   await expect(reveal).toBeHidden();
