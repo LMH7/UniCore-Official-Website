@@ -100,8 +100,9 @@ const errorPage = await readFile(path.join(source, "404.html"), "utf8");
 if (!baseElement.test(errorPage))
   throw new Error("404 页面缺少根路径 base，停止发布以免错误页链接失效。");
 await rm(output, { recursive: true, force: true });
+// Keep previously public image URLs on the existing GitHub host for cached pages.
 const sourceOnlyImages = new Set(["cover-sky-day.png", "cover-sky-night-realistic.png", "cover-sky-night.png", "cdif-lab-logo.png", "project-simulation-reference-1.png", "project-simulation-reference-2.png"]);
-await cp(source, output, { recursive: true, filter: file => !sourceOnlyImages.has(path.basename(file)) });
+await cp(source, output, { recursive: true, filter: file => provider !== "edgeone" || !sourceOnlyImages.has(path.basename(file)) });
 await writeFile(path.join(output, "assets/js/data-config.js"), `/* Public deployment configuration. */\nwindow.DATA_CONFIG = Object.freeze(${JSON.stringify({ source: dataSource, apiBase: config.apiBase, timeoutMs: config.timeoutMs })});\n`);
 const filename = path.join(output, "404.html");
 await writeFile(
