@@ -67,4 +67,5 @@ test("预览与正式构建隔离、生成SEO和指纹资源、保留GitHub备�
   assert.match(await read("artifacts/github-pages/home.html"), /noindex,follow/);
   assert.match(await read("artifacts/github-pages/home.html"), /https:\/\/official.example\/home.html/);
   assert.equal(JSON.parse(await read("artifacts/github-pages/deploy-info.json")).indexable, false);
+  assert.ok((await stat(path.join(root, "artifacts/github-pages/assets/images/cover-sky-day.png"))).size > 0, "cached pages on the old host must retain their image URLs");
 });

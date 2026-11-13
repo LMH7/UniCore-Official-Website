@@ -50,6 +50,6 @@
 
 ## 2026-11-13 封面传输优化
 
-日间和当前夜景 PNG 转换为同尺寸 WebP（Pillow，quality=88、method=6），未改变构图和内容。页面引用 cover-sky-day.webp 与 cover-sky-night-realistic.webp，分别为 63,868 和 12,664 字节；夜景按需下载。三个原 PNG 继续保留在源码作备份，GitHub/EdgeOne 发布副本排除它们。
+日间和当前夜景 PNG 转换为同尺寸 WebP（Pillow，quality=88、method=6），未改变构图和内容。页面引用 cover-sky-day.webp 与 cover-sky-night-realistic.webp，分别为 63,868 和 12,664 字节；夜景按需下载。三个原 PNG 继续保留在源码作备份，EdgeOne 发布副本排除它们；GitHub 保留旧地址供缓存页面使用。
 
-实验室标识 cdif-lab-logo 与两张 project-simulation-reference 图片额外生成无损 WebP，保留尺寸和像素，合计从 2,835,338 降至 1,869,812 字节；页面与原图链接使用 WebP。PNG 源文件保留备份，不放入 GitHub/EdgeOne 部署副本。二维码未做有损处理。
+实验室标识 cdif-lab-logo 与两张 project-simulation-reference 图片额外生成无损 WebP，保留尺寸和像素，合计从 2,835,338 降至 1,869,812 字节；页面与原图链接使用 WebP。PNG 源文件保留备份，不放入 EdgeOne 部署副本；GitHub 保留历史图片地址，兼容缓存页面。二维码未做有损处理。

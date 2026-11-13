@@ -70,6 +70,7 @@ node scripts/backend-task.mjs smoke https://1531026871-73sj75z34t.ap-guangzhou.t
 - 工作分支 → PR → main。GitHub 检查完成后才快进 edgeone-release，EdgeOne 跟踪此分支。不要向发布分支手工提交，不强推。权限或分支保护导致快进失败时先修复工作流。
 - GitHub 只证明检查通过及发布源更新，EdgeOne 成功状态须去其控制台看。GitHub Pages 仍单独发布备用站。
 - 发布副本中的 CSS/JS 使用内容指纹文件名，适用 Makers 默认长期浏览器缓存；页面、配置和未带指纹资源采用平台默认重新验证策略。每次部署平台自动使边缘缓存失效，没有给所有文件统一设置一年缓存。
+- GitHub 备用网址保留历史 PNG 地址，兼容旧页面缓存；EdgeOne 新站包只发布所需 WebP。
 - 保留根目录 404.html，平台返回真正的 404；不要加把所有路径重写到首页的 SPA 规则。
 - deploy-info.json 记录内容版本、模式与指纹。Git 导入构建可能没有 GITHUB_SHA，此时 commit 为 null，以平台提交号为准。
 - 故障先从 Makers 部署列表恢复已验收版本；没有回滚入口时用 git revert 恢复源码，通过检查后重发。保留 GitHub 备用网址和旧镜像。
