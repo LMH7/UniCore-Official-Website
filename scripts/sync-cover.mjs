@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { publicConfig, seoHTML } from "./deployment-config.mjs";
 
 const source = fileURLToPath(new URL("../site/welcome.html", import.meta.url));
 const target = fileURLToPath(new URL("../site/index.html", import.meta.url));
@@ -8,10 +9,7 @@ const welcome = await readFile(source, "utf8");
 if (!welcome.includes('data-layout="standalone"') || !welcome.includes('href="home.html"'))
   throw new Error("封面需要独立布局与 home.html 首页入口。");
 // 保留 welcome.html 预览地址；index.html 与它共用同一份封面结构。
-const expected = welcome.replace(
-  /<meta\s+name="robots"\s+content="noindex,follow"\s*\/?>/i,
-  '<link rel="canonical" href="https://lmh7.github.io/UniCore-Official-Website/index.html" />',
-);
+const expected = seoHTML(welcome, "index.html", await publicConfig());
 let current = "";
 try { current = await readFile(target, "utf8"); }
 catch (error) { if (error.code !== "ENOENT") throw error; }

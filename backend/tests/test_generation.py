@@ -17,7 +17,7 @@ class GenerationTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         for folder in ["content", "config", "site/assets/images"]:
             shutil.copytree(ROOT / folder, self.root / folder)
-        for file in ["scripts/sync-content.mjs", "site/assets/js/content-contract.js"]:
+        for file in ["scripts/sync-content.mjs", "scripts/deployment-config.mjs", "site/assets/js/content-contract.js"]:
             (self.root / file).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / file, self.root / file)
 
@@ -130,6 +130,17 @@ class GenerationTests(unittest.TestCase):
         self.assertNotIn("connect-src *", policy)
         config["apiBase"] = "http://insecure.example/"
         path.write_text(json.dumps(config), encoding="utf-8")
+        self.run_generator(success=False)
+
+    def test_invalid_case_and_ready_download_are_rejected(self):
+        path = self.root / "content/site-content.json"
+        original = json.loads(path.read_text(encoding="utf-8"))
+        original["solutions"][0]["case"]["link"] = "javascript:alert(1)"
+        path.write_text(json.dumps(original), encoding="utf-8")
+        self.run_generator(success=False)
+        original["solutions"][0]["case"]["link"] = ""
+        original["resourceUpdates"][0].update(status="ready", url="")
+        path.write_text(json.dumps(original), encoding="utf-8")
         self.run_generator(success=False)
 
 

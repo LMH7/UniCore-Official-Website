@@ -10,9 +10,9 @@
 
 封面视觉样式在 `site/assets/css/welcome.css`，飞机使用 `site/assets/images/cover-aircraft.svg` 中的短机身单色剪影（64×64 视口），以页面内 SVG 的 `currentColor` 随昼夜变色：白天深蓝，夜间浅蓝白。桌面飞机约 76px 宽，手机约 60px。天空、页眉、逐行文案、按钮与飞机在首次进入时依次淡入或轻微移动；飞机入场动画使用独立的 `.aircraft-arrival` 包裹层，不覆盖指针飞行的定位和转向。
 
-昼夜背景为 `site/assets/images/cover-sky-day.png` 与 `cover-sky-night-realistic.png`。夜景为独立生成的真实低光风格星空、弯月与薄云；旧版 `cover-sky-night.png` 留作备份，页面不再引用。
+昼夜背景优先使用 `site/assets/images/cover-sky-day.webp` 与 `cover-sky-night-realistic.webp`，原 PNG 保留兼容已有链接。夜景为独立生成的真实低光风格星空、弯月与薄云；旧版 `cover-sky-night.png` 留作备份，页面不再引用。
 
-右上角按钮需按住约 1500ms 才提交昼夜切换，支持鼠标、触屏及键盘空格/回车。按住时从按钮中心向外圆形展开，天空、文字、飞机、提示和按钮配色共用同一道分界线，分界光环和按钮底部进度同步变化；提前松开或取消会一起平滑缩回，不保存未完成的主题。前景显示副本由 `cover-palette.js` 管理，仅用于显示且不可交互，保持飞机位置与逐行轮播动画同步，不复制实际控件状态或焦点。初次默认蓝天，完整切换后以 `inex-cover-theme:v1` 保存当前会话选择，刷新时由 head 脚本提前恢复。背景加载失败可以重试，减少动态效果时仍保留长按确认，完成时前景和天空一起换色，跳过展开与光环动画。
+右上角按钮需按住约 1500ms 才提交昼夜切换，支持鼠标、触屏及键盘空格/回车。按住时从按钮中心向外圆形展开，天空、文字、飞机、提示和按钮配色共用同一道分界线，分界光环和按钮底部进度同步变化；提前松开或取消会一起平滑缩回，不保存未完成的主题。前景显示副本由 `cover-palette.js` 管理，仅用于显示且不可交互，保持飞机位置与逐行轮播动画同步，不复制实际控件状态或焦点。初次默认蓝天，完整切换后以 `inex-cover-theme:v1` 保存当前会话选择，刷新时由 head 中外置的 `cover-init.js` 提前恢复，以适配发布安全策略。背景加载失败可以重试，减少动态效果时仍保留长按确认，完成时前景和天空一起换色，跳过展开与光环动画。
 
 点击“进入首页”或左上品牌时，会先自动完成夜间切换，再重放原始链接交给共用 `page-transitions.js` / `page-transitions.css` 淡化进入 `home.html`；已处于夜间时直接进入。Ctrl/Command 点击等浏览器常规链接操作保留。背景图、首屏主题色、CSS 及 JS 中的相关引用需同步维护。
 
@@ -30,8 +30,10 @@
 
 - `id` 必须唯一，只用小写英文、数字和短横线。上线后尽量不改，避免旧分享链接失效。
 - `image` 使用 `assets/images/文件名.webp`，`imageAlt` 用简短文字说明图片。
-- `sensor` 是筛选依据，当前可填写“激光雷达”或“深度相机”。若新增新的传感器类型，还需要在 `products.html` 和 `app.js` 中同步筛选按钮与允许值。
-- `applications` 为研究方向数组；`specs` 为 `{label,value}` 数组，数据必须经研发确认。
+- `sensor` 是筛选依据，当前可填写“激光雷达”或“深度相机”。新增类型时同步 `products.html` 的筛选按钮；`products-page.js` 从按钮读取允许值。
+- `applications` 为研究方向数组；`applicationSolutions` 与它同序，明确关联的方案 id。没有对应方案的条目可用空字符串。
+- `specs` 为 `{label,value,group?}` 数组，数据必须经研发确认；`features` 为 `{title,text}` 数组，`series` 为产品系列。
+- `video` 使用公开视频路径或留空；`contentStatus` 供维护登记，支持 `placeholder`、`partial`、`complete`。
 - `resources` 为 `{title,url}` 数组，没有正式资料保持 `[]`。
 - `status` 目前只为后续扩展预留，不控制公开状态。草稿不要写进公开产品数组。
 
@@ -53,11 +55,15 @@
 - `resources`：公开资源与全站搜索内容。
 - `faqs`：资源和联系页的常见问题；每条包含 `question`、`answer`。
 
-修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync`，将同一份内容和模板生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
+方案 `platforms` 为关联产品 id 数组；`case.status` 为 `pending` 时不显示案例，`ready` 且有标题时显示。真实案例图片放在 `case.image`，可选链接放在 `case.link`；内部填写建议只保留在维护文档。`resourceUpdates` 中资料正式发布后填入真实 `url` 并将 `status` 改为 `ready`，未备齐的资料保持 `pending`。
+
+修改方案数据或 `app.js` 中的方案模板后运行 `npm run sync`，将同一份内容生成到 `solutions.html`。不要直接修改其中带 `data-solutions-key` 的生成内容；预置正文与快捷导航能避免页面加载后的布局跳动。
 
 独立页面标题和页面引导文字在相应 HTML 中；品牌改名还要检查 `<title>`、description、Open Graph 文案，以及 `product-detail.js` 的动态标题。公司主体与资质不要从 Logo 推断，应以负责人确认的对外表述为准。
 
-关于页使用连续排版：公司介绍之后是“依托实验室”，不再使用二级切换按钮。两个实验室的简介、官网链接和标识在 `site/about.html` 的 `.about-labs` 区域维护，顺序为飞行器基础布局全国重点实验室、跨域智能飞行实验室。标识分别使用 `aircraft-basic-layout-lab-logo.png` 与 `cdif-lab-logo.png`；简介来源见 `ASSET_SOURCES.md`。
+关于页使用连续排版和左侧文字目录。两个实验室的简介、官网链接和标识在 `site/about.html` 的 `.about-labs` 区域维护，顺序为飞行器基础布局全国重点实验室、跨域智能飞行实验室。标识使用 `aircraft-basic-layout-lab-logo.png` 与优化后的 `cdif-lab-logo.webp`；简介来源见 `ASSET_SOURCES.md`。
+
+有侧栏的六个栏目使用 144px 靠左目录、居中正文和共用的标题左边线；1200px 以下改横向目录。样式集中在 `enhancements.css`。高亮根据实际锚点留白和滚动位置更新，并区分点击意图；无需分别修改六页的高亮代码。
 
 ## 重点项目
 
@@ -65,12 +71,12 @@
 
 这些内容属于科研计划，更新时应区分研究方向、开展中的工作与已验证成果。适度扩充应围绕项目名称解释研究目标，不补写未经确认的性能指标或交付进度。
 
-- 第 2 项使用团队指定的两张微信照片，站点文件为 `project-simulation-reference-1.png`、`project-simulation-reference-2.png`。图片显示 Isaac Sim 界面，作为仿真环境参考，不能标成 Blender 项目成品截图。
+- 第 2 项使用团队指定的两张微信照片，页面使用 `project-simulation-reference-1.webp`、`project-simulation-reference-2.webp`，原 PNG 保留以兼容已有链接。图片显示 Isaac Sim 界面，作为仿真环境参考，不能标成 Blender 项目成品截图。
 - 第 3 项没有对应实拍，使用用户指定的 `flight-field.svg` 概念插画。
 - 第 4 项两张图片来自新版会议 PDF 第 4 页，分别是 ZJU FAST-LAB / 微分智飞与幻思创新的外部平台技术参考，图注保留参考来源。
 - 第 5 项使用新版会议 PDF 第 5 页的神经元形态与连接结构参考图，保留原图水印。未使用同页的社交帖子截图。
 
-详细图片来源与英文文件名见 `ASSET_SOURCES.md`。这次只更新本地网站，提交上传仍按团队分支流程手动进行。
+详细图片来源与英文文件名见 `ASSET_SOURCES.md`。日常更新走团队分支流程；发布状态和验收结果见 `docs/2026-11-12-整体验收.md`。
 
 ## 微信与 LinkedIn
 
@@ -101,9 +107,11 @@
 
 用户选择减少动态效果时不会做进入动画；触屏可点击所有功能，核心内容不依赖 hover 才可发现。保持按钮的可读标签与键盘焦点样式。
 
-## 后端准备
+## 后端与正式数据源
 
-`data-service.js` 目前配置 `source:"local"`，不会发起后端请求。需要接入时先阅读 `BACKEND_PLAN.md`，实现并测试真实 API 后再切换，不要把示例域名直接投入使用。JSON 示例用于接口对照，不是第二份实时内容源；更新内容后如需交接后端，要同步示例。
+后端已实现，操作见 `backend/README.md`。正式配置在 `config/public.json`，本分支保持 `source:"local"` 和空接口地址；9000 联调预览会自动读取本机同版真实后端。启用公网 API 前先部署对应完整内容快照，填写已验收的接口地址。接口版本需与网页保存的 `CONTENT_VERSION` 一致，旧版、无版本或失败时整体回退，避免旧后端覆盖新版页面。历史公网版本见上游验收记录。
+
+运行 `npm run sync` 自动更新接口示例、网页副本及后端快照。更新后端内容需重新打包发布；已启动进程不会热更新。发布图片和网页时使用同一提交，特别是撤下内容时同时更新回退副本。API 故障会显示“最新内容暂时无法获取，当前展示已保存的版本。”，访客仍可浏览。
 
 ## 发布前检查
 

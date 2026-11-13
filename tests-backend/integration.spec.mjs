@@ -95,3 +95,41 @@ test("两个接口发布版本不一致时不会混合显示", async ({ page }) 
   expect(state.reason).toContain("versions differ");
   await expect(page.locator(".content-fallback")).toBeVisible();
 });
+
+for (const version of ["0000000000000000", null]) {
+  test(`后端整体为${version ? "旧版" : "无版本"}时保留新版方案和资源`, async ({ page }) => {
+    await page.route("**/api/v1/*", async route => {
+      const response = await route.fetch();
+      const json = await response.json();
+      if (version) json.meta.version = version;
+      else delete json.meta;
+      if (route.request().url().endsWith("site-content")) {
+        delete json.data.resourceUpdates;
+        json.data.solutions.forEach(s => { delete s.platforms; delete s.case; });
+      }
+      await route.fulfill({response, json});
+    });
+    await page.goto("/solutions.html");
+    await ready(page);
+    expect((await page.evaluate(() => SiteData.ready)).fallback).toBe(true);
+    await expect(page.locator(".platform-chip")).toHaveCount(5);
+    await expect(page.locator(".solution-case.is-pending")).toHaveCount(0);
+    await page.goto("/resources.html");
+    await ready(page);
+    await expect(page.locator(".resource-update-row")).toHaveCount(4);
+  });
+}
+
+test("新版方案推荐平台、资源列表和项目图片贯通真实后端", async ({ page }) => {
+  for (const [path, selector, count] of [
+    ["solutions.html", ".platform-chip", 5],
+    ["resources.html", ".resource-update-row", 4],
+    ["projects.html", ".project-entry", 4],
+  ]) {
+    await page.goto("/" + path);
+    await ready(page);
+    expect((await page.evaluate(() => SiteData.ready)).source).toBe("api");
+    await expect(page.locator(selector)).toHaveCount(count);
+    await imagesLoaded(page);
+  }
+});

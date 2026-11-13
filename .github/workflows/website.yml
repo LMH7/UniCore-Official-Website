@@ -32,10 +32,13 @@ jobs:
       - run: python -m pip install -r backend/requirements.lock
       - run: python -m pip check
       - run: npm run check
+      - run: npm run test:deploy
       - run: npm run test:backend
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - run: npm run test:integration
+      - run: npm run test:edgeone
+      - run: npm run package:edgeone
       - run: npm run package:backend
       - uses: actions/upload-artifact@v4
         if: always()
@@ -44,11 +47,17 @@ jobs:
           path: |
             artifacts/test-report
             artifacts/backend-test-report
+            artifacts/edgeone-test-report
           retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: backend-source-package
           path: release/inex-backend-*
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edgeone-preview-package
+          path: release/inex-edgeone-*.zip
           retention-days: 14
       - run: node scripts/prepare-pages.mjs
         if: github.event_name != 'pull_request'
@@ -71,3 +80,16 @@ jobs:
       - name: Publish GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  edgeone-release:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Advance checked source for EdgeOne Git integration
+        run: git push origin HEAD:refs/heads/edgeone-release

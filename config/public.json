@@ -1,4 +1,5 @@
 {
+  "siteBase": "https://lmh7.github.io/UniCore-Official-Website/",
   "source": "local",
   "apiBase": "",
   "timeoutMs": 5000,

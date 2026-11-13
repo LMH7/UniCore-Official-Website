@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures.mjs";
 
 const views = [
   ["home.html", /让研究想法，\s*真正起飞。/],

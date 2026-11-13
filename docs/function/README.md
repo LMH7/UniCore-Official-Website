@@ -1,15 +1,13 @@
 # 后端交付入口
 
-2026-11-11 新版实现已迁移至 [`backend/`](../../backend/README.md)。原来的独立 `app.py` 已移除，避免继续部署写死内容、缺依赖、旧运行环境的版本。
+正式实现位于 [`backend/`](../../backend/README.md)，使用 Python 3.12、Flask 和 Waitress。当前整合状态、镜像及公网结果见 [整体验收](../2026-11-12-整体验收.md)。
 
-- 运行和腾讯云部署：[backend/README.md](../../backend/README.md)
-- 维护内容：[CONTENT_GUIDE.md](../../CONTENT_GUIDE.md)
-- 新版接口：[接口说明.md](接口说明.md)
-- 新版本地验收：[backend/ACCEPTANCE.md](../../backend/ACCEPTANCE.md)
-- 同学原先的线上记录：[验收记录.md](验收记录.md)，仅对应 2026-11-10 的旧服务。
-- 同学 Python 3.10 更新：[复核记录](2026-11-11-复核.md)，源提交与原记录归档于 [history/](history/README.md)。
-- 长期正式上线：[生产部署说明](../../deploy/production/README.md)。
+- [运行和维护](../../backend/README.md)
+- [内容维护](../../CONTENT_GUIDE.md)
+- [接口说明](接口说明.md)
+- [广州腾讯云部署](../../deploy/tencent-scf/README.md)
+- [整体交付](../../项目交付说明.md)
 
-不要再用“复制一个 app.py 覆盖旧模板”的方式部署。新版提供锁定依赖、启动入口和完整 ZIP，需要 Python 3.12 环境；目标云环境尚需账号持有人确认。
+`history/` 与早期验收记录只供追溯，不是正式部署源。不要再复制旧版独立 `app.py` 覆盖模板，也不要部署到 Python 3.10 环境。镜像内提供 Python 3.12，ZIP 需要匹配的 Python 3.12 环境。
 
-同学的新演示地址为 <https://1529293111-h6fg7s8i2a.ap-chengdu.tencentscf.com/>，记录运行时 Python 3.10。公网读取已复核，但标准路径等仍不满足修复版契约；代码修复和实际部署分别验收。正式方案使用 Python 3.12 容器，不迁就旧环境。默认网页继续使用本地内容，9000 预览可以检验修复版后端。
+原同学成都演示服务由其账号管理，本次不修改它。正式网站使用用户自己的广州账号。独立服务器配置仅保留作未来备选，不需要现在购买服务器。

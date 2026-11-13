@@ -25,7 +25,8 @@ window.PRODUCT_READY = (async () => {
   };
   const absolute = (value) => {
     try {
-      return new URL(value, location.href).href;
+      const canonical = document.querySelector('link[rel="canonical"]');
+      return new URL(value, canonical?.href || location.href).href;
     } catch {
       return "";
     }
@@ -73,7 +74,7 @@ window.PRODUCT_READY = (async () => {
         icon: "book",
         tone: "doc",
       });
-    return `<a class="resource-item resource-item--${resourceTone(item)}" href="${href}" target="_blank" rel="noopener noreferrer"><span class="resource-item-icon">${icon("download", 20)}</span><span class="resource-item-text"><strong>${e(item.title)}</strong><span>在新窗口打开<span class="visually-hidden">（新窗口）</span></span><span class="resource-meta">${item.updated ? `更新 ${e(item.updated)}` : "版本 / 更新日期待登记"}</span></span></a>`;
+    return `<a class="resource-item resource-item--${resourceTone(item)}" href="${href}" target="_blank" rel="noopener noreferrer"><span class="resource-item-icon">${icon("download", 20)}</span><span class="resource-item-text"><strong>${e(item.title)}</strong><span>在新窗口打开<span class="visually-hidden">（新窗口）</span></span><span class="resource-meta">${item.updated ? `更新 ${e(item.updated)}` : "查看公开资料"}</span></span></a>`;
   };
 
   const renderNotFound = () => {
@@ -102,7 +103,7 @@ window.PRODUCT_READY = (async () => {
     const features =
       Array.isArray(p.features) && p.features.length
         ? p.features.slice(0, 6)
-        : [{ title: "平台特点待补充", text: "建议补充 3 条，每条 20—40 字，说明平台定位与实验价值。" }];
+        : [{ title: "了解平台特点", text: "平台介绍正在整理，欢迎联系团队了解适合你的实验配置。" }];
     const specs = Array.isArray(p.specs) ? p.specs : [];
     const applications = Array.isArray(p.applications) ? p.applications : [];
     const applicationSolutions = Array.isArray(p.applicationSolutions)
@@ -226,16 +227,16 @@ window.PRODUCT_READY = (async () => {
       </section>
 
       <section class="detail-section" id="product-demo">
-        <div><span class="section-index" aria-hidden="true">04</span><span class="eyebrow">PLATFORM IN FLIGHT</span><h2>演示视频</h2><p>视频完成后在此播放；当前区域为固定比例预留位。</p></div>
+        <div><span class="section-index" aria-hidden="true">04</span><span class="eyebrow">PLATFORM IN FLIGHT</span><h2>演示视频</h2><p>了解平台的飞行实验与应用场景。</p></div>
         ${
           p.video && url(p.video)
             ? `<div class="video-frame"><video controls preload="none" playsinline src="${url(p.video)}"></video></div>`
-            : `<div class="video-slot" role="group" aria-label="演示视频待补充" data-placeholder="演示视频"><span class="video-slot-corner">16:9 · 待接入</span><span class="video-slot-mark">${icon("scan", 30)}</span><strong>演示视频待补充</strong><span>建议 16:9，航拍与实验场景各 30—60 秒。未接入视频时不提供播放按钮。</span></div>`
+            : `<div class="video-slot" role="group" aria-label="演示视频正在整理" data-placeholder="演示视频"><span class="video-slot-corner">PLATFORM DEMO</span><span class="video-slot-mark">${icon("scan", 30)}</span><strong>演示视频正在整理</strong><span>欢迎联系团队了解飞行实验与应用场景。</span></div>`
         }
       </section>
 
       <section class="detail-section" id="product-resources">
-        <div><span class="section-index" aria-hidden="true">05</span><span class="eyebrow">DOCUMENTS</span><h2>文档与资料</h2><p>资料待补充时先前往资源与支持；取得文件后在此直接下载。</p></div>
+        <div><span class="section-index" aria-hidden="true">05</span><span class="eyebrow">DOCUMENTS</span><h2>文档与资料</h2><p>查看平台的公开资料，或前往资源与支持了解获取方式。</p></div>
         <div>
           <div class="resource-placeholder-list">${(resources.length
             ? resources.map(renderResourceLink)

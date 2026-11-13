@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures.mjs";
 
 const ready = (page) => page.evaluate(() => window.INTERACTIONS_READY);
 
@@ -304,7 +304,7 @@ test("昼夜分界线内的文字和飞机同步换色，运动与轮播保持�
   expect(snapshot.palette).toBe("night");
   expect(snapshot.previewIsInsideReveal).toBe(true);
   expect(snapshot.clipPath).toMatch(/^circle\([1-9]/);
-  expect(snapshot.targetBackground).toContain("cover-sky-night-realistic.png");
+  expect(snapshot.targetBackground).toContain("cover-sky-night-realistic.webp");
   expect(snapshot.sourcePlaneColor).toBe("rgb(8, 43, 70)");
   expect(snapshot.previewPlaneColor).toBe("rgb(219, 242, 255)");
   expect(snapshot.previewDescriptionColor).not.toBe(snapshot.sourceDescriptionColor);
@@ -373,7 +373,7 @@ test("窄屏滚动后的夜转昼前景与原场景对齐，取消和完成切�
   expect(snapshot.offset).toBeLessThan(1);
   expect(snapshot.widthDifference).toBeLessThan(1);
   expect(snapshot.heightDifference).toBeLessThan(1);
-  expect(snapshot.targetBackground).toContain("cover-sky-day.png");
+  expect(snapshot.targetBackground).toContain("cover-sky-day.webp");
   expect(snapshot.sourceColor).toBe("rgb(219, 242, 255)");
   expect(snapshot.previewColor).toBe("rgb(8, 43, 70)");
   await expect(reveal).toBeHidden();
@@ -595,6 +595,9 @@ test("减少动态效果时内容可直接阅读，hover仍有反馈", async ({ 
 });
 
 test("静态模式不发起后端请求", async ({ page }) => {
+  await page.route("**/data-config.js*", route => route.fulfill({
+    contentType: "text/javascript", body: 'window.DATA_CONFIG = Object.freeze({source:"local",apiBase:"",timeoutMs:5000});',
+  }));
   const apiCalls = [];
   page.on("request", (req) => {
     if (req.url().includes("/api/")) apiCalls.push(req.url());
@@ -620,17 +623,17 @@ test("预留数据层能读取API返回并同步列表与详情，无需真实�
 }) => {
   await page.goto("/home.html");
   await ready(page);
-  const { products, content } = await page.evaluate(async () => {
+  const { products, content, version } = await page.evaluate(async () => {
     const d = await SiteData.ready;
-    return { products: d.products, content: d.content };
+    return { products: d.products, content: d.content, version: d.version };
   });
   products[0].name = "接口测试平台";
   await apiMode(page);
   await page.route("**/api/v1/products", (r) =>
-    r.fulfill({ json: { data: products } }),
+    r.fulfill({ json: { data: products, meta: {version} } }),
   );
   await page.route("**/api/v1/site-content", (r) =>
-    r.fulfill({ json: { data: content } }),
+    r.fulfill({ json: { data: content, meta: {version} } }),
   );
   await page.goto("/home.html");
   await ready(page);
@@ -655,13 +658,14 @@ test("有效的空产品列表显示空状态，不显示被接口撤下的本�
   await page.goto("/home.html");
   await ready(page);
   const content = await page.evaluate(() => SITE_CONTENT);
+  const version = await page.evaluate(() => CONTENT_VERSION);
   content.contacts = [];
   await apiMode(page);
   await page.route("**/api/v1/products", (r) =>
-    r.fulfill({ json: { data: [] } }),
+    r.fulfill({ json: { data: [], meta: {version} } }),
   );
   await page.route("**/api/v1/site-content", (r) =>
-    r.fulfill({ json: { data: content } }),
+    r.fulfill({ json: { data: content, meta: {version} } }),
   );
   await page.goto("/products.html");
   await ready(page);

@@ -10,16 +10,25 @@
     "sync:nav": "node scripts/sync-navigation.mjs",
     "sync:solutions": "node scripts/sync-solutions.mjs",
     "sync:cover": "node scripts/sync-cover.mjs",
-    "check": "node scripts/sync-content.mjs --check && node scripts/sync-cover.mjs --check && node scripts/sync-navigation.mjs --check && node scripts/sync-solutions.mjs --check && node scripts/check.mjs",
+    "check": "node scripts/sync-content.mjs --check && node scripts/sync-seo.mjs --check && node scripts/sync-cover.mjs --check && node scripts/sync-navigation.mjs --check && node scripts/sync-solutions.mjs --check && node scripts/check.mjs",
     "package": "node scripts/package.mjs",
     "test": "playwright test",
     "sync:content": "node scripts/sync-content.mjs",
-    "sync": "npm run sync:content && npm run sync:cover && npm run sync:nav && npm run sync:solutions",
+    "sync": "npm run sync:content && npm run sync:seo && npm run sync:cover && npm run sync:nav && npm run sync:solutions",
     "test:backend": "node scripts/backend-task.mjs test",
     "dev:backend": "node scripts/backend-task.mjs preview",
     "test:integration": "playwright test --config playwright.backend.config.mjs",
     "package:backend": "node scripts/backend-task.mjs package",
-    "build:cloud": "node scripts/cloud-image.mjs"
+    "build:cloud": "node scripts/cloud-image.mjs",
+    "verify": "npm run check && npm run test:deploy && npm run test:backend && npm test && npm run test:integration && npm run test:edgeone",
+    "verify:live": "node scripts/verify-live.mjs",
+    "release": "npm run package && npm run package:backend && node scripts/prepare-pages.mjs",
+    "sync:seo": "node scripts/sync-seo.mjs",
+    "build:edgeone": "node scripts/build-site.mjs --edgeone",
+    "build:github": "node scripts/build-site.mjs",
+    "test:deploy": "node --test tests-deployment/*.test.mjs",
+    "test:edgeone": "playwright test --config playwright.edgeone.config.mjs",
+    "package:edgeone": "node scripts/package.mjs --edgeone"
   },
   "engines": {
     "node": ">=20"
