@@ -4,7 +4,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(fileURLToPath(new URL("../", import.meta.url)));
-for (const script of ["sync-content.mjs", "sync-cover.mjs", "sync-navigation.mjs", "sync-solutions.mjs"]) {
+const edgeone = process.argv.includes("--edgeone");
+if (edgeone) execFileSync(process.execPath, [path.join(root, "scripts/build-site.mjs"), "--edgeone"], { stdio: "inherit" });
+for (const script of ["sync-content.mjs", "sync-seo.mjs", "sync-cover.mjs", "sync-navigation.mjs", "sync-solutions.mjs"]) {
   execFileSync(process.execPath, [path.join(root, "scripts", script), "--check"], { stdio: "inherit" });
 }
 execFileSync(process.execPath, [path.join(root, "scripts/check.mjs")], {
@@ -13,8 +15,8 @@ execFileSync(process.execPath, [path.join(root, "scripts/check.mjs")], {
 const release = path.join(root, "release");
 await mkdir(release, { recursive: true });
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-const folder = path.join(release, `unicore-site-${stamp}`);
-await cp(path.join(root, "site"), folder, { recursive: true });
+const folder = path.join(release, `${edgeone ? "inex-edgeone" : "unicore-site"}-${stamp}`);
+await cp(path.join(root, edgeone ? "artifacts/edgeone-pages" : "site"), folder, { recursive: true });
 // 使用 ZIP 的常见 store 模式，部署无需安装任何打包依赖。
 const table = Uint32Array.from({ length: 256 }, (_, i) => {
   for (let n = 0; n < 8; n++) i = i & 1 ? 0xedb88320 ^ (i >>> 1) : i >>> 1;

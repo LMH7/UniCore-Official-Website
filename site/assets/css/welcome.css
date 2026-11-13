@@ -9,7 +9,7 @@
   --cover-line: #ffffff40;
   --cover-button-bg: #123b5c30;
   --aircraft-color: #082b46;
-  --cover-initial-image: url("../images/cover-sky-day.png");
+  --cover-initial-image: url("../images/cover-sky-day.webp");
   font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 :root[data-cover-theme="night"], [data-cover-palette="night"] {
@@ -20,7 +20,7 @@
   --cover-line: #d2e8fb30;
   --cover-button-bg: #d8efff08;
   --aircraft-color: #dbf2ff;
-  --cover-initial-image: url("../images/cover-sky-night-realistic.png");
+  --cover-initial-image: url("../images/cover-sky-night-realistic.webp");
 }
 * { box-sizing: border-box; }
 html { min-height: 100%; background: var(--cover-bg); }
@@ -86,8 +86,8 @@ button:focus-visible, a:focus-visible, .cover-scene-preview [data-cover-focus-vi
   background-size: cover;
 }
 .cover-sky-base { background-image: var(--cover-initial-image); }
-.cover-sky[data-sky="day"] { background-image: url("../images/cover-sky-day.png"); }
-.cover-sky[data-sky="night"] { background-image: url("../images/cover-sky-night-realistic.png"); }
+.cover-sky[data-sky="day"] { background-image: url("../images/cover-sky-day.webp"); }
+.cover-sky[data-sky="night"] { background-image: url("../images/cover-sky-night-realistic.webp"); }
 .cover-sky::after {
   content: "";
   position: absolute;

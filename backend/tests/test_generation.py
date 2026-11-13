@@ -17,7 +17,7 @@ class GenerationTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         for folder in ["content", "config", "site/assets/images"]:
             shutil.copytree(ROOT / folder, self.root / folder)
-        for file in ["scripts/sync-content.mjs", "site/assets/js/content-contract.js"]:
+        for file in ["scripts/sync-content.mjs", "scripts/deployment-config.mjs", "site/assets/js/content-contract.js"]:
             (self.root / file).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / file, self.root / file)
 

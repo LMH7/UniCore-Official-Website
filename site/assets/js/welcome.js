@@ -338,6 +338,7 @@
     async function prepareSky(theme) {
       const image = document.getElementById(`cover-sky-${theme}-image`);
       if (!image) return false;
+      if (!image.getAttribute("src")) image.src = image.dataset.src;
       if (image.complete && image.naturalWidth > 0) return true;
       if (typeof image.decode !== "function") return false;
       let timeout = 0;

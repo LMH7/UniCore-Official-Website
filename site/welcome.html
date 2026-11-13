@@ -2,22 +2,16 @@
 <html lang="zh-CN" data-cover-theme="day">
   <head>
     <meta charset="utf-8" />
+    <!-- Deployment metadata: generated -->
+    <meta name="robots" content="noindex,follow" />
+    <meta property="og:image" content="https://lmh7.github.io/UniCore-Official-Website/assets/images/inex-social.jpg" />
+    <!-- End deployment metadata -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#79b6df" />
     <meta name="description" content="iNEX 联核智域互动飞行封面。点击小飞机，开启一段由你指引的飞行，再进入官网探索更多。" />
-    <meta name="robots" content="noindex,follow" />
     <title>让想法，自由飞行 · iNEX 互动封面</title>
-    <script>
-      try {
-        if (sessionStorage.getItem("inex-cover-theme:v1") === "night") {
-          document.documentElement.dataset.coverTheme = "night";
-          document.querySelector('meta[name="theme-color"]').content = "#06111f";
-        }
-      } catch (_) {}
-    </script>
+    <script src="assets/js/cover-init.js"></script>
     <link rel="icon" href="assets/images/favicon.png" type="image/png" />
-    <link rel="preload" as="image" href="assets/images/cover-sky-day.png" />
-    <link rel="preload" as="image" href="assets/images/cover-sky-night-realistic.png" />
     <link rel="stylesheet" href="assets/css/page-transitions.css" />
     <link rel="stylesheet" href="assets/css/welcome.css" />
     <script src="assets/js/page-transitions.js"></script>
@@ -28,10 +22,10 @@
     <a class="cover-skip" href="#main">跳到封面内容</a>
     <div class="cover-skies" aria-hidden="true">
       <div class="cover-sky cover-sky-base" id="cover-sky-base"></div>
-      <img id="cover-sky-day-image" src="assets/images/cover-sky-day.png" alt="" hidden decoding="async" />
-      <img id="cover-sky-night-image" src="assets/images/cover-sky-night-realistic.png" alt="" hidden decoding="async" />
+      <img id="cover-sky-day-image" data-src="assets/images/cover-sky-day.webp" alt="" hidden decoding="async" />
+      <img id="cover-sky-night-image" data-src="assets/images/cover-sky-night-realistic.webp" alt="" hidden decoding="async" />
     </div>
-    <div class="cover-sky cover-sky-reveal" id="cover-sky-reveal" data-sky="night" aria-hidden="true" inert></div>
+    <div class="cover-sky cover-sky-reveal" id="cover-sky-reveal" aria-hidden="true" inert></div>
       <svg class="cover-theme-boundary" id="cover-theme-boundary" aria-hidden="true">
         <defs>
           <linearGradient id="cover-wipe-spectrum" x1="0" y1="0" x2="1" y2="1">

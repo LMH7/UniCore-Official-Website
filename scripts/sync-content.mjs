@@ -3,28 +3,21 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import vm from "node:vm";
+import { publicConfig, edgeoneConfig, securityHeaders } from "./deployment-config.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const readJSON = async (path) => JSON.parse(await readFile(resolve(root, path), "utf8"));
 const products = await readJSON("content/products.json");
 const content = await readJSON("content/site-content.json");
-const config = await readJSON("config/public.json");
+const config = await publicConfig(new URL("../", import.meta.url));
 const context = vm.createContext({ URL });
 vm.runInContext(await readFile(resolve(root, "site/assets/js/content-contract.js"), "utf8"), context);
 context.ContentContract.validateProducts(products);
 context.ContentContract.validateContent(content);
 
-function base(value, name) {
-  const u = new URL(value);
-  if (!value.endsWith("/") || /[\s\\]/.test(value) || u.username || u.password || u.search || u.hash ||
-      (u.protocol !== "https:" && !(u.protocol === "http:" && ["127.0.0.1", "localhost"].includes(u.hostname))))
-    throw new Error(`${name} must be an HTTPS directory URL ending in / (loopback HTTP is allowed)`);
-  return u;
-}
 if (!["local", "api"].includes(config.source)) throw new Error("source must be local or api");
 if (!Number.isInteger(config.timeoutMs) || config.timeoutMs < 250 || config.timeoutMs > 10000) throw new Error("timeoutMs must be 250..10000");
-const api = base(config.apiBase, "apiBase");
-const assets = base(config.assetBase, "assetBase");
+const assets = new URL(config.assetBase);
 const images = [content.logo, content.qrImage, ...products.map(p => p.image), ...content.contacts.map(c => c.qrImage), ...content.solutions.map(s => s.case?.image)].filter(Boolean);
 for (const path of images) {
   if (path.startsWith("assets/images/")) await access(resolve(root, "site", path));
@@ -44,7 +37,8 @@ const outputs = {
   "backend/data/snapshot.json": pretty({version, assetBase: config.assetBase, products, content}) + "\n",
   "docs/api-examples/products.json": pretty({data: products, meta}) + "\n",
   "docs/api-examples/site-content.json": pretty({data: content, meta}) + "\n",
-  "site/_headers": `# Generated from config/public.json and content/*.json. Run npm run sync.\n/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: ${imageOrigins.join(" ")}; font-src 'self'; connect-src 'self' ${api.origin}; object-src 'none'; base-uri 'self'; frame-ancestors 'none'\n`,
+  "edgeone.json": pretty(edgeoneConfig(config, imageOrigins)) + "\n",
+  "site/_headers": `# Generated from config/public.json and content/*.json. Run npm run sync.\n/*\n${securityHeaders(config, imageOrigins).map(({key, value}) => `  ${key}: ${value}`).join("\n")}\n`,
 };
 const changed = [];
 for (const [path, next] of Object.entries(outputs)) {
