@@ -27,6 +27,10 @@ const dataSource = provider === "edgeone" && mode === "preview" ? "local" : conf
 const base = provider === "edgeone" ? "/" : githubBase;
 const source = path.join(root, "site");
 const output = path.join(root, provider === "edgeone" ? "artifacts/edgeone-pages" : "artifacts/github-pages");
+const artifactsRoot = path.resolve(root, "artifacts");
+if (path.dirname(path.resolve(output)) !== artifactsRoot ||
+    !["edgeone-pages", "github-pages"].includes(path.basename(output)))
+  throw new Error("Build output must stay inside the expected artifacts directory");
 for (const script of ["sync-content.mjs", "sync-seo.mjs", "sync-cover.mjs", "sync-navigation.mjs", "sync-solutions.mjs"]) {
   execFileSync(process.execPath, [path.join(root, "scripts", script), "--check"], { stdio: "inherit" });
 }
@@ -132,4 +136,4 @@ await writeFile(path.join(output, "deploy-info.json"), JSON.stringify({
 }, null, 2) + "\n");
 await checkEntry(output);
 console.log(`${provider} output: ${output}; ${mode}, ${dataSource} content; ${versions.size} fingerprinted scripts/styles; 404 base ${base}`);
-if (provider === "edgeone" && mode === "preview") console.log("Preview is excluded from search engines and uses the bundled content. Production requires a domain and API CORS configuration; see deploy/edgeone/README.md.");
+if (provider === "edgeone" && mode === "preview") console.log("Preview is excluded from search engines and uses the bundled content. Production requires a domain; API mode also requires a matching backend snapshot and CORS configuration. See deploy/edgeone/README.md.");

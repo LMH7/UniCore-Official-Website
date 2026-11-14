@@ -14,7 +14,10 @@ export async function publicConfig(root = new URL("../", import.meta.url)) {
   const config = JSON.parse(await readFile(new URL("config/public.json", root), "utf8"));
   // Older content-generation fixtures can omit siteBase; new repositories declare it explicitly.
   config.siteBase ||= config.assetBase;
-  for (const name of ["siteBase", "assetBase", "apiBase"]) directoryURL(config[name], name);
+  for (const name of ["siteBase", "assetBase"]) directoryURL(config[name], name);
+  if (!["local", "api"].includes(config.source)) throw new Error("source must be local or api");
+  if (typeof config.apiBase !== "string") throw new Error("apiBase must be a string");
+  if (config.apiBase || config.source === "api") directoryURL(config.apiBase, "apiBase");
   return config;
 }
 
@@ -48,23 +51,25 @@ export function robots(siteBase, indexable = true) {
     : "User-agent: *\nDisallow: /\n";
 }
 
-export function securityHeaders(config, imageOrigins = []) {
+export function securityHeaders(config, imageOrigins = [], mediaOrigins = []) {
   const images = [...new Set([new URL(config.assetBase).origin, ...imageOrigins])].sort();
+  const media = [...new Set(mediaOrigins)].sort();
+  const connect = config.apiBase ? ` ${directoryURL(config.apiBase, "apiBase").origin}` : "";
   return [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "X-Frame-Options", value: "DENY" },
     { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-    { key: "Content-Security-Policy", value: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: ${images.join(" ")}; font-src 'self'; connect-src 'self' ${new URL(config.apiBase).origin}; object-src 'none'; base-uri 'self'; frame-ancestors 'none'` },
+    { key: "Content-Security-Policy", value: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: ${images.join(" ")}; media-src 'self'${media.length ? " " + media.join(" ") : ""}; font-src 'self'; connect-src 'self'${connect}; object-src 'none'; base-uri 'self'; frame-ancestors 'none'` },
   ];
 }
 
-export function edgeoneConfig(config, imageOrigins = []) {
+export function edgeoneConfig(config, imageOrigins = [], mediaOrigins = []) {
   return {
     installCommand: "npm ci",
     buildCommand: "npm run build:edgeone",
     outputDirectory: "artifacts/edgeone-pages",
     nodeVersion: "24.18.0",
-    headers: [{ source: "/*", headers: securityHeaders(config, imageOrigins) }],
+    headers: [{ source: "/*", headers: securityHeaders(config, imageOrigins, mediaOrigins) }],
   };
 }

@@ -1,6 +1,8 @@
 # 项目交接与三人分工
 
-项目的运行入口、当前状态和交付物见 [项目交付说明](项目交付说明.md)。技术检查和公网发布分开记录，以 [整体验收](docs/2026-11-12-整体验收.md) 为准。
+2026-11-13：当前分支已选择性同步最新 main 并保留增强产品详情和当前排版，尚待手动提交。以 [本次同步交接](docs/MAIN-SYNC-20261113.md) 的版本、检查与提交步骤为准；历史验收不代表本轮已上线。
+
+项目的运行入口、当前状态和交付物见 [项目交付说明](项目交付说明.md)。技术检查和公网发布分开记录；[2026-11-12 整体验收](docs/2026-11-12-整体验收.md) 是上游历史记录，不代表本轮同步已经发布。
 
 2026-11-13：正式前端选择 EdgeOne，当前先交付预览包；账号创建、域名和跨域切换见 [EdgeOne 操作说明](deploy/edgeone/README.md)，优先级见 [优化清单](docs/优化清单.md)。`edgeone-release` 为自动发布源，不直接改这个分支。
 
@@ -14,7 +16,7 @@
 | 改实验室介绍、项目与学术成果 | `site/about.html`、`site/projects.html`、`site/publications.html` |
 | 改封面 | `site/welcome.html`、`welcome.js`、`welcome.css` |
 | 改导航与公共布局 | `site/assets/js/layout.js`，修改后运行 `npm run sync` |
-| 改页面交互 | `app.js`、`interactions.js`、`product-detail.js` |
+| 改页面交互 | `app.js`、`interactions.js`、`product-detail.js`；列表筛选由 `products-page.js` 单独负责 |
 | 改 API | `backend/app.py`、`backend/validation.py` |
 | 改发布配置 | `config/public.json`，修改后运行 `npm run sync` |
 | 部署与回退 | `DEPLOY.md`、`deploy/tencent-scf/README.md` |
@@ -42,9 +44,11 @@
 
 内容版本用于识别两份数据是否一致；只有代码变化时内容哈希可能不变，因此回退还要记录 Git 提交和镜像摘要。
 
-## 未合并分支
+## 产品分支整合
 
-`product-center-associate` 的 PR #7 仍独立保留：其中有根目录重复网页、直接修改生成数据、旧版数据说明、重复接管筛选监听，以及占位图路径不一致。这次使用已整合并验证的产品列表和详情实现，避免覆盖统一内容源。后续吸收其特点卡片或视频功能时，应从内容源和统一控制器接入，再做回归，不能整包覆盖 `site/`。
+`product-center-associate` 的产品增强已选择性整合：特点、分组参数、视频/资料入口和研究方向映射统一维护在 `content/products.json`；筛选保持单控制器，占位图路径和放大回退已修正。根目录重复网页未作为发布源。主线新增的部署、资源兼容和版本保护与这些功能共同保留。
+
+本分支发布数据保持 `local`。已有广州公网快照与本分支完整产品数据不同，开启 API 前需由发布负责人更新对应后端快照并验收；本次同步没有部署云资源。
 
 ## 团队继续提供的正式资料
 

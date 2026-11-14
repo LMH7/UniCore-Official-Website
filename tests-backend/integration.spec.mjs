@@ -40,12 +40,18 @@ test("真实后端贯通产品列表、详情、实验室介绍和联系图片",
   expect(errors).toEqual([]);
 });
 
-async function crossOrigin(page, csp = policy) {
+async function crossOrigin(page, { allowAPI = true } = {}) {
   // Edge requires a separate permission for requests to another loopback port.
   await page.context().grantPermissions(["local-network-access"], { origin: "http://127.0.0.1:4181" });
   // Use actual generated hosting policy, substituting the test server origins.
-  const localPolicy = csp.replaceAll(new URL(config.apiBase).origin, "http://127.0.0.1:4180")
-    .replaceAll(new URL(config.assetBase).origin, "http://127.0.0.1:4180");
+  let localPolicy = policy.replaceAll(new URL(config.assetBase).origin, "http://127.0.0.1:4180");
+  if (config.apiBase) localPolicy = localPolicy.replaceAll(new URL(config.apiBase).origin, "http://127.0.0.1:4180");
+  // A local-only release deliberately has no API origin in its hosting policy.
+  // Add the test API origin only when this test asks for the permissive policy.
+  if (!allowAPI)
+    localPolicy = localPolicy.replace(/connect-src [^;]+/, "connect-src 'self'");
+  else if (!config.apiBase)
+    localPolicy = localPolicy.replace(/connect-src [^;]+/, "connect-src 'self' http://127.0.0.1:4180");
   await page.route("http://127.0.0.1:4181/**/*.html", async route => {
     const r = await route.fetch();
     await route.fulfill({response: r, headers: {...r.headers(), "content-security-policy": localPolicy}});
@@ -67,8 +73,9 @@ test("分开部署时真实跨域请求与生成的图片许可均生效", async
 });
 
 test("浏览器阻止连接时整体回退本地内容", async ({ page }) => {
-  await crossOrigin(page, policy.replace(/connect-src [^;]+/, "connect-src 'self'"));
-  await page.goto("http://127.0.0.1:4181/products.html");
+  await crossOrigin(page, { allowAPI: false });
+  const response = await page.goto("http://127.0.0.1:4181/products.html");
+  expect(response.headers()["content-security-policy"]).toMatch(/connect-src 'self';/);
   await ready(page);
   expect((await page.evaluate(() => SiteData.ready)).fallback).toBe(true);
   await expect(page.locator(".product-card")).toHaveCount(snapshot.products.length);

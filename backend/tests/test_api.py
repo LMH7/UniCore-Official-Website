@@ -1,5 +1,6 @@
 import copy
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -100,21 +101,17 @@ class ApiTests(unittest.TestCase):
         self.assertTrue(r.json["data"][0]["image"].startswith("https://cdn.example/site/"))
         self.assertEqual(SNAPSHOT["version"], r.json["meta"]["version"])
 
-    def test_case_images_resolve_against_the_public_site(self):
+    def test_case_images_and_videos_follow_public_asset_base(self):
         snapshot = copy.deepcopy(SNAPSHOT)
-        snapshot["content"]["solutions"][0]["case"] = {
-            "status": "ready", "title": "公开案例", "summary": "简介",
-            "image": "assets/images/nex-500.webp", "imageAlt": "平台",
-            "link": "projects.html", "note": "",
-        }
+        snapshot["products"][0]["video"] = "assets/videos/example.mp4"
+        snapshot["content"]["solutions"][0]["case"]["image"] = "assets/images/nex-500.webp"
         snapshot["version"] = content_version(snapshot["products"], snapshot["content"])
-        with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder) / "snapshot.json"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "snapshot.json"
             path.write_text(json.dumps(snapshot), encoding="utf-8")
-            app = create_app({"SNAPSHOT_PATH": str(path), "PUBLIC_ASSET_BASE": "https://cdn.example/site/"})
-            case = app.test_client().get("/site-content").json["data"]["solutions"][0]["case"]
-            self.assertEqual(case["image"], "https://cdn.example/site/assets/images/nex-500.webp")
-            self.assertEqual(snapshot["content"]["solutions"][0]["case"]["image"], "assets/images/nex-500.webp")
+            client = create_app({"SNAPSHOT_PATH": str(path), "PUBLIC_ASSET_BASE": "https://cdn.example/site/"}).test_client()
+            self.assertEqual(client.get("/products").json["data"][0]["video"], "https://cdn.example/site/assets/videos/example.mp4")
+            self.assertEqual(client.get("/site-content").json["data"]["solutions"][0]["case"]["image"], "https://cdn.example/site/assets/images/nex-500.webp")
 
 
 class SnapshotTests(unittest.TestCase):
@@ -140,9 +137,18 @@ class SnapshotTests(unittest.TestCase):
             lambda d: d["products"][0].update(image="assets/images/../../secret"),
             lambda d: d["content"]["resources"][0].update(url="javascript:alert(1)"),
             lambda d: d["content"]["faqs"][0].update(answer=None),
-            lambda d: d["content"]["solutions"][0]["case"].update(link="javascript:alert(1)"),
-            lambda d: d["content"]["resourceUpdates"][0].update(status="ready", url=""),
             lambda d: d["content"]["contacts"].append(copy.deepcopy(d["content"]["contacts"][0])),
+            lambda d: d["content"].update(email=None),
+            lambda d: d["content"]["solutions"][0].update(platforms="nex-250"),
+            lambda d: d["content"]["solutions"][0].update(case=[]),
+            lambda d: d["content"]["solutions"][0]["case"].update(link="javascript:alert(1)"),
+            lambda d: d["content"].update(resourceUpdates={}),
+            lambda d: d["content"]["resourceUpdates"][0].update(status="ready", url=""),
+            lambda d: d["products"][0].update(features="not-an-array"),
+            lambda d: d["products"][0].update(series=None),
+            lambda d: d["products"][0].update(video="javascript:alert(1)"),
+            lambda d: d["products"][0]["specs"][0].update(group={}),
+            lambda d: d["products"][0].update(applicationSolutions=["education"]),
         ]
         for mutate in cases:
             d = copy.deepcopy(SNAPSHOT)
@@ -150,6 +156,54 @@ class SnapshotTests(unittest.TestCase):
             d["version"] = content_version(d["products"], d["content"])
             with self.subTest(mutate=mutate), self.assertRaises(ValueError):
                 validate_snapshot(d)
+
+    def test_legacy_optional_fields_remain_compatible(self):
+        d = copy.deepcopy(SNAPSHOT)
+        for product in d["products"]:
+            for key in ("features", "series", "video", "contentStatus", "applicationSolutions"):
+                product.pop(key, None)
+            for spec in product["specs"]:
+                spec.pop("group", None)
+        for solution in d["content"]["solutions"]:
+            solution.pop("platforms", None)
+            solution.pop("case", None)
+        d["content"].pop("resourceUpdates", None)
+        d["version"] = content_version(d["products"], d["content"])
+        self.assertEqual(validate_snapshot(d)["version"], d["version"])
+
+    def test_product_documented_content_states_are_valid(self):
+        for state in ("partial", "complete"):
+            d = copy.deepcopy(SNAPSHOT)
+            d["products"][0]["contentStatus"] = state
+            d["version"] = content_version(d["products"], d["content"])
+            with self.subTest(state=state):
+                self.assertEqual(validate_snapshot(d)["products"][0]["contentStatus"], state)
+
+    def test_preview_video_loopback_is_accepted_by_both_contracts(self):
+        frontend = """
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const input = JSON.parse(readFileSync(0, 'utf8'));
+const context = vm.createContext({URL});
+vm.runInContext(readFileSync('site/assets/js/content-contract.js', 'utf8'), context);
+try { context.ContentContract.validateProducts(input.products); process.stdout.write('accepted'); }
+catch { process.stdout.write('rejected'); }
+"""
+        for value, valid in [("http://127.0.0.1:9000/assets/videos/demo.mp4", True),
+                             ("http://localhost:9000/assets/videos/demo.mp4", True),
+                             ("http://external.example/demo.mp4", False)]:
+            d = copy.deepcopy(SNAPSHOT)
+            d["products"][0]["video"] = value
+            d["version"] = content_version(d["products"], d["content"])
+            with self.subTest(video=value):
+                if valid:
+                    validate_snapshot(d)
+                else:
+                    with self.assertRaises(ValueError):
+                        validate_snapshot(d)
+                result = subprocess.run(["node", "--input-type=module", "-e", frontend],
+                                        cwd=ROOT, input=json.dumps(d), capture_output=True, text=True, encoding="utf-8", check=True)
+                self.assertEqual(result.stdout, "accepted" if valid else "rejected")
 
     def test_empty_products_and_optional_contacts_are_valid(self):
         d = copy.deepcopy(SNAPSHOT)

@@ -1,7 +1,7 @@
 {
   "siteBase": "https://lmh7.github.io/UniCore-Official-Website/",
-  "source": "api",
-  "apiBase": "https://1531026871-73sj75z34t.ap-guangzhou.tencentscf.com/api/v1/",
+  "source": "local",
+  "apiBase": "",
   "timeoutMs": 5000,
   "assetBase": "https://lmh7.github.io/UniCore-Official-Website/"
 }

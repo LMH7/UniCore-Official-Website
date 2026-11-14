@@ -69,15 +69,64 @@ class GenerationTests(unittest.TestCase):
         self.save_products(p)
         self.run_generator(success=False)
 
+    def test_new_frontend_fields_are_validated_before_generation(self):
+        products_path = self.root / "content/products.json"
+        content_path = self.root / "content/site-content.json"
+        products = products_path.read_text(encoding="utf-8")
+        content = content_path.read_text(encoding="utf-8")
+        mutations = [
+            ("content", lambda d: d.update(email=None)),
+            ("content", lambda d: d["solutions"][0].update(platforms="nex-250")),
+            ("content", lambda d: d.update(resourceUpdates={})),
+            ("content", lambda d: d["solutions"][0].update(case=[])),
+            ("products", lambda d: d[0].update(features="not-an-array")),
+            ("products", lambda d: d[0].update(series=None)),
+            ("products", lambda d: d[0].update(video="javascript:alert(1)")),
+            ("products", lambda d: d[0]["specs"][0].update(group={})),
+            ("products", lambda d: d[0].update(applicationSolutions=["education"])),
+        ]
+        for name, mutate in mutations:
+            products_path.write_text(products, encoding="utf-8")
+            content_path.write_text(content, encoding="utf-8")
+            path = content_path if name == "content" else products_path
+            value = json.loads(path.read_text(encoding="utf-8"))
+            mutate(value)
+            path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+            with self.subTest(field=name, mutate=mutate):
+                self.run_generator(success=False)
+
+    def test_local_mode_can_leave_api_unconfigured_but_api_mode_cannot(self):
+        path = self.root / "config/public.json"
+        config = json.loads(path.read_text(encoding="utf-8"))
+        config.update(source="local", apiBase="")
+        path.write_text(json.dumps(config), encoding="utf-8")
+        self.run_generator()
+        self.assertIn("connect-src 'self';", (self.root / "site/_headers").read_text(encoding="utf-8"))
+        config["source"] = "api"
+        path.write_text(json.dumps(config), encoding="utf-8")
+        self.run_generator(success=False)
+
+    def test_documented_product_states_generate_successfully(self):
+        for state in ("partial", "complete"):
+            products = self.products()
+            products[0]["contentStatus"] = state
+            self.save_products(products)
+            with self.subTest(state=state):
+                self.run_generator()
+
     def test_configuration_generates_exact_network_allowlist(self):
         path = self.root / "config/public.json"
         config = json.loads(path.read_text(encoding="utf-8"))
         config.update(source="api", apiBase="https://api.example/v1/", assetBase="https://media.example/site/")
         path.write_text(json.dumps(config), encoding="utf-8")
+        products = self.products()
+        products[0]["video"] = "https://video.example/demo.mp4"
+        self.save_products(products)
         self.run_generator()
         policy = (self.root / "site/_headers").read_text(encoding="utf-8")
         self.assertIn("connect-src 'self' https://api.example;", policy)
         self.assertIn("img-src 'self' data: https://media.example;", policy)
+        self.assertIn("media-src 'self' https://video.example;", policy)
         self.assertNotIn("connect-src *", policy)
         config["apiBase"] = "http://insecure.example/"
         path.write_text(json.dumps(config), encoding="utf-8")

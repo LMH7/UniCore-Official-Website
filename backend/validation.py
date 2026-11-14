@@ -54,6 +54,21 @@ def link(value, field):
     raise ValueError("Invalid public link: " + field)
 
 
+def publication_status(value, field):
+    if value not in ("pending", "ready"):
+        raise ValueError("Invalid publication status: " + field)
+
+
+def media(value, field):
+    text(value, field)
+    parts = urlsplit(value)
+    if (parts.scheme == "http" and parts.hostname in ("127.0.0.1", "localhost")
+            and not parts.username and not parts.password and not re.search(r"[\s\\]", value)):
+        parts.port
+        return
+    link(value, field)
+
+
 def validate(products, content):
     ids = set()
     for product in records(products, "products"):
@@ -66,13 +81,35 @@ def validate(products, content):
         for key in ("name", "subtitle", "sensor", "imageAlt", "summary", "description", "status"):
             text(product.get(key), "product." + key, required=True)
         asset(product.get("image"), "product.image")
+        if "series" in product:
+            text(product["series"], "product.series")
+        if "video" in product:
+            media(product["video"], "product.video")
+        if "contentStatus" in product:
+            if product["contentStatus"] not in ("placeholder", "partial", "complete"):
+                raise ValueError("Invalid product contentStatus")
+        if "features" in product:
+            for item in records(product["features"], "product.features"):
+                if not isinstance(item, dict):
+                    raise ValueError("Invalid product feature")
+                text(item.get("title"), "feature.title", required=True)
+                text(item.get("text"), "feature.text", required=True)
         for item in records(product.get("applications"), "applications"):
             text(item, "application", required=True)
+        if "applicationSolutions" in product:
+            mappings = records(product["applicationSolutions"], "applicationSolutions")
+            if len(mappings) != len(product["applications"]):
+                raise ValueError("Invalid applicationSolutions length")
+            for solution_id in mappings:
+                if solution_id != "":
+                    identifier(solution_id, "applicationSolutions.id")
         for item in records(product.get("specs"), "specs"):
             if not isinstance(item, dict):
                 raise ValueError("Invalid spec")
             text(item.get("label"), "spec.label", required=True)
             text(item.get("value"), "spec.value", required=True)
+            if "group" in item:
+                text(item["group"], "spec.group")
         for item in records(product.get("resources"), "product.resources"):
             if not isinstance(item, dict):
                 raise ValueError("Invalid product resource")
@@ -101,16 +138,20 @@ def validate(products, content):
             if group == "solutions":
                 for topic in records(item.get("topics"), "topics"):
                     text(topic, "topic", required=True)
-                for platform in records(item.get("platforms", []), "platforms"):
-                    identifier(platform, "platform.id")
+                if "platforms" in item:
+                    for product_id in records(item["platforms"], "solution.platforms"):
+                        identifier(product_id, "solution.platforms.id")
                 if "case" in item:
                     case = item["case"]
-                    if not isinstance(case, dict) or case.get("status") not in ("pending", "ready"):
+                    if not isinstance(case, dict):
                         raise ValueError("Invalid solution case")
+                    publication_status(case.get("status"), "case.status")
                     for key in ("title", "summary", "imageAlt", "note"):
-                        text(case.get(key), "case." + key, required=case["status"] == "ready" and key == "title")
+                        text(case.get(key), "case." + key)
                     asset(case.get("image"), "case.image", allow_empty=True)
                     link(case.get("link"), "case.link")
+                    if case["status"] == "ready":
+                        text(case.get("title"), "case.title", required=True)
             else:
                 asset(item.get("qrImage"), "contact.qrImage", allow_empty=True)
                 link(item.get("url"), "contact.url")
@@ -120,14 +161,20 @@ def validate(products, content):
         for key in ("title", "type", "description", "label"):
             text(item.get(key), "resource." + key, required=True)
         link(item.get("url"), "resource.url")
-    for item in records(content.get("resourceUpdates", []), "resourceUpdates"):
-        if not isinstance(item, dict) or item.get("status") not in ("pending", "ready"):
-            raise ValueError("Invalid resource update")
-        text(item.get("title"), "resourceUpdate.title", required=True)
-        text(item.get("note"), "resourceUpdate.note")
-        link(item.get("url"), "resourceUpdate.url")
-        if item["status"] == "ready" and not item["url"]:
-            raise ValueError("Ready resource requires a URL")
+        if "id" in item:
+            identifier(item["id"], "resource.id")
+        if "icon" in item:
+            text(item["icon"], "resource.icon", required=True)
+    if "resourceUpdates" in content:
+        for item in records(content["resourceUpdates"], "resourceUpdates"):
+            if not isinstance(item, dict):
+                raise ValueError("Invalid resource update")
+            text(item.get("title"), "resourceUpdate.title", required=True)
+            text(item.get("note"), "resourceUpdate.note")
+            publication_status(item.get("status"), "resourceUpdate.status")
+            link(item.get("url"), "resourceUpdate.url")
+            if item["status"] == "ready":
+                text(item.get("url"), "resourceUpdate.url", required=True)
     for item in records(content.get("faqs"), "faqs"):
         if not isinstance(item, dict):
             raise ValueError("Invalid FAQ object")

@@ -41,6 +41,7 @@ window.SiteData = (() => {
       state = { ...local, source: "local", fallback: true, reason: error.name === "AbortError" ? "timeout" : error.message };
     } finally { clearTimeout(timeout); }
     window.PRODUCTS = state.products;
+    window.SITE_PRODUCTS = state.products;
     window.SITE_CONTENT = state.content;
     return state;
   })();

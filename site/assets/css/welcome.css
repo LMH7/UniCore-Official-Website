@@ -130,8 +130,9 @@ button:focus-visible, a:focus-visible, .cover-scene-preview [data-cover-focus-vi
   animation: cover-arrive 800ms 100ms both;
 }
 .cover-brand img { display: block; width: 123px; height: auto; filter: drop-shadow(0 2px 7px #08253e20); }
-.cover-brand > span { padding-left: 21px; border-left: 1px solid var(--cover-line); font-size: 15px; letter-spacing: .16em; }
-.cover-brand small { display: block; margin-top: 5px; font-size: 7px; color: var(--cover-dim); letter-spacing: .14em; }
+.cover-brand-caption { display: inline-grid; grid-template-columns: max-content; row-gap: 4px; padding-left: 21px; border-left: 1px solid var(--cover-line); font-size: 18px; line-height: 1.2; letter-spacing: normal; white-space: nowrap; }
+.cover-brand-name { display: block; font-weight: 500; text-align: justify; text-align-last: justify; }
+.cover-brand small { display: block; font: 400 9px/1.35 "Segoe UI", sans-serif; color: var(--cover-dim); letter-spacing: .02em; }
 .cover-theme-toggle {
   position: relative;
   display: inline-flex;
@@ -388,7 +389,7 @@ body.is-following .status-light { background: #aff6de; box-shadow: 0 0 10px #b2f
   .cover-header { min-height: 88px; gap: 12px; }
   .cover-brand { gap: 0; }
   .cover-brand img { width: 100px; }
-  .cover-brand > span { display: none; }
+  .cover-brand-caption { display: none; }
   .cover-theme-toggle { min-height: 44px; padding: 9px 12px; gap: 7px; font-size: 10px; }
   .cover-sky { background-position: 58% center; }
   .cover-main { min-height: 535px; padding-top: 44px; padding-bottom: 36px; align-items: flex-start; }

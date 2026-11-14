@@ -2,6 +2,27 @@ import { test, expect } from "./fixtures.mjs";
 
 const ready = (page) => page.evaluate(() => window.INTERACTIONS_READY);
 
+for (const width of [390, 1440]) {
+  test(`侧边栏目在 ${width}px 点击后高亮对应项，往返切换不落到上一项`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const path of ["about", "products", "projects", "solutions", "resources", "contact"]) {
+      await page.goto(`/${path}.html`);
+      await ready(page);
+      const links = page.locator(".page-index a");
+      const count = await links.count();
+      for (const index of [1, 0, count - 1, 1]) {
+        const link = links.nth(index);
+        const href = await link.getAttribute("href");
+        await link.click();
+        await expect(link, `${path}: ${href}`).toHaveAttribute("aria-current", "location");
+        await expect(page.locator('.page-index a[aria-current="location"]')).toHaveCount(1);
+        expect(new URL(page.url()).hash).toBe(href);
+      }
+    }
+  });
+}
+
 async function holdCoverTheme(page, expectedTheme) {
   const button = page.locator("#cover-theme-toggle");
   await button.hover();

@@ -47,7 +47,7 @@ Windows 使用 Chrome 检查时先设置 `$env:PLAYWRIGHT_CHANNEL='chrome'`。CI
 
 ## SCF 后端
 
-步骤见 [SCF 部署说明](deploy/tencent-scf/README.md)，上轮云端结果见 [2026-11-12 验收](docs/2026-11-12-整体验收.md)。本轮内容不变，版本仍为 a56f29d171df80e5，无需为封面与迁移准备重建镜像。
+步骤见 [SCF 部署说明](deploy/tencent-scf/README.md)，上轮云端结果见 [2026-11-12 验收](docs/2026-11-12-整体验收.md)。本分支保留了额外的产品详情字段，与公网历史版本 `a56f29d171df80e5` 不同；以 `npm run sync` 生成的当前内容版本为准。当前发布使用本地数据，启用公网 API 前必须重新构建并部署同版完整快照，不能直接切换到旧快照。
 
 正式域名与新站资源就绪后，按 EdgeOne 手册切换 ALLOWED_ORIGINS/PUBLIC_ASSET_BASE。页面能浏览不等于 API 接通，因为有完整本地回退。更新 content 时，先部署对应镜像并做公网检查，再发布同版网页。
 

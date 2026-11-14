@@ -19,10 +19,12 @@ if (!["local", "api"].includes(config.source)) throw new Error("source must be l
 if (!Number.isInteger(config.timeoutMs) || config.timeoutMs < 250 || config.timeoutMs > 10000) throw new Error("timeoutMs must be 250..10000");
 const assets = new URL(config.assetBase);
 const images = [content.logo, content.qrImage, ...products.map(p => p.image), ...content.contacts.map(c => c.qrImage), ...content.solutions.map(s => s.case?.image)].filter(Boolean);
+const videos = products.map(p => p.video).filter(Boolean);
 for (const path of images) {
   if (path.startsWith("assets/images/")) await access(resolve(root, "site", path));
   else if (new URL(path).protocol !== "https:") throw new Error("Public image URLs must use HTTPS");
 }
+for (const video of videos) if (!/^https:\/\//.test(video)) await access(resolve(root, "site", video));
 const sort = value => Array.isArray(value) ? value.map(sort) : value && typeof value === "object"
   ? Object.fromEntries(Object.keys(value).sort().map(k => [k, sort(value[k])])) : value;
 const version = createHash("sha256").update(JSON.stringify(sort({products, content}))).digest("hex").slice(0, 16);
@@ -30,15 +32,16 @@ const pretty = value => JSON.stringify(value, null, 2);
 const js = value => pretty(value).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 const meta = { version, apiVersion: "v1" };
 const imageOrigins = [...new Set([assets.origin, ...images.filter(p => !p.startsWith("assets/")).map(p => new URL(p).origin)])].sort();
+const mediaOrigins = [...new Set(videos.filter(p => /^https:\/\//.test(p)).map(p => new URL(p).origin))].sort();
 const outputs = {
-  "site/assets/js/products.js": `/* Generated from content/products.json. Run npm run sync. */\nwindow.PRODUCTS = ${js(products)};\n`,
+  "site/assets/js/products.js": `/* Generated from content/products.json. Run npm run sync. */\nwindow.PRODUCTS = ${js(products)};\nwindow.SITE_PRODUCTS = window.PRODUCTS;\n`,
   "site/assets/js/site-content.js": `/* Generated from content/site-content.json. Run npm run sync. */\nwindow.CONTENT_VERSION = "${version}";\nwindow.SITE_CONTENT = ${js(content)};\n`,
   "site/assets/js/data-config.js": `/* Generated from config/public.json. Run npm run sync. */\nwindow.DATA_CONFIG = Object.freeze(${js({source: config.source, apiBase: config.apiBase, timeoutMs: config.timeoutMs})});\n`,
   "backend/data/snapshot.json": pretty({version, assetBase: config.assetBase, products, content}) + "\n",
   "docs/api-examples/products.json": pretty({data: products, meta}) + "\n",
   "docs/api-examples/site-content.json": pretty({data: content, meta}) + "\n",
-  "edgeone.json": pretty(edgeoneConfig(config, imageOrigins)) + "\n",
-  "site/_headers": `# Generated from config/public.json and content/*.json. Run npm run sync.\n/*\n${securityHeaders(config, imageOrigins).map(({key, value}) => `  ${key}: ${value}`).join("\n")}\n`,
+  "edgeone.json": pretty(edgeoneConfig(config, imageOrigins, mediaOrigins)) + "\n",
+  "site/_headers": `# Generated from config/public.json and content/*.json. Run npm run sync.\n/*\n${securityHeaders(config, imageOrigins, mediaOrigins).map(({key, value}) => `  ${key}: ${value}`).join("\n")}\n`,
 };
 const changed = [];
 for (const [path, next] of Object.entries(outputs)) {

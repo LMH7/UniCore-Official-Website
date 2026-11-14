@@ -28,6 +28,12 @@
     if (!value || remote(value) || (/^(?![/\\])[a-zA-Z0-9_./-]+(?:[?#][a-zA-Z0-9_.%=&-]*)?$/.test(value) && !value.includes(".."))) return;
     fail(field);
   }
+  function media(value, field) {
+    text(value, field);
+    // The local backend preview resolves media URLs against its loopback origin.
+    if (remote(value, true)) return;
+    link(value, field);
+  }
   function unique(items, field) {
     const ids = new Set();
     for (const item of array(items, field)) {
@@ -37,13 +43,31 @@
     }
     return items;
   }
+  function identifier(value, field) {
+    if (typeof value !== "string" || !/^[a-z0-9-]{1,80}$/.test(value)) fail(field);
+  }
+  function publicationStatus(value, field) {
+    if (!["pending", "ready"].includes(value)) fail(field);
+  }
   function validateProducts(items) {
     for (const p of unique(items, "products")) {
       for (const k of ["name", "subtitle", "sensor", "imageAlt", "summary", "description", "status"]) text(p[k], `product.${k}`, true);
       asset(p.image, "product.image");
+      if ("series" in p) text(p.series, "product.series");
+      if ("video" in p) media(p.video, "product.video");
+      if ("contentStatus" in p && !["placeholder", "partial", "complete"].includes(p.contentStatus)) fail("product.contentStatus");
+      if ("features" in p) for (const f of array(p.features, "product.features")) {
+        object(f, "feature"); text(f.title, "feature.title", true); text(f.text, "feature.text", true);
+      }
       for (const v of array(p.applications, "applications")) text(v, "application", true);
+      if ("applicationSolutions" in p) {
+        const mappings = array(p.applicationSolutions, "applicationSolutions");
+        if (mappings.length !== p.applications.length) fail("applicationSolutions.length");
+        for (const value of mappings) if (value !== "") identifier(value, "applicationSolutions.id");
+      }
       for (const s of array(p.specs, "specs")) {
         object(s, "spec"); text(s.label, "spec.label", true); text(s.value, "spec.value", true);
+        if ("group" in s) text(s.group, "spec.group");
       }
       for (const r of array(p.resources, "product.resources")) {
         object(r, "product.resource"); text(r.title, "resource.title", true); link(r.url, "resource.url");
@@ -59,14 +83,13 @@
     for (const s of unique(data.solutions, "solutions")) {
       for (const k of ["number", "title", "english", "icon", "summary", "audience", "description"]) text(s[k], `solution.${k}`, true);
       for (const t of array(s.topics, "topics")) text(t, "topic", true);
-      if (s.platforms !== undefined)
-        for (const id of array(s.platforms, "platforms"))
-          if (typeof id !== "string" || !/^[a-z0-9-]{1,80}$/.test(id)) fail("platform.id");
-      if (s.case !== undefined) {
-        const c = s.case; object(c, "case");
-        if (!["pending", "ready"].includes(c.status)) fail("case.status");
-        for (const k of ["title", "summary", "imageAlt", "note"]) text(c[k], `case.${k}`, c.status === "ready" && k === "title");
-        asset(c.image, "case.image", true); link(c.link, "case.link");
+      if ("platforms" in s) for (const id of array(s.platforms, "solution.platforms")) identifier(id, "solution.platforms.id");
+      if ("case" in s) {
+        object(s.case, "solution.case");
+        publicationStatus(s.case.status, "case.status");
+        for (const k of ["title", "summary", "imageAlt", "note"]) text(s.case[k], `case.${k}`);
+        asset(s.case.image, "case.image", true); link(s.case.link, "case.link");
+        if (s.case.status === "ready") text(s.case.title, "case.title", true);
       }
     }
     for (const c of unique(data.contacts, "contacts")) {
@@ -77,11 +100,14 @@
       object(r, "resource");
       for (const k of ["title", "type", "description", "label"]) text(r[k], `resource.${k}`, true);
       link(r.url, "resource.url");
+      if ("id" in r) identifier(r.id, "resource.id");
+      if ("icon" in r) text(r.icon, "resource.icon", true);
     }
-    for (const u of array(data.resourceUpdates || [], "resourceUpdates")) {
-      object(u, "resourceUpdate"); text(u.title, "resourceUpdate.title", true); text(u.note, "resourceUpdate.note");
-      if (!["pending", "ready"].includes(u.status) || (u.status === "ready" && !u.url)) fail("resourceUpdate.status/url");
-      link(u.url, "resourceUpdate.url");
+    if ("resourceUpdates" in data) for (const item of array(data.resourceUpdates, "resourceUpdates")) {
+      object(item, "resourceUpdate");
+      text(item.title, "resourceUpdate.title", true); text(item.note, "resourceUpdate.note");
+      publicationStatus(item.status, "resourceUpdate.status"); link(item.url, "resourceUpdate.url");
+      if (item.status === "ready") text(item.url, "resourceUpdate.url", true);
     }
     for (const f of array(data.faqs, "faqs")) {
       object(f, "faq"); text(f.question, "faq.question", true); text(f.answer, "faq.answer", true);

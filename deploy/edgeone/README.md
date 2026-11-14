@@ -44,9 +44,9 @@ node scripts/serve.mjs --port 4178 --dir artifacts/edgeone-pages --headers edgeo
 ## 正式域名准备好以后
 
 1. 账号持有人购买/提供域名。未备案先用“不含中国大陆”节点；大陆或含大陆的全球加速需先备案。添加域名、DNS CNAME 和 HTTPS 证书。
-2. 开发者将 `config/public.json` 中的 `siteBase`、`assetBase` 改为正式 HTTPS 根网址，**以 `/` 结尾**，保留现有 apiBase。执行 `npm run sync` 和 `npm run verify`，连同生成文件一起提交。GitHub 备用页会 noindex，canonical 指向官网。
+2. 开发者将 `config/public.json` 中的 `siteBase`、`assetBase` 改为正式 HTTPS 根网址，**以 `/` 结尾**。默认保持 `source: "local"`、`apiBase: ""`，正式域名也可使用随站内容，无需修改云函数。执行 `npm run sync` 和 `npm run verify`，连同生成文件一起提交。GitHub 备用页会 noindex，canonical 指向官网。
 3. 只在 EdgeOne **生产环境**设置 `DEPLOY_MODE=production`、`SITE_URL=https://实际域名/`。预览环境仍为 preview。正式模式未填写网址时构建会报错。
-4. 域名、证书、新站图片可以访问后，在现有广州 SCF 设置：
+4. 如需启用 API，先按 SCF 手册部署包含**当前完整快照**的后端，再在域名、证书、新站图片均可访问后，给广州 SCF 设置：
 
    ```text
    ALLOWED_ORIGINS=https://实际域名,https://lmh7.github.io
@@ -55,12 +55,13 @@ node scripts/serve.mjs --port 4178 --dir artifacts/edgeone-pages --headers edgeo
    ```
 
    来源不带路径和结尾 `/`；图片地址必须带 `/`。保留 GitHub 来源用于备用站，不使用 `*`。不要让 API 过早指向尚未上线的图片。
-5. 只改域名与上述环境变量无需重建现有镜像。内容未变时版本仍为 `a56f29d171df80e5`；若同时修改 content，则按 SCF 手册发布新镜像。
-6. 检查响应头、全部图片、产品详情刷新、实验室、二维码、深层 404。确认页面数据来源是 api，不能把跨域失败后的本地回退误认为接通。
+5. 当前版本以 `backend/data/snapshot.json` 中的 `version` 为准；本次整合后的产品完整字段与公网旧快照不同，不能直接沿用旧镜像。只有确认云端与当前快照版本和内容一致时，单改上述环境变量才无需重建镜像。随后将 `config/public.json` 改为 `source: "api"`，并显式填写有效、以 `/` 结尾的 HTTPS `apiBase`（包含 `/api/v1/` 路径），重新执行同步、检查和前端构建。
+6. 检查响应头、全部图片、产品详情刷新、实验室、二维码、深层 404。启用 API 时确认页面数据来源是 api，不能把跨域失败或版本不匹配后的本地回退误认为接通。保持 local 模式时使用 `--source local` 验收，无需云端改动。
 
 ```powershell
 npm run verify:live -- --base https://实际域名/ --source api --edgeone
-node scripts/backend-task.mjs smoke https://1531026871-73sj75z34t.ap-guangzhou.tencentscf.com --version a56f29d171df80e5 --origin https://实际域名
+$contentVersion = node -p "require('./backend/data/snapshot.json').version"
+node scripts/backend-task.mjs smoke https://1531026871-73sj75z34t.ap-guangzhou.tencentscf.com --version $contentVersion --origin https://实际域名
 ```
 
 普通可访问的预览地址可用 `--source local --edgeone`；平台带校验的预览链接先在浏览器中验收，不能把普通根域名代替完整校验链接传给脚本。全部完成并真实公网验收通过后，才宣布正式迁移。

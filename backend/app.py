@@ -48,6 +48,8 @@ def public_images(snapshot, base):
     result = copy.deepcopy(snapshot)
     for product in result["products"]:
         product["image"] = urljoin(base, product["image"])
+        if product.get("video"):
+            product["video"] = urljoin(base, product["video"])
     content = result["content"]
     for field in ("logo", "qrImage"):
         if content[field]:
@@ -56,9 +58,8 @@ def public_images(snapshot, base):
         if contact["qrImage"]:
             contact["qrImage"] = urljoin(base, contact["qrImage"])
     for solution in content["solutions"]:
-        case = solution.get("case", {})
-        if case.get("image"):
-            case["image"] = urljoin(base, case["image"])
+        if solution.get("case", {}).get("image"):
+            solution["case"]["image"] = urljoin(base, solution["case"]["image"])
     return result
 
 
