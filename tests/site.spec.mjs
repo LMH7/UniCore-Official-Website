@@ -279,6 +279,9 @@ test("图片与脚本使用本地资源，站点能在子目录下浏览", async
 async function measureContentLayout(page) {
   return page.evaluate(async () => {
     await document.fonts.ready;
+    // Headless Chromium includes an empty stable scrollbar gutter in root clientWidth.
+    // The zero-margin body box is the actual area that contains the centered layout.
+    const viewport = document.body.getBoundingClientRect();
     const measureContainer = (selector) => {
       const element = document.querySelector(selector);
       const rect = element.getBoundingClientRect();
@@ -297,7 +300,7 @@ async function measureContentLayout(page) {
       content: measureContainer("#main > .page-content > .container"),
       main: measureContainer(".page-layout-main"),
       titleLeft: document.querySelector(".page-hero h1").getBoundingClientRect().left,
-      viewportWidth: document.documentElement.clientWidth,
+      viewportCenter: viewport.left + viewport.width / 2,
       sidebar: {
         position: getComputedStyle(document.querySelector(".page-index")).position,
         right: document.querySelector(".page-index").getBoundingClientRect().right,
@@ -310,7 +313,7 @@ function expectCenteredContentLayout(actual, label) {
   for (const metric of ["left", "width", "contentLeft", "contentWidth"])
     expect(Math.abs(actual.hero[metric] - actual.content[metric]), `${label} 标题与正文容器 ${metric} 一致`).toBeLessThan(1);
   expect(Math.abs(actual.titleLeft - actual.main.contentLeft), `${label} 标题与正文左边线对齐`).toBeLessThan(1);
-  expect(Math.abs(actual.main.left + actual.main.width / 2 - actual.viewportWidth / 2), `${label} 正文整体居中`).toBeLessThan(1);
+  expect(Math.abs(actual.main.left + actual.main.width / 2 - actual.viewportCenter), `${label} 正文整体居中`).toBeLessThan(1);
   if (actual.sidebar.position === "fixed")
     expect(actual.sidebar.right, `${label} 侧栏位于正文之外`).toBeLessThan(actual.main.left);
 }
